@@ -45,7 +45,7 @@ static bool thread_handle_signal_act(tcb_t *t)
 			t->signals_actual = 0;
 		/* on a match, clear the signal waiting flags */
 		t->signals_wait = 0;
-		t->thread_wait &= ~(K_THR_PEND_SIGNAL_ANY |  K_THR_PEND_SIGNAL_ANY_C|
+		t->thread_wait &= ~(K_THR_PEND_SIGNAL_ANY |  K_THR_PEND_SIGNAL_ALL|
 				K_THR_PEND_SIGNAL_ALL_C | K_THR_PEND_SIGNAL_ANY_C);
 	}
 
@@ -164,14 +164,16 @@ k_status_t thread_abort(tcb_t *t)
 {
 	k_status_t ret = k_status_ok;
 
-	if(t == NULL) {
-		ret = k_status_invalid_param;
-		goto cleanup;
-	}
-
 	/* disable scheduling during task abortion */
 	ret = k_sched_lock();
 	ULIPE_ASSERT(ret == k_status_ok);
+
+	if(t == NULL) {
+		/* null thread can be the current */
+		t = k_current_task;
+		ULIPE_ASSERT(t!= NULL);
+	}
+
 
 	/* this is a ready task so, remove it from ready list */
 	ret=k_make_not_ready(t);
@@ -188,18 +190,12 @@ k_status_t thread_abort(tcb_t *t)
 	k_sched_and_swap();
 	ret = k_status_ok;
 
-cleanup:
 	return(ret);
 }
 
 k_status_t thread_suspend(tcb_t *t)
 {
 	k_status_t ret = k_status_ok;
-
-	if(t == NULL) {
-		ret = k_status_invalid_param;
-		goto cleanup;
-	}
 
 	if(t->thread_wait & K_THR_SUSPENDED) {
 		/* thread is already suspended */
@@ -209,6 +205,13 @@ k_status_t thread_suspend(tcb_t *t)
 
 	ret = k_sched_lock();
 	ULIPE_ASSERT(ret == k_status_ok);
+
+	if(t == NULL) {
+		/* null thread can be the current */
+		t = k_current_task;
+		ULIPE_ASSERT(t!= NULL);
+	}
+
 
 	/* to suspend a thread, only remove it from ready list and
 	 * mark with suspended
@@ -263,18 +266,21 @@ cleanup:
 	return(ret);
 }
 
-k_status_t thread_wait_signals(tcb_t *t, uint32_t signals, thread_signal_opt_t opt)
+uint32_t thread_wait_signals(tcb_t *t, uint32_t signals, thread_signal_opt_t opt, k_status_t *err)
 {
-	k_status_t ret = k_status_ok;
+	uint32_t rcvd = 0xFFFFFFFF;
 	bool match = false;
-
-	if(t == NULL) {
-		ret = k_status_invalid_param;
-		goto cleanup;
-	}
+	k_status_t ret;
 
 	ret = k_sched_lock();
 	ULIPE_ASSERT(ret == k_status_ok);
+
+	if(t == NULL) {
+		/* null thread can be the current */
+		t = k_current_task;
+		ULIPE_ASSERT(t!= NULL);
+	}
+
 
 	/*
 	 * Select and prepare task to wait for the conditions imposed to signaling
@@ -299,6 +305,7 @@ k_status_t thread_wait_signals(tcb_t *t, uint32_t signals, thread_signal_opt_t o
 		default:
 			ret = k_sched_unlock();
 			ULIPE_ASSERT(ret == k_status_ok);
+			ret = k_status_invalid_param;
 			goto cleanup;
 	}
 
@@ -306,9 +313,12 @@ k_status_t thread_wait_signals(tcb_t *t, uint32_t signals, thread_signal_opt_t o
 	if(match) {
 		ret = k_sched_unlock();
 		ULIPE_ASSERT(ret == k_status_ok);
+		rcvd = t->signals_actual;
 		goto cleanup;
 	}
 
+	ret = k_make_not_ready(t);
+	ULIPE_ASSERT(ret == k_status_ok);
 
 	ret = k_sched_unlock();
 	ULIPE_ASSERT(ret == k_status_ok);
@@ -317,9 +327,13 @@ k_status_t thread_wait_signals(tcb_t *t, uint32_t signals, thread_signal_opt_t o
 	k_sched_and_swap();
 	ret = k_status_ok;
 
+	rcvd = t->signals_actual;
 
 cleanup:
-	return(ret);
+	if(err != NULL)
+		*err = ret;
+
+	return(rcvd);
 }
 
 k_status_t thread_set_signals(tcb_t *t, uint32_t signals)
@@ -343,6 +357,11 @@ k_status_t thread_set_signals(tcb_t *t, uint32_t signals)
 		ULIPE_ASSERT(ret == k_status_ok);
 		goto cleanup;
 	}
+
+
+	ret = k_make_ready(t);
+	ULIPE_ASSERT(ret == k_status_ok);
+
 
 	ret = k_sched_unlock();
 	ULIPE_ASSERT(ret == k_status_ok);
@@ -379,6 +398,9 @@ k_status_t thread_clr_signals(tcb_t *t, uint32_t signals)
 		ULIPE_ASSERT(ret == k_status_ok);
 		goto cleanup;
 	}
+
+	ret = k_make_ready(t);
+	ULIPE_ASSERT(ret == k_status_ok);
 
 	ret = k_sched_unlock();
 	ULIPE_ASSERT(ret == k_status_ok);
@@ -425,16 +447,19 @@ k_status_t thread_set_prio(tcb_t *t, int8_t prio)
 {
 	k_status_t ret = k_status_ok;
 
-	if(t == NULL) {
+	if((prio > (K_PRIORITY_LEVELS - 1)) ||
+			(prio < (-1 * (K_PRIORITY_LEVELS - 2)))){
 		ret = k_status_invalid_param;
 		goto cleanup;
 	}
 
-	if((t->thread_prio > (K_PRIORITY_LEVELS - 1)) ||
-			(t->thread_prio < (-(K_PRIORITY_LEVELS - 2)))){
-		ret = k_status_invalid_param;
-		goto cleanup;
+
+	if(t == NULL) {
+		/* null thread can be the current */
+		t = k_current_task;
+		ULIPE_ASSERT(t!= NULL);
 	}
+
 
 	if(t->thread_prio == prio) {
 		/* same prio, no need to process it */
@@ -445,6 +470,8 @@ k_status_t thread_set_prio(tcb_t *t, int8_t prio)
 
 	ret = k_sched_lock();
 	ULIPE_ASSERT(ret == k_status_ok);
+
+
 
 	/* the priority change impacts on moving the task to another level
 	 * on ready fifo

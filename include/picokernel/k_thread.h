@@ -91,7 +91,7 @@ k_status_t thread_resume(tcb_t *t);
  *  @param
  *  @return
  */
-k_status_t thread_wait_signals(tcb_t *t, uint32_t signals, thread_signal_opt_t opt);
+uint32_t thread_wait_signals(tcb_t *t, uint32_t signals, thread_signal_opt_t opt, k_status_t *err);
 
 
 /**

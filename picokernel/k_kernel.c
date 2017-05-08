@@ -157,13 +157,17 @@ tcb_t * k_unpend_obj(k_work_list_t *obj_list)
 		obj_list->bitmap &= ~(1 << upper_prio);
 		sys_dlist_remove(&thr->wait_obj);
 
-		if(!sys_dlist_is_empty(&obj_list->list_head[upper_prio]))
+		if(sys_dlist_is_empty(&obj_list->list_head[upper_prio])) {
 			obj_list->bitmap &= ~(1 << (2 * K_PRIORITY_LEVELS));
+			if(!(obj_list->bitmap & 0x70))
+				obj_list->bitmap &= ~(1 << ((2 * K_PRIORITY_LEVELS)-1));
+		}
 
 	} else {
 		sys_dlist_remove(&thr->wait_obj);
-		if(!sys_dlist_is_empty(&obj_list->list_head[thr->thread_prio]))
+		if(sys_dlist_is_empty(&obj_list->list_head[thr->thread_prio])){
 			obj_list->bitmap &= ~(1 << thr->thread_prio);
+		}
 	}
 
 	port_irq_unlock(key);
@@ -227,13 +231,19 @@ k_status_t k_make_not_ready(tcb_t *thr)
 		k_rdy_list.bitmap &= ~(1 << upper_prio);
 		sys_dlist_remove(&thr->rdy_list);
 
-		if(!sys_dlist_is_empty(&k_rdy_list.list_head[upper_prio]))
+		if(sys_dlist_is_empty(&k_rdy_list.list_head[upper_prio])){
 			k_rdy_list.bitmap &= ~(1 << (2 * K_PRIORITY_LEVELS));
+			if(!(k_rdy_list.bitmap & 0x70)) {
+				k_rdy_list.bitmap &= ~(1 << ((2 * K_PRIORITY_LEVELS)-1));
+			}
+		}
 
 	} else {
 		sys_dlist_remove(&thr->rdy_list);
-		if(!sys_dlist_is_empty(&k_rdy_list.list_head[thr->thread_prio]))
+		if(sys_dlist_is_empty(&k_rdy_list.list_head[thr->thread_prio])) {
 			k_rdy_list.bitmap &= ~(1 << thr->thread_prio);
+		}
+
 
 	}
 
@@ -344,6 +354,10 @@ k_status_t kernel_init(void)
 
 k_status_t kernel_start(void)
 {
+	if(!k_configured)
+		/* kernel must be configured before start */
+		goto cleanup;
+
 	archtype_t key = port_irq_lock();
 
 	/* init architecture stuff */
@@ -358,6 +372,7 @@ k_status_t kernel_start(void)
 	/* start kernel (this function will never return) */
 	port_start_kernel();
 
+cleanup:
 	return(k_status_error);
 }
 

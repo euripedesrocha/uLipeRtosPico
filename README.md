@@ -13,11 +13,12 @@ high performance threads.
   
 # Main Features
 
-- Real time, preemptive-cooperative microkernel;
+- Real time all functions are O(1), preemptive-cooperative microkernel;
 - Fast context switching time, below to 100ns @ 50MHz processor clock;
 - Tickless operation;
 - Static kernel object allocation;
 - Supports up to 4 priority levels, 3 sys prio for high perfomance tasks;
+- Threads with same priorities will run in cooperative way;
 - Thread signals with set, clear, any and match capabilities;
 - Counting semaphores;
 - Binary semaphores with optional priority ceilling offering mutex primitives;

@@ -24,10 +24,10 @@
 #define K_ARCH_MEM_WIDTH_DWORD			0
 
 /* general kernel configuration */
-#define K_MINIMAL_STACK_VAL				32
+#define K_MINIMAL_STACK_VAL				16
 #define K_TIMER_DISPATCHER_PRIORITY		4
 #define K_TIMER_DISPATCHER_STACK_SIZE	128
-#define K_ENABLE_SEMAPHORE				0
+#define K_ENABLE_SEMAPHORE				1
 #define K_ENABLE_MESSAGING				0
 #define K_ENABLE_TIMERS					0
 

@@ -112,7 +112,7 @@ k_status_t thread_create(thread_t func, void *arg,tcb_t *tcb)
 	 * the thread will not created
 	 */
 	if((tcb->thread_prio > (K_PRIORITY_LEVELS - 1)) ||
-			(tcb->thread_prio < (-(K_PRIORITY_LEVELS - 2)))){
+			(tcb->thread_prio < (-(K_PRIORITY_LEVELS - 1)))){
 		ret = k_status_invalid_param;
 		goto cleanup;
 	}
@@ -136,8 +136,7 @@ k_status_t thread_create(thread_t func, void *arg,tcb_t *tcb)
 	tcb->thread_wait = 0;
 	tcb->timer_wait = 0;
 	tcb->created = true;
-	sys_dlist_init(&tcb->rdy_list);
-	sys_dlist_init(&tcb->wait_obj);
+	sys_dlist_init(&tcb->thr_link);
 
 	/* initialize stack contents */
 	archtype_t key = port_irq_lock();
@@ -202,6 +201,13 @@ k_status_t thread_suspend(tcb_t *t)
 		ret = k_thread_susp;
 		goto cleanup;
 	}
+
+	if(port_from_isr()){
+		/* suspend cannot be called from ISR */
+		ret = k_status_illegal_from_isr;
+		goto cleanup;
+	}
+
 
 	ret = k_sched_lock();
 	ULIPE_ASSERT(ret == k_status_ok);
@@ -279,6 +285,12 @@ uint32_t thread_wait_signals(tcb_t *t, uint32_t signals, thread_signal_opt_t opt
 		/* null thread can be the current */
 		t = k_current_task;
 		ULIPE_ASSERT(t!= NULL);
+	}
+
+	if(port_from_isr()){
+		/* wait cannot be called from ISR */
+		ret = k_status_illegal_from_isr;
+		goto cleanup;
 	}
 
 
@@ -420,6 +432,7 @@ k_status_t thread_yield(void)
 	ret = k_sched_lock();
 	ULIPE_ASSERT(ret == k_status_ok);
 
+	tcb_t *t = k_current_task;
 	/*
 	 * Yielding a task is very simple, we force a fifo remotion, then
 	 * pick the removed entry and send back to the fifo, the kernel
@@ -427,14 +440,16 @@ k_status_t thread_yield(void)
 	 * itself
 	 */
 
-	ret = k_make_not_ready(k_current_task);
+
+	ret = k_make_not_ready(t);
 	ULIPE_ASSERT(ret == k_status_ok);
 
-	ret = k_make_ready(k_current_task);
+	ret = k_make_ready(t);
 	ULIPE_ASSERT(ret == k_status_ok);
 
 	ret = k_sched_unlock();
 	ULIPE_ASSERT(ret == k_status_ok);
+
 
 	k_sched_and_swap();
 	ret = k_status_ok;
@@ -448,7 +463,7 @@ k_status_t thread_set_prio(tcb_t *t, int8_t prio)
 	k_status_t ret = k_status_ok;
 
 	if((prio > (K_PRIORITY_LEVELS - 1)) ||
-			(prio < (-1 * (K_PRIORITY_LEVELS - 2)))){
+			(prio < (-1 * (K_PRIORITY_LEVELS - 1)))){
 		ret = k_status_invalid_param;
 		goto cleanup;
 	}
@@ -506,9 +521,7 @@ cleanup:
 tcb_t *thread_get_current(void)
 {
 	tcb_t *ret;
-	ULIPE_ASSERT(k_sched_lock() == k_status_ok);
 	ret = k_current_task;
-	ULIPE_ASSERT(k_sched_unlock() == k_status_ok);
 
 	return(ret);
 }

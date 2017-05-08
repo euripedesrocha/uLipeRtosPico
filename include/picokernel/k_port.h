@@ -103,5 +103,15 @@ extern uint8_t port_bit_fs_scan(archtype_t reg);
  */
 extern uint8_t port_bit_ls_scan(archtype_t reg);
 
+/**
+ *  @fn port_set_break
+ *  @brief set breakpoint
+ *  @param
+ *  @return
+ */
+#if K_DEBUG > 0
+extern void port_set_break(void);
+#endif
+
 
 #endif

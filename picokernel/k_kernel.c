@@ -76,19 +76,19 @@ static tcb_t *k_sched(k_work_list_t *l)
 	 * finally access the tcb
 	 */
 
-	if(l->bitmap & (1 << (2 * K_PRIORITY_LEVELS))) {
-		uint8_t prio = (l->bitmap & 0x70) >> K_PRIORITY_LEVELS;
+	if(l->bitmap & (1 << (2 * (K_PRIORITY_LEVELS)- 1))) {
+		uint8_t prio = (l->bitmap & 0x70) >> (K_PRIORITY_LEVELS - 1);
 		prio = ((K_PRIORITY_LEVELS - 1) - k_clz_table[prio]);
 
-		head = sys_dlist_peek_head(&l->list_head[prio + K_PRIORITY_LEVELS]);
+		head = sys_dlist_peek_head(&l->list_head[prio + K_PRIORITY_LEVELS - 1]);
 		ULIPE_ASSERT(head != NULL);
-		ret = CONTAINER_OF(head, tcb_t, rdy_list);
+		ret = CONTAINER_OF(head, tcb_t, thr_link);
 
 	} else {
 		uint8_t prio = ((K_PRIORITY_LEVELS - 1) - k_clz_table[l->bitmap]);
 		head = sys_dlist_peek_head(&l->list_head[prio]);
 		ULIPE_ASSERT(head != NULL);
-		ret = CONTAINER_OF(head, tcb_t, rdy_list);
+		ret = CONTAINER_OF(head, tcb_t, thr_link);
 
 	}
 
@@ -117,13 +117,13 @@ k_status_t k_pend_obj(tcb_t *thr, k_work_list_t *obj_list)
 	 */
 
 	if(thr->thread_prio < 0) {
-		uint8_t upper_prio = (((uint8_t)thr->thread_prio & (0x7F) ));
-		obj_list->bitmap |= (1 << (2 * K_PRIORITY_LEVELS))+(1 << upper_prio);
-		sys_dlist_append(&obj_list->list_head[upper_prio], &thr->rdy_list);
+		uint8_t upper_prio = (((uint8_t)thr->thread_prio * -1 ) + K_PRIORITY_LEVELS - 1);
+		obj_list->bitmap |= (1 << ((2 * K_PRIORITY_LEVELS)-1))+(1 << (upper_prio));
+		sys_dlist_append(&obj_list->list_head[upper_prio], &thr->thr_link);
 
 	} else {
 		obj_list->bitmap |= (1 << thr->thread_prio);
-		sys_dlist_append(&obj_list->list_head[thr->thread_prio], &thr->rdy_list);
+		sys_dlist_append(&obj_list->list_head[thr->thread_prio], &thr->thr_link);
 	}
 
 	port_irq_unlock(key);
@@ -148,23 +148,23 @@ tcb_t * k_unpend_obj(k_work_list_t *obj_list)
 
 
 	thr = k_sched(obj_list);
-	ULIPE_ASSERT(thr != NULL);
+	if(thr == NULL)
+		goto cleanup;
 
 	archtype_t key = port_irq_lock();
 
 	if(thr->thread_prio < 0) {
-		uint8_t upper_prio = (((uint8_t)thr->thread_prio & (0x7F) ));
-		obj_list->bitmap &= ~(1 << upper_prio);
-		sys_dlist_remove(&thr->wait_obj);
+		uint8_t upper_prio = (((uint8_t)thr->thread_prio * -1 ) + K_PRIORITY_LEVELS - 1);
+		sys_dlist_remove(&thr->thr_link);
 
 		if(sys_dlist_is_empty(&obj_list->list_head[upper_prio])) {
-			obj_list->bitmap &= ~(1 << (2 * K_PRIORITY_LEVELS));
+			obj_list->bitmap &= ~(1 << upper_prio);
 			if(!(obj_list->bitmap & 0x70))
 				obj_list->bitmap &= ~(1 << ((2 * K_PRIORITY_LEVELS)-1));
 		}
 
 	} else {
-		sys_dlist_remove(&thr->wait_obj);
+		sys_dlist_remove(&thr->thr_link);
 		if(sys_dlist_is_empty(&obj_list->list_head[thr->thread_prio])){
 			obj_list->bitmap &= ~(1 << thr->thread_prio);
 		}
@@ -172,6 +172,8 @@ tcb_t * k_unpend_obj(k_work_list_t *obj_list)
 
 	port_irq_unlock(key);
 
+
+cleanup:
 	return(thr);
 }
 
@@ -196,13 +198,13 @@ k_status_t k_make_ready(tcb_t *thr)
 	 */
 
 	if(thr->thread_prio < 0) {
-		uint8_t upper_prio = (((uint8_t)thr->thread_prio & (0x7F) ));
-		k_rdy_list.bitmap |= (1 << (2 * K_PRIORITY_LEVELS))+(1 << upper_prio);
-		sys_dlist_append(&k_rdy_list.list_head[upper_prio], &thr->rdy_list);
+		uint8_t upper_prio = (((uint8_t)thr->thread_prio * -1 ) + K_PRIORITY_LEVELS - 1);
+		k_rdy_list.bitmap |= (1 << ((2 * K_PRIORITY_LEVELS)-1))+(1 << upper_prio);
+		sys_dlist_append(&k_rdy_list.list_head[upper_prio], &thr->thr_link);
 
 	} else {
 		k_rdy_list.bitmap |= (1 << thr->thread_prio);
-		sys_dlist_append(&k_rdy_list.list_head[thr->thread_prio], &thr->rdy_list);
+		sys_dlist_append(&k_rdy_list.list_head[thr->thread_prio], &thr->thr_link);
 	}
 
 
@@ -227,19 +229,18 @@ k_status_t k_make_not_ready(tcb_t *thr)
 
 
 	if(thr->thread_prio < 0) {
-		uint8_t upper_prio = (((uint8_t)thr->thread_prio & (0x7F) ));
-		k_rdy_list.bitmap &= ~(1 << upper_prio);
-		sys_dlist_remove(&thr->rdy_list);
+		uint8_t upper_prio = (((uint8_t)thr->thread_prio * -1 ) + K_PRIORITY_LEVELS -1 );
+		sys_dlist_remove(&thr->thr_link);
 
 		if(sys_dlist_is_empty(&k_rdy_list.list_head[upper_prio])){
-			k_rdy_list.bitmap &= ~(1 << (2 * K_PRIORITY_LEVELS));
+			k_rdy_list.bitmap &= ~(1 <<upper_prio);
 			if(!(k_rdy_list.bitmap & 0x70)) {
 				k_rdy_list.bitmap &= ~(1 << ((2 * K_PRIORITY_LEVELS)-1));
 			}
 		}
 
 	} else {
-		sys_dlist_remove(&thr->rdy_list);
+		sys_dlist_remove(&thr->thr_link);
 		if(sys_dlist_is_empty(&k_rdy_list.list_head[thr->thread_prio])) {
 			k_rdy_list.bitmap &= ~(1 << thr->thread_prio);
 		}
@@ -279,8 +280,11 @@ k_status_t k_sched_and_swap(void)
 	}
 
 	k_high_prio_task = k_sched(&k_rdy_list);
+
 	ULIPE_ASSERT(k_high_prio_task != NULL);
 
+	/* stack monitor used during debug */
+	ULIPE_ASSERT((k_high_prio_task->stack_top - k_high_prio_task->stack_base) <=  k_high_prio_task->stack_size);
 
 	if(k_high_prio_task != k_current_task) {
 		/* new high priority task, perform a swap request */
@@ -293,6 +297,7 @@ cleanup:
 
 k_status_t k_sched_lock(void)
 {
+
 	archtype_t key = port_irq_lock();
 	if(sched_nesting < (archtype_t)0xFFFFFFFF)
 		sched_nesting++;

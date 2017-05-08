@@ -34,6 +34,11 @@ typedef enum {
 	k_thread_del,
 	k_thread_blk,
 	k_thread_susp,
+
+	/* semaphore status */
+	k_sema_not_available = 0,
+	k_sema_illegal_use_celling,
+
 }k_status_t;
 
 
@@ -58,18 +63,6 @@ typedef uint64_t archtype_t;
 #endif
 
 
-/** assertion mechanism */
-static inline void ulipe_assert(bool x)
-{
-	if(!x) while(1);
-}
-
-#if K_DEBUG > 0
-#define ULIPE_ASSERT(x) ulipe_assert(x)
-#else
-#define ULIPE_ASSERT(x) (void)x
-#endif
-
 
 #include "include/picokernel/k_thread.h"
 #include "include/picokernel/k_port.h"
@@ -77,6 +70,23 @@ static inline void ulipe_assert(bool x)
 #include "include/picokernel/k_message.h"
 #include "include/picokernel/k_raw_timer.h"
 #include "include/picokernel/k_sema.h"
+
+
+
+/** assertion mechanism */
+static inline void ulipe_assert(bool x)
+{
+	if(!x){
+		port_set_break();
+		while(1);
+	}
+}
+
+#if K_DEBUG > 0
+#define ULIPE_ASSERT(x) ulipe_assert(x)
+#else
+#define ULIPE_ASSERT(x) (void)x
+#endif
 
 
 #endif

@@ -10,7 +10,7 @@
 #include "ulipe_rtos_pico.h"
 
 /**static variables **/
-THREAD_CONTROL_BLOCK_DECLARE(idle_thread, 0, 0);
+THREAD_CONTROL_BLOCK_DECLARE(idle_thread, 16, 0);
 
 #if(K_ENABLE_TIMERS > 0)
 THREAD_CONTROL_BLOCK_DECLARE(timer_thread, K_TIMER_DISPATCHER_STACK_SIZE, K_TIMER_DISPATCHER_PRIORITY);
@@ -22,7 +22,6 @@ static k_list_t k_timed_list;
 
 static bool k_configured;
 static archtype_t irq_counter;
-static archtype_t sched_nesting;
 static const uint8_t k_clz_table[(1 << K_PRIORITY_LEVELS)] = {0x04, 0x03, 0x02, 0x02,
 															  0x01, 0x01, 0x01, 0x01,
 															  0x00, 0x00, 0x00, 0x00,
@@ -48,7 +47,8 @@ static void k_idle_thread(void *arg)
 {
 	/** todo: implement low power handling here */
 	(void)arg;
-	for(;;);
+	for(;;)
+		thread_yield();
 }
 
 /**
@@ -257,12 +257,6 @@ k_status_t k_sched_and_swap(void)
 {
 	k_status_t ret = k_status_ok;
 
-	/* scheduler must not locked and kernel must be running */
-	if(sched_nesting > 0) {
-		ret = k_status_sched_locked;
-		goto cleanup;
-	}
-
 	if(!k_running){
 		ret = k_status_error;
 		goto cleanup;
@@ -295,27 +289,7 @@ cleanup:
 	return(ret);
 }
 
-k_status_t k_sched_lock(void)
-{
 
-	archtype_t key = port_irq_lock();
-	if(sched_nesting < (archtype_t)0xFFFFFFFF)
-		sched_nesting++;
-	port_irq_unlock(key);
-
-	return(k_status_ok);
-}
-
-k_status_t k_sched_unlock(void)
-{
-	archtype_t key = port_irq_lock();
-	if(sched_nesting > 0)
-		sched_nesting--;
-	port_irq_unlock(key);
-
-	return(k_status_ok);
-
-}
 
 void k_work_list_init(k_work_list_t *l)
 {
@@ -337,9 +311,6 @@ k_status_t kernel_init(void)
 
 	/* irq counter zeroed, default state */
 	irq_counter = 0;
-
-	/* sched initially released */
-	sched_nesting = 0;
 
 	/* current and hpt holding no task */
 	k_current_task = NULL;

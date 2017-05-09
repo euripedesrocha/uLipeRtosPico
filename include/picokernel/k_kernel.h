@@ -65,23 +65,6 @@ k_status_t k_make_not_ready(tcb_t *thr);
  */
 k_status_t k_sched_and_swap(void);
 
-/**
- *  @fn k_sched_lock()
- *  @brief locks scheduling preventing swap
- *  @param
- *  @return
- */
-k_status_t k_sched_lock(void);
-
-
-/**
- *  @fn k_sched_unlock()
- *  @brief unlocks scheduling enabling swap
- *  @param
- *  @return
- */
-k_status_t k_sched_unlock(void);
-
 
 /**
  *  @fn k_bit_set()

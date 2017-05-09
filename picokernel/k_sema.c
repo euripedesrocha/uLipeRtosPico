@@ -14,21 +14,27 @@
 /** private functions */
 static void semaphore_handle_celling(ksema_t *s, tcb_t *t)
 {
+
+	archtype_t key = port_irq_lock();
+
 	uint8_t prio = t->thread_prio;
 	thread_set_prio(t, K_SEMA_CEILLING_PRIO);
 	s->prio = prio;
 	s->prio_ceilling = true;
-	s->cnt--;
+	if(s->cnt > 0)
+		s->cnt--;
+
+	port_irq_unlock(key);
 }
 
-static void semahore_restore_prio(ksema_t *s, tcb_t *t)
+static void semaphore_restore_prio(ksema_t *s, tcb_t *t)
 {
 	ULIPE_ASSERT(t != NULL);
 	if(!s->prio_ceilling)
 		goto cleanup;
 
 	/*
-	 * Only the thread that´s used ceilling
+	 * Only the thread thatï¿½s used ceilling
 	 * can give back the semaphore, other
 	 * cases are not allowed, traps the kernel.
 	 */
@@ -79,9 +85,6 @@ k_status_t semaphore_take(ksema_t *s)
 	}
 
 
-	ret = k_sched_lock();
-	ULIPE_ASSERT(ret == k_status_ok);
-
 	if(!s->cnt) {
 		/*
 		 * if no key available, we need to insert the waiting thread
@@ -91,38 +94,32 @@ k_status_t semaphore_take(ksema_t *s)
 		ret = k_make_not_ready(t);
 		ULIPE_ASSERT(ret == k_status_ok);
 
+		archtype_t key = port_irq_lock();
 		t->thread_wait |= K_THR_PEND_SEMA;
+		port_irq_unlock(key);
+
 
 		ret = k_pend_obj(t, &s->threads_pending);
 		ULIPE_ASSERT(ret == k_status_ok);
 
 		reesched = true;
 	} else {
-		s->cnt--;
+		archtype_t key = port_irq_lock();
+		if(s->cnt > 0)
+			s->cnt--;
+		port_irq_unlock(key);
 	}
 
 
 	if(!reesched){
-		ret = k_sched_unlock();
-		ULIPE_ASSERT(ret == k_status_ok);
 		goto cleanup;
 	}
-
-
-	ret = k_sched_unlock();
-	ULIPE_ASSERT(ret == k_status_ok);
 
 	/*
 	 * if current thread entered on pending state, we need to reesched the
 	 * thread set and find a new thread to execute, otherwise, dispatch idle
 	 */
 	k_sched_and_swap();
-
-	/*
-	 * thread woken, immediately give a semaphore to it
-	 */
-	s->cnt--;
-
 
 cleanup:
 	return(ret);
@@ -154,10 +151,6 @@ k_status_t semaphore_take_and_ceil(ksema_t *s)
 		s->created = true;
 	}
 
-
-	ret = k_sched_lock();
-	ULIPE_ASSERT(ret == k_status_ok);
-
 	if(!s->cnt) {
 		/*
 		 * if no key available, we need to insert the waiting thread
@@ -167,7 +160,9 @@ k_status_t semaphore_take_and_ceil(ksema_t *s)
 		ret = k_make_not_ready(t);
 		ULIPE_ASSERT(ret == k_status_ok);
 
+		archtype_t key = port_irq_lock();
 		t->thread_wait |= K_THR_PEND_SEMA;
+		port_irq_unlock(key);
 
 		ret = k_pend_obj(t, &s->threads_pending);
 		ULIPE_ASSERT(ret == k_status_ok);
@@ -185,25 +180,14 @@ k_status_t semaphore_take_and_ceil(ksema_t *s)
 
 
 	if(!reesched){
-		ret = k_sched_unlock();
-		ULIPE_ASSERT(ret == k_status_ok);
 		goto cleanup;
 	}
 
-	ret = k_sched_unlock();
-	ULIPE_ASSERT(ret == k_status_ok);
 	/*
 	 * if current thread entered on pending state, we need to reesched the
 	 * thread set and find a new thread to execute, otherwise, dispatch idle
 	 */
 	k_sched_and_swap();
-
-	/*
-	 * thread woken, immediately give a semaphore to it
-	 */
-	semaphore_handle_celling(s, t);
-
-
 
 cleanup:
 	return(ret);
@@ -231,14 +215,17 @@ k_status_t semaphore_give(ksema_t *s, uint32_t count)
 		s->created = true;
 	}
 
-	ret = k_sched_lock();
-	ULIPE_ASSERT(ret == k_status_ok);
+
+	archtype_t key = port_irq_lock();
 
 	s->cnt+= count;
 	if(s->cnt > s->limit)
 		s->cnt = s->limit;
 
-	semahore_restore_prio(s,thread_get_current());
+	port_irq_unlock(key);
+
+
+	semaphore_restore_prio(s,thread_get_current());
 
 	/*
 	 * once a semaphore was updated its keys
@@ -248,19 +235,28 @@ k_status_t semaphore_give(ksema_t *s, uint32_t count)
 	t = k_unpend_obj(&s->threads_pending);
 	if(t == NULL) {
 		/* no tasks pendings, just get out here */
-		ret = k_sched_unlock();
-		ULIPE_ASSERT(ret == k_status_ok);
 		goto cleanup;
+	} else {
+
+		if(s->prio_ceilling)
+			semaphore_handle_celling(s, t);
+		else {
+
+			archtype_t key = port_irq_lock();
+			if(s->cnt > 0)
+				s->cnt--;
+			port_irq_unlock(key);
+
+		}
+
 	}
 
+	key = port_irq_lock();
 	t->thread_wait &= ~(K_THR_PEND_SEMA);
+	port_irq_unlock(key);
 
 	ret = k_make_ready(t);
 	ULIPE_ASSERT(ret == k_status_ok);
-
-	ret = k_sched_unlock();
-	ULIPE_ASSERT(ret == k_status_ok);
-
 
 	k_sched_and_swap();
 

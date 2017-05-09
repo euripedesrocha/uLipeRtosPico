@@ -14,17 +14,12 @@
 /** private functions */
 static void semaphore_handle_celling(ksema_t *s, tcb_t *t)
 {
-
-	archtype_t key = port_irq_lock();
-
 	uint8_t prio = t->thread_prio;
 	thread_set_prio(t, K_SEMA_CEILLING_PRIO);
 	s->prio = prio;
 	s->prio_ceilling = true;
 	if(s->cnt > 0)
 		s->cnt--;
-
-	port_irq_unlock(key);
 }
 
 static void semaphore_restore_prio(ksema_t *s, tcb_t *t)
@@ -77,6 +72,7 @@ k_status_t semaphore_take(ksema_t *s)
 		ret = k_sema_illegal_use_celling;
 		goto cleanup;
 	}
+	archtype_t key = port_irq_lock();
 
 	if(!s->created) {
 		/* handle first time usage */
@@ -94,27 +90,24 @@ k_status_t semaphore_take(ksema_t *s)
 		ret = k_make_not_ready(t);
 		ULIPE_ASSERT(ret == k_status_ok);
 
-		archtype_t key = port_irq_lock();
 		t->thread_wait |= K_THR_PEND_SEMA;
-		port_irq_unlock(key);
-
 
 		ret = k_pend_obj(t, &s->threads_pending);
 		ULIPE_ASSERT(ret == k_status_ok);
 
 		reesched = true;
 	} else {
-		archtype_t key = port_irq_lock();
 		if(s->cnt > 0)
 			s->cnt--;
-		port_irq_unlock(key);
 	}
 
 
 	if(!reesched){
+		port_irq_unlock(key);
 		goto cleanup;
 	}
 
+	port_irq_unlock(key);
 	/*
 	 * if current thread entered on pending state, we need to reesched the
 	 * thread set and find a new thread to execute, otherwise, dispatch idle
@@ -144,6 +137,7 @@ k_status_t semaphore_take_and_ceil(ksema_t *s)
 		goto cleanup;
 	}
 
+	archtype_t key = port_irq_lock();
 
 	if(!s->created) {
 		/* handle first time usage */
@@ -160,9 +154,7 @@ k_status_t semaphore_take_and_ceil(ksema_t *s)
 		ret = k_make_not_ready(t);
 		ULIPE_ASSERT(ret == k_status_ok);
 
-		archtype_t key = port_irq_lock();
 		t->thread_wait |= K_THR_PEND_SEMA;
-		port_irq_unlock(key);
 
 		ret = k_pend_obj(t, &s->threads_pending);
 		ULIPE_ASSERT(ret == k_status_ok);
@@ -180,9 +172,11 @@ k_status_t semaphore_take_and_ceil(ksema_t *s)
 
 
 	if(!reesched){
+		port_irq_unlock(key);
 		goto cleanup;
 	}
 
+	port_irq_unlock(key);
 	/*
 	 * if current thread entered on pending state, we need to reesched the
 	 * thread set and find a new thread to execute, otherwise, dispatch idle
@@ -209,6 +203,7 @@ k_status_t semaphore_give(ksema_t *s, uint32_t count)
 		goto cleanup;
 	}
 
+	archtype_t key = port_irq_lock();
 	if(!s->created) {
 		/* handle first time usage */
 		k_work_list_init(&s->threads_pending);
@@ -216,13 +211,10 @@ k_status_t semaphore_give(ksema_t *s, uint32_t count)
 	}
 
 
-	archtype_t key = port_irq_lock();
 
 	s->cnt+= count;
 	if(s->cnt > s->limit)
 		s->cnt = s->limit;
-
-	port_irq_unlock(key);
 
 
 	semaphore_restore_prio(s,thread_get_current());
@@ -235,32 +227,28 @@ k_status_t semaphore_give(ksema_t *s, uint32_t count)
 	t = k_unpend_obj(&s->threads_pending);
 	if(t == NULL) {
 		/* no tasks pendings, just get out here */
+		port_irq_unlock(key);
 		goto cleanup;
 	} else {
 
 		if(s->prio_ceilling)
 			semaphore_handle_celling(s, t);
 		else {
-
-			archtype_t key = port_irq_lock();
 			if(s->cnt > 0)
 				s->cnt--;
-			port_irq_unlock(key);
-
 		}
 
 	}
 
-	key = port_irq_lock();
 	t->thread_wait &= ~(K_THR_PEND_SEMA);
-	port_irq_unlock(key);
 
 	ret = k_make_ready(t);
 	ULIPE_ASSERT(ret == k_status_ok);
+	port_irq_unlock(key);
+
 
 	k_sched_and_swap();
 
 cleanup:
 	return(ret);
-
 }

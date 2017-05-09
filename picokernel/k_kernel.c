@@ -10,7 +10,7 @@
 #include "ulipe_rtos_pico.h"
 
 /**static variables **/
-THREAD_CONTROL_BLOCK_DECLARE(idle_thread, 16, 0);
+THREAD_CONTROL_BLOCK_DECLARE(idle_thread, 32, 0);
 
 #if(K_ENABLE_TIMERS > 0)
 THREAD_CONTROL_BLOCK_DECLARE(timer_thread, K_TIMER_DISPATCHER_STACK_SIZE, K_TIMER_DISPATCHER_PRIORITY);
@@ -35,6 +35,7 @@ tcb_t *k_high_prio_task;
 
 
 /** private functions **/
+
 
 
 /**
@@ -64,7 +65,6 @@ static tcb_t *k_sched(k_work_list_t *l)
 
 	ULIPE_ASSERT(l != NULL);
 
-	archtype_t key = port_irq_lock();
 
 	/*
 	 * The scheduling alghoritm uses a classical multilevel
@@ -92,7 +92,6 @@ static tcb_t *k_sched(k_work_list_t *l)
 
 	}
 
-	port_irq_unlock(key);
 
 	return(ret);
 }
@@ -107,7 +106,6 @@ k_status_t k_pend_obj(tcb_t *thr, k_work_list_t *obj_list)
 	ULIPE_ASSERT(obj_list != NULL);
 
 
-	archtype_t key = port_irq_lock();
 
 	/*
 	 * The insertion on obj_list consider that tasks are using priority ceilling
@@ -126,7 +124,6 @@ k_status_t k_pend_obj(tcb_t *thr, k_work_list_t *obj_list)
 		sys_dlist_append(&obj_list->list_head[thr->thread_prio], &thr->thr_link);
 	}
 
-	port_irq_unlock(key);
 	return(err);
 
 }
@@ -151,7 +148,6 @@ tcb_t * k_unpend_obj(k_work_list_t *obj_list)
 	if(thr == NULL)
 		goto cleanup;
 
-	archtype_t key = port_irq_lock();
 
 	if(thr->thread_prio < 0) {
 		uint8_t upper_prio = (((uint8_t)thr->thread_prio * -1 ) + K_PRIORITY_LEVELS - 1);
@@ -170,8 +166,6 @@ tcb_t * k_unpend_obj(k_work_list_t *obj_list)
 		}
 	}
 
-	port_irq_unlock(key);
-
 
 cleanup:
 	return(thr);
@@ -182,7 +176,6 @@ k_status_t k_make_ready(tcb_t *thr)
 	k_status_t err = k_status_ok;
 	ULIPE_ASSERT(thr != NULL);
 
-	archtype_t key = port_irq_lock();
 
 	/* to make ready evaluate if task does not waits for
 	 * any more objects
@@ -209,7 +202,6 @@ k_status_t k_make_ready(tcb_t *thr)
 
 
 cleanup:
-	port_irq_unlock(key);
 	return(err);
 }
 
@@ -217,8 +209,6 @@ k_status_t k_make_not_ready(tcb_t *thr)
 {
 	k_status_t err = k_status_ok;
 	ULIPE_ASSERT(thr != NULL);
-
-	archtype_t key = port_irq_lock();
 
 	/*
 	 * for remotion we need care both priority cases as well,
@@ -248,9 +238,31 @@ k_status_t k_make_not_ready(tcb_t *thr)
 
 	}
 
-	port_irq_unlock(key);
 	return(err);
 
+}
+
+bool k_yield(tcb_t *t)
+{
+	k_status_t err = k_status_ok;
+	ULIPE_ASSERT(t != NULL);
+	bool resched = false;
+
+
+	err = k_make_not_ready(t);
+	ULIPE_ASSERT(err == k_status_ok);
+
+	err = k_make_ready(t);
+	ULIPE_ASSERT(err == k_status_ok);
+
+	/* check if anything changed durring send to back
+	 * operation
+	 */
+	if(k_sched(&k_rdy_list) != t) {
+		resched = true;
+	}
+
+	return(resched);
 }
 
 k_status_t k_sched_and_swap(void)
@@ -277,8 +289,14 @@ k_status_t k_sched_and_swap(void)
 
 	ULIPE_ASSERT(k_high_prio_task != NULL);
 
+#if K_DEBUG > 0
+	uint32_t stk_usage = (k_high_prio_task->stack_top - k_high_prio_task->stack_base);
+
 	/* stack monitor used during debug */
-	ULIPE_ASSERT((k_high_prio_task->stack_top - k_high_prio_task->stack_base) <=  k_high_prio_task->stack_size);
+	ULIPE_ASSERT( stk_usage <=  k_high_prio_task->stack_size * 4);
+
+#endif
+
 
 	if(k_high_prio_task != k_current_task) {
 		/* new high priority task, perform a swap request */
@@ -338,7 +356,6 @@ k_status_t kernel_start(void)
 
 	/* init architecture stuff */
 	port_init_machine();
-	port_irq_unlock(key);
 
 	/* gets the first task to run */
 	k_high_prio_task = k_sched(&k_rdy_list);
@@ -348,6 +365,7 @@ k_status_t kernel_start(void)
 	/* start kernel (this function will never return) */
 	port_start_kernel();
 
+	(void)key;
 cleanup:
 	return(k_status_error);
 }
@@ -356,23 +374,21 @@ void kernel_irq_in(void)
 {
 	/* this function only can be called if os is executing  and from an isr*/
 	if(!k_running)
-		goto cleanup;
+		return;
 	if(!port_from_isr())
-		goto cleanup;
+		return;
 
 	if(irq_counter < (archtype_t)0xFFFFFFFF)
 		irq_counter++;
-cleanup:
-	return;
 }
 
 void kernel_irq_out(void)
 {
 	/* this function only can be called if os is executing  and from an isr*/
 	if(!k_running)
-		goto cleanup;
+		return;
 	if(!port_from_isr())
-		goto cleanup;
+		return;
 
 	if(irq_counter > (archtype_t)0)
 		irq_counter--;
@@ -380,6 +396,4 @@ void kernel_irq_out(void)
 	/* all isrs attended, perform a system reeschedule */
 	if(!irq_counter)
 		k_sched_and_swap();
-cleanup:
-	return;
 }

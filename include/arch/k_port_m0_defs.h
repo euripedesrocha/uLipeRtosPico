@@ -19,9 +19,9 @@
  *  Machine dependent macros:
  */
 
-#define K_PORT_PENDSV_NVIC_PRIO 	0xFF
-#define K_PORT_SVC_NVIC_PRIO 		0xFF
-#define K_PORT_TICKER_NVIC_PRIO 	0xFE
+#define K_PORT_PENDSV_NVIC_PRIO 	(K_SVC_MAX_PRIO)
+#define K_PORT_SVC_NVIC_PRIO 		(K_SVC_MAX_PRIO - 1)
+#define K_PORT_TICKER_NVIC_PRIO 	(K_SVC_MAX_PRIO - 2)
 
 
 

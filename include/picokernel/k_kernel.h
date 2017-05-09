@@ -58,6 +58,15 @@ k_status_t k_make_not_ready(tcb_t *thr);
 
 
 /**
+ *  @fn k_yield()
+ *  @brief send the specified tcb to the back of its current FIFO
+ *  @param
+ *  @return
+ */
+bool k_yield(tcb_t *t);
+
+
+/**
  *  @fn k_sched_and_swap()
  *  @brief schedule the task set and swap to the next ready to run
  *  @param
@@ -130,6 +139,12 @@ void kernel_irq_in(void);
  */
 void kernel_irq_out(void);
 
-
+/**
+ *  @fn kernel_exception()
+ *  @brief used to trap the kernel when a fault occurs
+ *  @param
+ *  @return
+ */
+//void kernel_exception(void);
 
 #endif

@@ -49,8 +49,8 @@ void port_init_machine(void)
 {
 	/* sets the system interrupts on system control block */
 	SCB->CCR = 0x200;
-	SCB->SHP[0] = K_PORT_PENDSV_NVIC_PRIO << 24;
-	SCB->SHP[1] = 0xFEFF << 16;
+	SCB->SHP[0] =  K_PORT_PENDSV_NVIC_PRIO << 24;
+	SCB->SHP[1] = (K_PORT_PENDSV_NVIC_PRIO | (K_PORT_TICKER_NVIC_PRIO << 8)) << 16;
 }
 
 

@@ -1,21 +1,22 @@
 /**
  * 							ULIPE RTOS PICO
  *
- *  @file k_port_cm0.c
+ *  @file k_port_cm3_4_7.c
  *
- *  @brief specific cortex M0 system control block and timer file
+ *  @brief specific cortex M3+ system control block and timer file
  *
  *
  */
 
 #include "ulipe_rtos_pico.h"
-#include "include/arch/k_port_m0_defs.h"
+#include "include/arch/k_port_m3_4_7_defs.h"
 
-#if(ARCH_TYPE_ARM_CM0 > 0)
+#if(ARCH_TYPE_ARM_CM3_4_7 > 0)
+
 
 archtype_t *port_create_stack_frame(archtype_t *stack, thread_t thr_func, void *cookie)
 {
-	 arm_cm0_xcpt_contents_t *ptr = ((arm_cm0_xcpt_contents_t *)stack) - 1;
+	 arm_cm3_xcpt_contents_t *ptr = ((arm_cm3_xcpt_contents_t *)stack) - 1;
 
 	ptr->lr = 0xFFFFFFFD;				//Adds exec return on link reg
 	ptr->pc = (uint32_t)thr_func;		//task function at pc
@@ -49,8 +50,10 @@ void port_init_machine(void)
 {
 	/* sets the system interrupts on system control block */
 	SCB->CCR = 0x200;
-	SCB->SHP[0] = K_PORT_PENDSV_NVIC_PRIO << 24;
-	SCB->SHP[1] = 0xFEFF << 16;
+	SCB->SHP[10] = 0xFE;
+	SCB->SHP[11] = 0xFF;
+	SCB->SHP[7]  = 0xFF;
+
 }
 
 
@@ -86,4 +89,5 @@ uint8_t port_bit_ls_scan(archtype_t reg)
 	ULIPE_ASSERT(false);
 	return(ret);
 }
+
 #endif

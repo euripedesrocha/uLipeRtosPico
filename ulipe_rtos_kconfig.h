@@ -14,8 +14,10 @@
 #define K_DEBUG							1
 
 /* architecture definition */
-#define ARCH_TYPE_ARM_CM0				1
-#define ARCH_TYPE_ARM_CM3_4_7			0
+#define ARCH_TYPE_ARM_CM0				0
+#define ARCH_TYPE_ARM_CM3_4_7			1
+#define ARCH_TYPE_ARM_CM4_7_F			0
+
 
 /* architecture data width */
 #define K_ARCH_MEM_WIDTH_BYTE			0

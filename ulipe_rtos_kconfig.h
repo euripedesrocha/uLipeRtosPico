@@ -17,6 +17,8 @@
 #define ARCH_TYPE_ARM_CM0				1
 #define ARCH_TYPE_ARM_CM3_4_7			0
 #define ARCH_TYPE_ARM_CM4_7_F			0
+#define ARCH_TYPE_QUARK_IAMCU			0
+#define ARCH_TYPE_QUARK_ARCEM			0
 
 
 /* architecture data width */

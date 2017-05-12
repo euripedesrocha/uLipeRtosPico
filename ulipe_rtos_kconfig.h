@@ -11,10 +11,10 @@
 #define __ULIPE_RTOS_KCONFIG_H
 
 /* kernel debugging */
-#define K_DEBUG							1
+#define K_DEBUG					1
 
 /* architecture definition */
-#define ARCH_TYPE_ARM_CM0				1
+#define ARCH_TYPE_ARM_CM0			1
 #define ARCH_TYPE_ARM_CM3_4_7			0
 #define ARCH_TYPE_ARM_CM4_7_F			0
 #define ARCH_TYPE_QUARK_IAMCU			0
@@ -29,8 +29,8 @@
 
 /* general kernel configuration */
 #define K_MINIMAL_STACK_VAL				16
-#define K_TIMER_DISPATCHER_PRIORITY		4
-#define K_TIMER_DISPATCHER_STACK_SIZE	128
+#define K_TIMER_DISPATCHER_PRIORITY			4
+#define K_TIMER_DISPATCHER_STACK_SIZE			128
 #define K_ENABLE_SEMAPHORE				1
 #define K_ENABLE_MESSAGING				0
 #define K_ENABLE_TIMERS					0

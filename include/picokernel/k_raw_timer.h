@@ -25,8 +25,9 @@ typedef struct ktimer{
 	archtype_t load_val;
 	archtype_t actual_val;
 	ktimer_callback_t cb;
-	k_work_list_t threads_pending;
 	bool expired;
+	bool created;
+	k_work_list_t threads_pending;
 	k_list_t timer_list_link;
 }ktimer_t;
 

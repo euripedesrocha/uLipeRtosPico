@@ -145,7 +145,7 @@ tcb_t *thread_get_current(void);
 
 #define THREAD_CONTROL_BLOCK_DECLARE(name, stack_size_val, priority) 			\
 		static archtype_t stack_##name[stack_size_val+K_MINIMAL_STACK_VAL];		\
-		static tcb_t name = {													\
+	    tcb_t name = {															\
 				.stack_base = &stack_##name[0],									\
 				.stack_size	= K_MINIMAL_STACK_VAL+stack_size_val,				\
 				.thread_prio=priority,											\

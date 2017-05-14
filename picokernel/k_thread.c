@@ -503,10 +503,6 @@ cleanup:
 tcb_t *thread_get_current(void)
 {
 	tcb_t *ret;
-
-	archtype_t key = port_irq_lock();
 	ret = k_current_task;
-	port_irq_unlock(key);
-
 	return(ret);
 }

@@ -36,8 +36,12 @@ typedef enum {
 	k_thread_susp,
 
 	/* semaphore status */
-	k_sema_not_available = 0,
+	k_sema_not_available,
 	k_sema_illegal_use_celling,
+
+	/* queue status */
+	k_queue_empty,
+	k_queue_full,
 
 }k_status_t;
 

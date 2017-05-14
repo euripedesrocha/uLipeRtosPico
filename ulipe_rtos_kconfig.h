@@ -15,9 +15,9 @@
 
 /* architecture definition */
 #define ARCH_TYPE_ARM_CM0				0
-#define ARCH_TYPE_ARM_CM3_4_7			0
+#define ARCH_TYPE_ARM_CM3_4_7			1
 #define ARCH_TYPE_ARM_CM4_7_F			0
-#define ARCH_TYPE_QUARK_IAMCU			1
+#define ARCH_TYPE_QUARK_IAMCU			0
 #define ARCH_TYPE_QUARK_ARCEM			0
 
 
@@ -32,9 +32,10 @@
 #define K_TIMER_DISPATCHER_PRIORITY		4
 #define K_TIMER_DISPATCHER_STACK_SIZE	128
 #define K_ENABLE_SEMAPHORE				1
-#define K_ENABLE_MESSAGING				0
+#define K_ENABLE_MESSAGING				1
 #define K_ENABLE_TIMERS					0
 #define K_SVC_MAX_PRIO					0xFF
+
 
 
 /* timer related */

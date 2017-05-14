@@ -60,7 +60,7 @@ static void k_idle_thread(void *arg)
  */
 static tcb_t *k_sched(k_work_list_t *l)
 {
-	tcb_t *ret;
+	tcb_t *ret = NULL;
 	k_list_t *head;
 
 	ULIPE_ASSERT(l != NULL);
@@ -79,20 +79,17 @@ static tcb_t *k_sched(k_work_list_t *l)
 	if(l->bitmap & (1 << (2 * (K_PRIORITY_LEVELS)- 1))) {
 		uint8_t prio = (l->bitmap & 0x70) >> (K_PRIORITY_LEVELS - 1);
 		prio = ((K_PRIORITY_LEVELS - 1) - k_clz_table[prio]);
-
 		head = sys_dlist_peek_head(&l->list_head[prio + K_PRIORITY_LEVELS - 1]);
-		ULIPE_ASSERT(head != NULL);
-		ret = CONTAINER_OF(head, tcb_t, thr_link);
+		if(head != NULL)
+			ret = CONTAINER_OF(head, tcb_t, thr_link);
 
 	} else {
 		uint8_t prio = ((K_PRIORITY_LEVELS - 1) - k_clz_table[l->bitmap]);
 		head = sys_dlist_peek_head(&l->list_head[prio]);
-		ULIPE_ASSERT(head != NULL);
-		ret = CONTAINER_OF(head, tcb_t, thr_link);
+		if(head != NULL)
+			ret = CONTAINER_OF(head, tcb_t, thr_link);
 
 	}
-
-
 	return(ret);
 }
 
@@ -251,6 +248,7 @@ bool k_yield(tcb_t *t)
 
 	err = k_make_not_ready(t);
 	ULIPE_ASSERT(err == k_status_ok);
+
 
 	err = k_make_ready(t);
 	ULIPE_ASSERT(err == k_status_ok);

@@ -8,7 +8,7 @@
  *
  */
  			
-#include "../../ulipe_rtos_kconfig.h"
+#include "../../../ulipe_rtos_kconfig.h"
 #if(ARCH_TYPE_QUARK_IAMCU > 0)
 	
 #define PORT_START_VECTOR	$0x20
@@ -124,8 +124,7 @@ port_first_swap:
 		movb    $1,	(%eax)				
 		movl 	k_current_task, %eax		@the hpt is now the current task
 		movl	(%ecx), (%eax)				@
-		pushfl  
-		popf 								@setup initial eflags 
+		popfl 								@setup initial eflags
 		popal								@first context
 		iret	
 

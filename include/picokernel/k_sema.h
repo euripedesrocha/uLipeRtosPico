@@ -56,7 +56,7 @@ k_status_t semaphore_give(ksema_t *s, uint32_t count);
  *  @return
  */
 #define SEMAPHORE_BLOCK_DECLARE(name,initial,limit_val)			\
-	ksema_t name = {											\
+	static ksema_t name = {										\
 			.cnt=initial,										\
 			.limit=limit_val,									\
 			.prio=K_SYS_THREAD_PRIO,							\

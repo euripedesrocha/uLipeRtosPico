@@ -50,6 +50,24 @@ typedef struct ktcb{
 	k_list_t thr_link;
 }tcb_t;
 
+/**
+ *  @fn THREAD_CONTROL_BLOCK_DECLARE()
+ *  @brief declares a full initialized thread control block
+ *  @param
+ *  @return
+ */
+
+#define THREAD_CONTROL_BLOCK_DECLARE(name, stack_size_val, priority) 			\
+		static archtype_t stack_##name[stack_size_val+K_MINIMAL_STACK_VAL];		\
+	    tcb_t name = {															\
+				.stack_base = &stack_##name[0],									\
+				.stack_size	= K_MINIMAL_STACK_VAL+stack_size_val,				\
+				.thread_prio=priority,											\
+				.thread_wait=0,													\
+				.created=false,													\
+		}
+
+
 
 /**
  *  @fn thread_create()
@@ -136,21 +154,5 @@ tcb_t *thread_get_current(void);
 
 
 
-/**
- *  @fn THREAD_CONTROL_BLOCK_DECLARE()
- *  @brief declares a full initialized thread control block
- *  @param
- *  @return
- */
-
-#define THREAD_CONTROL_BLOCK_DECLARE(name, stack_size_val, priority) 			\
-		static archtype_t stack_##name[stack_size_val+K_MINIMAL_STACK_VAL];		\
-	    tcb_t name = {															\
-				.stack_base = &stack_##name[0],									\
-				.stack_size	= K_MINIMAL_STACK_VAL+stack_size_val,				\
-				.thread_prio=priority,											\
-				.thread_wait=0,													\
-				.created=false,													\
-		}
 
 #endif

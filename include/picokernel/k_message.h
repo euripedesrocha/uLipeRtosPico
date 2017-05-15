@@ -24,6 +24,27 @@ typedef struct kmsg{
 }kmsg_t;
 
 
+/**
+ *  @fn MESSAGE_BLOCK_DECLARE()
+ *  @brief allocates memory and a fully initialized messaging block
+ *  @param
+ *  @return
+ */
+#define MESSAGE_BLOCK_DECLARE(name, noof_slots, slot_size_val)							\
+	static uint8_t data_##name[noof_slots * (slot_size_val + sizeof(archtype_t))] = {0};\
+	static kmsg_t name = {																\
+	  .data = &data_##name[0],  							                    		\
+	  .items = 0,                                         								\
+	  .slots_number = noof_slots,                         								\
+	  .wr_ptr = 0,                                        								\
+	  .rd_ptr = 0,                                        								\
+	  .slot_size = slot_size_val,					                 					\
+	  .wr_threads_pending.bitmap=0,														\
+	  .rd_threads_pending.bitmap=0,														\
+	  .created=false,																	\
+	}
+
+
 
 /* options for queue usage */
 typedef enum {
@@ -49,25 +70,6 @@ k_status_t message_insert(kmsg_t *m, void *data, uint32_t size, msg_opt_t opt);
 k_status_t message_remove(kmsg_t *msg, void *data, uint32_t *size,bool peek, msg_opt_t opt);
 
 
-/**
- *  @fn MESSAGE_BLOCK_DECLARE()
- *  @brief allocates memory and a fully initialized messaging block
- *  @param
- *  @return
- */
-#define MESSAGE_BLOCK_DECLARE(name, noof_slots, slot_size_val)							\
-	static uint8_t data_##name[noof_slots * (slot_size_val + sizeof(archtype_t))] = {0};\
-	static kmsg_t name = {																\
-	  .data = &data_##name[0],  							                    		\
-	  .items = 0,                                         								\
-	  .slots_number = noof_slots,                         								\
-	  .wr_ptr = 0,                                        								\
-	  .rd_ptr = 0,                                        								\
-	  .slot_size = slot_size_val,					                 					\
-	  .wr_threads_pending.bitmap=0,														\
-	  .rd_threads_pending.bitmap=0,														\
-	  .created=false,																	\
-	}
 
 
 #endif

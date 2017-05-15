@@ -14,11 +14,6 @@
 /* timer callback function type */
 typedef void (*ktimer_callback_t) (ktimer_t* t);
 
-/* timer usage options */
-typedef enum {
-	k_timer_block=0,
-	k_timer_accept,
-}ktimer_opt_t;
 
 /* timer control block structure */
 typedef struct ktimer{
@@ -30,6 +25,28 @@ typedef struct ktimer{
 	k_work_list_t threads_pending;
 	k_list_t timer_list_link;
 }ktimer_t;
+
+
+/* timer usage options */
+typedef enum {
+	k_timer_block=0,
+	k_timer_accept,
+}ktimer_opt_t;
+
+
+/**
+ *  @fn TIMER_CONTROL_BLOCK_DECLARE()
+ *  @brief declares a fully initialized control block for timer
+ *  @param
+ *  @return
+ */
+#define TIMER_CONTROL_BLOCK_DECLARE(name,load_value)		\
+		ktimer_t name = {									\
+			.load_val=load_value,							\
+			.expired=true,									\
+			.threads_pending.bitmap=0,						\
+			.created=false,									\
+		}
 
 
 /**
@@ -72,18 +89,6 @@ k_status_t timer_set_load(ktimer_t *t, archtype_t load_val);
  */
 k_status_t timer_stop(ktimer_t *t);
 
-/**
- *  @fn TIMER_CONTROL_BLOCK_DECLARE()
- *  @brief declares a fully initialized control block for timer
- *  @param
- *  @return
- */
-#define TIMER_CONTROL_BLOCK_DECLARE(name,load_value)		\
-		ktimer_t name = {									\
-			.load_val=load_value,							\
-			.expired=true,									\
-			.threads_pending.bitmap=0,						\
-		}
 
 #endif
 #endif

@@ -23,6 +23,22 @@ typedef struct ksema{
 
 
 /**
+ *  @fn SEMAPHORE_BLOCK_DECLARE()
+ *  @brief declare a fully initialized semaphore control block
+ *  @param
+ *  @return
+ */
+#define SEMAPHORE_BLOCK_DECLARE(name,initial,limit_val)			\
+	static ksema_t name = {										\
+			.cnt=initial,										\
+			.limit=limit_val,									\
+			.prio=K_SYS_THREAD_PRIO,							\
+			.prio_ceilling=false,								\
+			.created=false,										\
+	}
+
+
+/**
  *  @fn semaphore_take()
  *  @brief take a semaphore, stops execution until available
  *  @param
@@ -49,20 +65,6 @@ k_status_t semaphore_give(ksema_t *s, uint32_t count);
 
 
 
-/**
- *  @fn SEMAPHORE_BLOCK_DECLARE()
- *  @brief declare a fully initialized semaphore control block
- *  @param
- *  @return
- */
-#define SEMAPHORE_BLOCK_DECLARE(name,initial,limit_val)			\
-	static ksema_t name = {										\
-			.cnt=initial,										\
-			.limit=limit_val,									\
-			.prio=K_SYS_THREAD_PRIO,							\
-			.prio_ceilling=false,								\
-			.created=false,										\
-	}
 
 #endif
 #endif

@@ -18,20 +18,14 @@ typedef void (*ktimer_callback_t) (ktimer_t* t);
 /* timer control block structure */
 typedef struct ktimer{
 	archtype_t load_val;
-	archtype_t actual_val;
 	ktimer_callback_t cb;
 	bool expired;
 	bool created;
+	bool running;
 	k_work_list_t threads_pending;
 	k_list_t timer_list_link;
 }ktimer_t;
 
-
-/* timer usage options */
-typedef enum {
-	k_timer_block=0,
-	k_timer_accept,
-}ktimer_opt_t;
 
 
 /**
@@ -43,6 +37,7 @@ typedef enum {
 #define TIMER_CONTROL_BLOCK_DECLARE(name,load_value)		\
 		ktimer_t name = {									\
 			.load_val=load_value,							\
+			.running=false,									\
 			.expired=true,									\
 			.threads_pending.bitmap=0,						\
 			.created=false,									\
@@ -63,7 +58,7 @@ k_status_t timer_start(ktimer_t *t);
  *  @param
  *  @return
  */
-k_status_t timer_poll(ktimer_t *t, ktimer_opt_t opt);
+k_status_t timer_poll(ktimer_t *t);
 
 /**
  *  @fn timer_set_callback()

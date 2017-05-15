@@ -44,6 +44,7 @@ static k_status_t message_handle_pend(kmsg_t *m,bool insert, msg_opt_t opt, arch
 		case k_msg_block:
 			/* thread will wait until one slot become free */
 			k_make_not_ready(thr);
+			thr |= K_THR_PEND_MSG;
 
 			if(insert)
 				k_pend_obj(thr, &m->wr_threads_pending);

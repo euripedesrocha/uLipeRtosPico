@@ -39,8 +39,9 @@
 
 
 /* timer related */
-#define K_MACHINE_CLOCK					48000000
-#define K_TICKER_FREQUENCY				1000
+#define K_TIMER_IP_CLOCK				48000000
+#define K_TIMER_WIDTH					24
+
 
 
 #endif

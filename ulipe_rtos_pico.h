@@ -43,6 +43,12 @@ typedef enum {
 	k_queue_empty,
 	k_queue_full,
 
+	/* timer status */
+	k_timer_expired,
+	k_timer_running,
+	k_timer_stopped,
+	k_timer_busy,
+
 }k_status_t;
 
 

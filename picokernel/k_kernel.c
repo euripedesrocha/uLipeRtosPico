@@ -12,11 +12,6 @@
 /**static variables **/
 THREAD_CONTROL_BLOCK_DECLARE(idle_thread, 32, 0);
 
-#if(K_ENABLE_TIMERS > 0)
-THREAD_CONTROL_BLOCK_DECLARE(timer_thread, K_TIMER_DISPATCHER_STACK_SIZE, K_TIMER_DISPATCHER_PRIORITY);
-#endif
-
-
 static k_work_list_t k_rdy_list;
 static k_list_t k_timed_list;
 

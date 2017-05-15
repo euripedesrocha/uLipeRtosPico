@@ -87,6 +87,26 @@ extern void port_start_timer(archtype_t reload_val);
  */
 extern void port_timer_load_append(archtype_t append_val);
 
+
+/**
+ *  @fn port_timer_halt()
+ *  @brief stops timer counting
+ *  @param
+ *  @return
+ */
+extern void port_timer_halt(void);
+
+
+/**
+ *  @fn port_timer_resume()
+ *  @brief resumes timer counting
+ *  @param
+ *  @return
+ */
+extern void port_timer_resume(void);
+
+
+
 /**
  *  @fn port_bit_fs_scan()
  *  @brief perform bit forward scan

@@ -226,6 +226,17 @@ extern void port_timer_load_append(archtype_t append_val)
 
 }
 
+
+extern void port_timer_halt(void)
+{
+
+}
+
+extern void port_timer_resume(void)
+{
+
+}
+
 static void port_timer_handler (void)
 {
 

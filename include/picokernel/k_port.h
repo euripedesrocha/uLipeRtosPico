@@ -90,11 +90,11 @@ extern void port_timer_load_append(archtype_t append_val);
 
 /**
  *  @fn port_timer_halt()
- *  @brief stops timer counting
+ *  @brief stops timer counting amd return its current value
  *  @param
  *  @return
  */
-extern void port_timer_halt(void);
+extern uint32_t port_timer_halt(void);
 
 
 /**

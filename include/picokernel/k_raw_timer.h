@@ -18,6 +18,7 @@ typedef void (*ktimer_callback_t) (ktimer_t* t);
 /* timer control block structure */
 typedef struct ktimer{
 	archtype_t load_val;
+	archtype_t start_point;
 	ktimer_callback_t cb;
 	bool expired;
 	bool created;
@@ -75,15 +76,6 @@ k_status_t timer_set_callback(ktimer_t *t, ktimer_callback_t cb);
  *  @return
  */
 k_status_t timer_set_load(ktimer_t *t, archtype_t load_val);
-
-/**
- *  @fn timer_stop()
- *  @brief stops this timer from counting
- *  @param
- *  @return
- */
-k_status_t timer_stop(ktimer_t *t);
-
 
 #endif
 #endif

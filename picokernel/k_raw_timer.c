@@ -100,9 +100,9 @@ static void timer_rebuild_timeline(ktimer_t *t, archtype_t *key);
 		t->start_point = port_timer_halt();
 		port_timer_resume();
 	}
-		port_irq_unlock(*key);
-		thread_set_signals(&timer_tcb,cmd);
-		*key = port_irq_lock();
+	port_irq_unlock(*key);
+	thread_set_signals(&timer_tcb,cmd);
+	*key = port_irq_lock();
 
 }
 

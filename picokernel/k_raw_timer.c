@@ -13,11 +13,6 @@
 
 #define K_TIMER_NO_WAKEUP_TASK (archtype_t)0
 
-/* timer commands */
-#define K_TIMER_LOAD_FRESH		0x01
-#define K_TIMER_DISPATCH 		0x02
-#define K_TIMER_REFRESH			0x04
-
 
 /* static variables */
 static k_list_t k_timed_list;
@@ -112,7 +107,7 @@ static void timer_rebuild_timeline(ktimer_t *t, archtype_t *key);
  *  @param
  *  @return
  */
-static void timer_dispatcher(void *args)
+void timer_dispatcher(void *args)
 {
 	(void)args;
 	k_status_t err;

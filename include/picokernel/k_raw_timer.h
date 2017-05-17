@@ -11,6 +11,13 @@
 
 
 #if(K_ENABLE_TIMERS > 0)
+
+/* timer commands */
+#define K_TIMER_LOAD_FRESH		0x01
+#define K_TIMER_DISPATCH 		0x02
+#define K_TIMER_REFRESH			0x04
+
+
 /* timer callback function type */
 typedef void (*ktimer_callback_t) (ktimer_t* t);
 

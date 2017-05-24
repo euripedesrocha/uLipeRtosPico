@@ -17,9 +17,8 @@
 #define K_TIMER_DISPATCH 		0x02
 #define K_TIMER_REFRESH			0x04
 
-
 /* timer callback function type */
-typedef void (*ktimer_callback_t) (ktimer_t* t);
+typedef void (*ktimer_callback_t) (void * t);
 
 
 /* timer control block structure */
@@ -33,6 +32,7 @@ typedef struct ktimer{
 	k_work_list_t threads_pending;
 	k_list_t timer_list_link;
 }ktimer_t;
+
 
 
 

@@ -16,7 +16,7 @@
 
 /* static variables */
 static k_list_t k_timed_list;
-static archtype_t k_next_wakeup_value = K_TIMER_NO_WAKEUP_TASK;
+static archtype_t k_elapsed_time = 0;
 static bool no_timers = true;
 
 THREAD_CONTROL_BLOCK_DECLARE(timer_tcb, K_TIMER_DISPATCHER_STACK_SIZE, K_TIMER_DISPATCHER_PRIORITY);
@@ -47,15 +47,19 @@ static ktimer_t *timer_period_sort(k_list_t *tlist, archtype_t count)
 	 * ret with this timer until interation ends
 	 * or another load value fits in this rule
 	 */
-	head = sys_dlist_peek_head(&tlist);
+	head = sys_dlist_peek_head(tlist);
 	ULIPE_ASSERT(head != NULL);	
 	ret = CONTAINER_OF(head, ktimer_t, timer_list_link);
 	ULIPE_ASSERT(ret != NULL);	
 
 	SYS_DLIST_FOR_EACH_CONTAINER(tlist, tmp, timer_list_link) {
-		if ((count - tmp->load_val) < (count - ret->load_val)) {
+
+		if ((count + tmp->load_val - (count - tmp->start_point)) <
+				(count + ret->load_val - (count - ret->start_point))) {
 			ret = tmp;
 		}
+
+
 	}
 
 cleanup:
@@ -68,7 +72,7 @@ cleanup:
  *  @param
  *  @return
  */
-static void timer_rebuild_timeline(ktimer_t *t, archtype_t *key);
+static void timer_rebuild_timeline(ktimer_t *t, archtype_t *key)
 {
 	ULIPE_ASSERT(t != NULL);
 	ULIPE_ASSERT(key != NULL);
@@ -92,7 +96,7 @@ static void timer_rebuild_timeline(ktimer_t *t, archtype_t *key);
 		 * to be loaded on timer IP when this timer 
 		 * will be selected
 		 */
-		t->start_point = port_timer_halt();
+		t->start_point = (k_elapsed_time + port_timer_halt());
 		port_timer_resume();
 	}
 	port_irq_unlock(*key);
@@ -112,7 +116,7 @@ void timer_dispatcher(void *args)
 	(void)args;
 	k_status_t err;
 	ktimer_t *actual_timer;
-	archtype_t signals = 0;
+	archtype_t signals = 0, clear_msk =0;
 
 	archtype_t key = port_irq_lock();
 	sys_dlist_init(&k_timed_list);
@@ -129,7 +133,7 @@ void timer_dispatcher(void *args)
 		 */
 		if(!signals) {
 			signals = thread_wait_signals(NULL, K_TIMER_LOAD_FRESH | K_TIMER_DISPATCH | K_TIMER_REFRESH, 
-			k_match_any_consume, &err);
+					k_wait_match_any, &err);
 			ULIPE_ASSERT(err == k_status_ok);
 
 		}
@@ -138,6 +142,8 @@ void timer_dispatcher(void *args)
 		/* select commands with priority */
 		if(signals & K_TIMER_DISPATCH) {
 			signals &= ~(K_TIMER_DISPATCH);
+			clear_msk |= K_TIMER_DISPATCH;
+
 
 			/*
 			 * we know how timer needs to be woken
@@ -171,16 +177,19 @@ void timer_dispatcher(void *args)
 			actual_timer->running = false;
 			actual_timer->expired = true;
 
+			k_elapsed_time +=  actual_timer->load_val - (actual_timer->start_point - k_elapsed_time);
+
+
 			/* finds the new ready to use timer */
-			actual_timer = timer_period_sort(&k_timed_list, k_next_wakeup_value);
+			actual_timer = timer_period_sort(&k_timed_list, k_elapsed_time);
+
 			if(actual_timer != NULL) {
 				/* calculate the next load value as well 
 				 * the new timeline taking the point when the 
 				 * timer was started in account 
 				 */
-				uint32_t expired = k_next_wakeup_value - actual_timer->start_point;
+				uint32_t expired = k_elapsed_time - actual_timer->start_point;
 				uint32_t load = actual_timer->load_val - expired;
-				k_next_wakeup_value += load;
 				port_start_timer(load);
 
 
@@ -189,6 +198,7 @@ void timer_dispatcher(void *args)
 				 * the timer IP 
 				 */
 				no_timers = true;
+				k_elapsed_time = 0;
 
 			}
 
@@ -198,24 +208,30 @@ void timer_dispatcher(void *args)
 
 		if(signals & K_TIMER_REFRESH) {
 			signals &= ~(K_TIMER_REFRESH);
+			clear_msk |= K_TIMER_REFRESH;
+
 			key = port_irq_lock();
 
+
 			/* iterate list and schedule a new timer on timeline */
-			ktimer_t *tmr = timer_period_sort(&k_timed_list, k_next_wakeup_value);
+			k_list_t *tail = sys_dlist_peek_tail(&k_timed_list);
+			ktimer_t *tmr = CONTAINER_OF(tail, ktimer_t, timer_list_link);;
 
-			if((tmr != NULL) && ((tmr->start_point - tmr->load_val) < k_next_wakeup_value)) {
-				/* needs update the timeline 
-				 * put the new boundary on timeline, send previous
-				 * timer back to list and pick the most recent timer
-				 * is about to wake
-				 */
-				if(tmr != actual_timer) {	
+			if((tmr != NULL) && ( tmr != actual_timer )) {
 
-					archtype_t delta = k_next_wakeup_value - tmr->start_point + port_timer_halt();
-					k_next_wakeup_value = delta;
-					delta = tmr->load_val - (k_next_wakeup_value - tmr->start_point);
+				archtype_t cur = port_timer_halt();
+				archtype_t corrected_load = tmr->load_val - ((k_elapsed_time + cur) - tmr->start_point);
+
+
+				if(k_elapsed_time + cur + corrected_load <
+						(k_elapsed_time + cur + (actual_timer->load_val - (k_elapsed_time + cur - actual_timer->start_point)))) {
+
 					actual_timer = tmr;
-					port_timer_load_append(delta);
+					archtype_t delta = (k_elapsed_time+ cur + corrected_load) -
+								(k_elapsed_time + cur);
+					k_elapsed_time += cur;
+
+					port_start_timer(delta);
 					port_timer_resume();
 				}
 				port_irq_unlock(key);
@@ -230,6 +246,7 @@ void timer_dispatcher(void *args)
 
 		if(signals & K_TIMER_LOAD_FRESH) {
 			signals &= ~(K_TIMER_LOAD_FRESH);
+			clear_msk |= K_TIMER_LOAD_FRESH;
 			k_list_t *head;
 
 			key = port_irq_lock();
@@ -237,13 +254,16 @@ void timer_dispatcher(void *args)
 			head = sys_dlist_peek_head(&k_timed_list);
 			ULIPE_ASSERT(head != NULL);	
 			actual_timer = CONTAINER_OF(head, ktimer_t, timer_list_link);
-			k_next_wakeup_value = actual_timer->load_val;
 			port_irq_unlock(key);
 
 			/* start the timeline running */
 			no_timers = false;
-			port_start_timer(k_next_wakeup_value);
+			port_start_timer(actual_timer->load_val);
 		}
+
+		thread_clr_signals(&timer_tcb, clear_msk);
+		clear_msk = 0;
+
 	}
 }
 
@@ -301,6 +321,12 @@ k_status_t timer_poll(ktimer_t *t)
 
 	if(t == NULL) {
 		ret = k_status_invalid_param;
+		goto cleanup;
+	}
+
+	if(!t->running) {
+		/* timer must be running */
+		ret = k_timer_stopped;
 		goto cleanup;
 	}
 
@@ -381,18 +407,12 @@ k_status_t timer_set_callback(ktimer_t *t, ktimer_callback_t cb)
 
 
 	if(t->expired) {
-		ret = k_timer_expired
+		ret = k_timer_expired;
 		port_irq_unlock(key);
 		goto cleanup;
 	}
 
-	if(k_next_wakeup_value != K_TIMER_NO_WAKEUP_TASK)
-		port_timer_halt();
-
 	t->cb = cb;
-
-	if(k_next_wakeup_value != K_TIMER_NO_WAKEUP_TASK)
-		port_timer_resume();
 
 	port_irq_unlock(key);
 
@@ -427,13 +447,7 @@ k_status_t timer_set_load(ktimer_t *t, archtype_t load_val)
 		goto cleanup;
 	}
 
-	if(k_next_wakeup_value != K_TIMER_NO_WAKEUP_TASK)
-		port_timer_halt();
-
 	t->load_val = load_val;
-
-	if(k_next_wakeup_value != K_TIMER_NO_WAKEUP_TASK)
-		port_timer_resume();
 
 	port_irq_unlock(key);
 

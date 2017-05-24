@@ -74,7 +74,7 @@ void port_timer_load_append(archtype_t append_val)
 extern uint32_t port_timer_halt(void)
 {
 	SysTick->CTRL &= ~0x07; 	
-	return(SysTick->VAL);	
+	return(SysTick->LOAD - SysTick->VAL);
 }
 
 extern void port_timer_resume(void)

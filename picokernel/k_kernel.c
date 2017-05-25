@@ -28,8 +28,11 @@ bool k_running = false;
 tcb_t *k_current_task;
 tcb_t *k_high_prio_task;
 
+
+#if(K_ENABLE_TIMERS > 0)
 extern tcb_t timer_tcb;
 extern void timer_dispatcher(void *args);
+#endif
 
 /** private functions **/
 
@@ -335,8 +338,10 @@ k_status_t kernel_init(void)
 	k_status_t err = thread_create(&k_idle_thread,NULL, &idle_thread);
 	ULIPE_ASSERT(err == k_status_ok);
 
+#if(K_ENABLE_TIMERS > 0)
 	err = thread_create(&timer_dispatcher,NULL, &timer_tcb);
 	ULIPE_ASSERT(err == k_status_ok);
+#endif
 
 	/* os configured and ready to be started */
 	k_configured = true;

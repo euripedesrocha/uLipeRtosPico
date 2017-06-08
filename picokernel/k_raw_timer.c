@@ -88,7 +88,6 @@ static void timer_rebuild_timeline(ktimer_t *t, archtype_t *key)
 	/* check if timer is not running */
 	if(no_timers) {
 		cmd = K_TIMER_LOAD_FRESH;
-		t->start_point = 0;
 	} else {
 		cmd = K_TIMER_REFRESH;
 		/* memorize the point of timeline when timer was added, we
@@ -96,8 +95,6 @@ static void timer_rebuild_timeline(ktimer_t *t, archtype_t *key)
 		 * to be loaded on timer IP when this timer 
 		 * will be selected
 		 */
-		t->start_point = (k_elapsed_time + port_timer_halt());
-		port_timer_resume();
 	}
 	port_irq_unlock(*key);
 	thread_set_signals(&timer_tcb,cmd);
@@ -177,31 +174,6 @@ void timer_dispatcher(void *args)
 			actual_timer->running = false;
 			actual_timer->expired = true;
 
-			k_elapsed_time +=  actual_timer->load_val - (actual_timer->start_point - k_elapsed_time);
-
-
-			/* finds the new ready to use timer */
-			actual_timer = timer_period_sort(&k_timed_list, k_elapsed_time);
-
-			if(actual_timer != NULL) {
-				/* calculate the next load value as well 
-				 * the new timeline taking the point when the 
-				 * timer was started in account 
-				 */
-				uint32_t expired = k_elapsed_time - actual_timer->start_point;
-				uint32_t load = actual_timer->load_val - expired;
-				port_start_timer(load);
-
-
-			} else {
-				/* all timers were served, so stops 
-				 * the timer IP 
-				 */
-				no_timers = true;
-				k_elapsed_time = 0;
-
-			}
-
 			port_irq_unlock(key);
 		}
 
@@ -214,33 +186,6 @@ void timer_dispatcher(void *args)
 
 
 			/* iterate list and schedule a new timer on timeline */
-			k_list_t *tail = sys_dlist_peek_tail(&k_timed_list);
-			ktimer_t *tmr = CONTAINER_OF(tail, ktimer_t, timer_list_link);;
-
-			if((tmr != NULL) && ( tmr != actual_timer )) {
-
-				archtype_t cur = port_timer_halt();
-				archtype_t corrected_load = tmr->load_val - ((k_elapsed_time + cur) - tmr->start_point);
-
-
-				if(k_elapsed_time + cur + corrected_load <
-						(k_elapsed_time + cur + (actual_timer->load_val - (k_elapsed_time + cur - actual_timer->start_point)))) {
-
-					actual_timer = tmr;
-					archtype_t delta = (k_elapsed_time+ cur + corrected_load) -
-								(k_elapsed_time + cur);
-					k_elapsed_time += cur;
-
-					port_start_timer(delta);
-					port_timer_resume();
-				}
-				port_irq_unlock(key);
-	
-			} else {
-				/* no need to update, just resumes the timer */
-				port_timer_load_append(0);
-				port_irq_unlock(key);				
-			}
 
 		}
 
@@ -258,7 +203,6 @@ void timer_dispatcher(void *args)
 
 			/* start the timeline running */
 			no_timers = false;
-			port_start_timer(actual_timer->load_val);
 		}
 
 		thread_clr_signals(&timer_tcb, clear_msk);

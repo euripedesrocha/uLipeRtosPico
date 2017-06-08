@@ -55,41 +55,38 @@ void port_init_machine(void)
 
 
 #if(K_ENABLE_TIMERS > 0)
+
 void port_start_timer(archtype_t reload_val)
 {
-	SysTick->LOAD = reload_val;
-	SysTick->CTRL |= 0x07; 
 }
 
 void port_timer_load_append(archtype_t append_val)
 {
-	/* disable timer if not already yet */
-	SysTick->CTRL &= ~0x07; 	
-	SysTick->LOAD =  SysTick->VAL + append_val;	
 }
 
 extern uint32_t port_timer_halt(void)
 {
-	SysTick->CTRL &= ~0x07; 	
-	return(SysTick->VAL);	
 }
 
 extern void port_timer_resume(void)
 {
-	SysTick->CTRL |= 0x07; 
 }
 
-void SysTick_Handler(void)
+void timer_match_handler(void)
 {
 	extern tcb_t timer_tcb;
 	kernel_irq_in();
-
-	/* systick expired, stops the timer */
-	SysTick->CTRL &= ~0x07;	
 	/* request timeline handling */
 	thread_set_signals(&timer_tcb, K_TIMER_DISPATCH);
 	kernel_irq_out();
 }
+
+void timer_ovf_handler(void)
+{
+	kernel_irq_in();
+	kernel_irq_out();
+}
+
 
 #endif
 

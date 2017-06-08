@@ -30,7 +30,7 @@ THREAD_CONTROL_BLOCK_DECLARE(timer_tcb, K_TIMER_DISPATCHER_STACK_SIZE, K_TIMER_D
  *  @param
  *  @return
  */
-static ktimer_t *timer_period_sort(k_list_t *tlist, archtype_t count)
+static ktimer_t *timer_period_sort(k_list_t *tlist)
 {
 	ktimer_t *ret = NULL;
 	ktimer_t *tmp = NULL;
@@ -184,9 +184,19 @@ void timer_dispatcher(void *args)
 
 			key = port_irq_lock();
 
+			/* stops timer with last known point */
+			archtype_t ref = port_timer_halt();
 
 			/* iterate list and schedule a new timer on timeline */
+			ktimer_t *tmp = timer_period_sort(&k_timed_list);
+			if(tmp != actual_timer) {
+				actual_timer = tmp;
+				port_timer_load_append(actual_timer->load_val);
 
+			}
+
+			/* resume counting after update next match point */
+			port_timer_resume();
 		}
 
 		if(signals & K_TIMER_LOAD_FRESH) {
@@ -200,6 +210,11 @@ void timer_dispatcher(void *args)
 			ULIPE_ASSERT(head != NULL);	
 			actual_timer = CONTAINER_OF(head, ktimer_t, timer_list_link);
 			port_irq_unlock(key);
+
+
+			/* no timers running so put a new match value */
+			port_timer_load_append(actual_timer->load_val);
+
 
 			/* start the timeline running */
 			no_timers = false;
@@ -391,7 +406,7 @@ k_status_t timer_set_load(ktimer_t *t, archtype_t load_val)
 		goto cleanup;
 	}
 
-	t->load_val = load_val;
+	t->timer_to_wait = load_val;
 
 	port_irq_unlock(key);
 

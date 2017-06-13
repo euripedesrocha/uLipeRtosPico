@@ -72,7 +72,8 @@ extern void port_timer_resume(void)
 {
 }
 
-void timer_match_handler(void)
+
+extern void timer_match_handler(void)
 {
 	extern tcb_t timer_tcb;
 	kernel_irq_in();
@@ -81,7 +82,7 @@ void timer_match_handler(void)
 	kernel_irq_out();
 }
 
-void timer_ovf_handler(void)
+extern void timer_ovf_handler(void)
 {
 	kernel_irq_in();
 	kernel_irq_out();

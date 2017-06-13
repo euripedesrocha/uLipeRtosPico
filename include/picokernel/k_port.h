@@ -105,7 +105,22 @@ extern uint32_t port_timer_halt(void);
  */
 extern void port_timer_resume(void);
 
+/**
+ *  @fn timer_match_handler()
+ *  @brief  output compare timer handler used by tickless engine
+ *  @param
+ *  @return
+ */
+extern void timer_match_handler(void);
 
+
+/**
+ *  @fn timer_ovf_handler()
+ *  @brief timer overflow handling 
+ *  @param
+ *  @return
+ */
+extern void timer_ovf_handler(void);
 
 /**
  *  @fn port_bit_fs_scan()

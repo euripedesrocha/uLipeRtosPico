@@ -215,35 +215,39 @@ extern void port_init_machine(void)
 }
 
 #if(K_ENABLE_TIMERS > 0)
-extern void port_start_timer(archtype_t reload_val)
+
+void port_start_timer(archtype_t reload_val)
 {
-	#error "timer not implemented yet for this archiceture"
 }
 
-
-extern void port_timer_load_append(archtype_t append_val)
+void port_timer_load_append(archtype_t append_val)
 {
-	#error "timer not implemented yet for this archiceture"
 }
-
 
 extern uint32_t port_timer_halt(void)
 {
-	#error "timer not implemented yet for this archiceture"
-
 }
 
 extern void port_timer_resume(void)
 {
-	#error "timer not implemented yet for this archiceture"
-
 }
 
-static void port_timer_handler (void)
+
+extern void timer_match_handler(void)
 {
-	#error "timer not implemented yet for this archiceture"
-
+	extern tcb_t timer_tcb;
+	kernel_irq_in();
+	/* request timeline handling */
+	thread_set_signals(&timer_tcb, K_TIMER_DISPATCH);
+	kernel_irq_out();
 }
+
+extern void timer_ovf_handler(void)
+{
+	kernel_irq_in();
+	kernel_irq_out();
+}
+
 #endif
 
 

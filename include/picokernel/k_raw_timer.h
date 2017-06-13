@@ -24,7 +24,7 @@ typedef void (*ktimer_callback_t) (void * t);
 /* timer control block structure */
 typedef struct ktimer{
 	archtype_t load_val;
-	archtype_t ;
+	archtype_t timer_to_wait;
 	ktimer_callback_t cb;
 	bool expired;
 	bool created;

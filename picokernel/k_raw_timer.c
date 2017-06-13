@@ -53,13 +53,9 @@ static ktimer_t *timer_period_sort(k_list_t *tlist)
 	ULIPE_ASSERT(ret != NULL);	
 
 	SYS_DLIST_FOR_EACH_CONTAINER(tlist, tmp, timer_list_link) {
-
-		if ((count + tmp->load_val - (count - tmp->start_point)) <
-				(count + ret->load_val - (count - ret->start_point))) {
+		if(ret->load_val > tmp->load_val) {
 			ret = tmp;
 		}
-
-
 	}
 
 cleanup:
@@ -77,9 +73,14 @@ static void timer_rebuild_timeline(ktimer_t *t, archtype_t *key)
 	ULIPE_ASSERT(t != NULL);
 	ULIPE_ASSERT(key != NULL);
 	archtype_t cmd;
+	archtype_t tim = port_timer_halt();
 
-	t->running = true;
-	t->expired = false;
+
+	t->load_val = tim + t->timer_to_wait;
+	t->running  = true;
+	t->expired  = false;
+
+	port_timer_resume();
 
 	/* put the new timer on timeline list */
 	sys_dlist_append(&k_timed_list, &t->timer_list_link);
@@ -141,7 +142,6 @@ void timer_dispatcher(void *args)
 			signals &= ~(K_TIMER_DISPATCH);
 			clear_msk |= K_TIMER_DISPATCH;
 
-
 			/*
 			 * we know how timer needs to be woken
 			 */
@@ -175,17 +175,27 @@ void timer_dispatcher(void *args)
 			actual_timer->expired = true;
 
 			port_irq_unlock(key);
+
+			/* find next timer to pend */
+			actual_timer= timer_period_sort(&k_timed_list);
+			if(actual_timer == NULL) {
+				/* no timers to run */
+				no_timers = true;
+			} else {
+				port_timer_load_append(actual_timer->load_val);
+			}
+
 		}
 
 
 		if(signals & K_TIMER_REFRESH) {
 			signals &= ~(K_TIMER_REFRESH);
 			clear_msk |= K_TIMER_REFRESH;
+			no_timers = false;
+
 
 			key = port_irq_lock();
 
-			/* stops timer with last known point */
-			archtype_t ref = port_timer_halt();
 
 			/* iterate list and schedule a new timer on timeline */
 			ktimer_t *tmp = timer_period_sort(&k_timed_list);
@@ -195,14 +205,13 @@ void timer_dispatcher(void *args)
 
 			}
 
-			/* resume counting after update next match point */
-			port_timer_resume();
 		}
 
 		if(signals & K_TIMER_LOAD_FRESH) {
 			signals &= ~(K_TIMER_LOAD_FRESH);
 			clear_msk |= K_TIMER_LOAD_FRESH;
 			k_list_t *head;
+			no_timers = false;
 
 			key = port_irq_lock();
 			/* gets the only available container of timed list */

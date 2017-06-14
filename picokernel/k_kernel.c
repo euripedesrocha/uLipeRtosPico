@@ -283,6 +283,7 @@ k_status_t k_sched_and_swap(void)
 		goto cleanup;
 	}
 
+
 	k_high_prio_task = k_sched(&k_rdy_list);
 
 	ULIPE_ASSERT(k_high_prio_task != NULL);

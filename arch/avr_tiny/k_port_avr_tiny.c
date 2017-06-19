@@ -13,6 +13,8 @@
 
 #if(ARCH_TYPE_AVR_TINY > 0)
 
+
+
 archtype_t *port_create_stack_frame(archtype_t *stack, thread_t thr_func, void *cookie)
 {
     avr_tiny_xcpt_contents_t *ptr = ((avr_tiny_xcpt_contents_t *)stack) - 1;
@@ -27,10 +29,21 @@ archtype_t *port_create_stack_frame(archtype_t *stack, thread_t thr_func, void *
 
 void port_swap_req(void)
 {
+	/* force int0 external interrupt */
+	GIMSK |= (1 << 6);
+	GIFR  |= (1 << 6);
 }
 
 void port_init_machine(void)
 {
+	/* interrupts initally shutdown */
+	GIMSK  = 0;
+	SREG   = 0;
+
+	/* enable timer and match engine */
+	TCCR0A  = 0;
+	TCCR0B  = 0x00;
+	TIMSK  |= 0x02;
 }
 
 
@@ -38,18 +51,27 @@ void port_init_machine(void)
 
 void port_start_timer(archtype_t reload_val)
 {
+	TCNT0  = 0;
+	OCR0A  = (reload_val  & 0xFF);
+	TIMSK |= 0x10;
+	TCCR0B = 0x07;
 }
 
 void port_timer_load_append(archtype_t append_val)
 {
+	OCR0A  = (reload_val  & 0xFF);	
 }
 
 extern uint32_t port_timer_halt(void)
 {
+	uint32_t ret = TCNT0;
+	TCCR0B = 0;
+	return(ret);
 }
 
 extern void port_timer_resume(void)
 {
+	TCCR0B = 0x07;
 }
 
 

@@ -18,7 +18,11 @@
 #include <string.h>
 
 #include "picokernel/inc/k_list.h"
-#include "ulipe_rtos_kconfig.h"
+#ifndef __ULIPE_RTOS_KCONFIG_H
+	#warning "No config file found, loading default setings"
+	#include "ulipe_rtos_def_config.h"
+#endif
+
 
 /* ulipe rtos pico status codes */
 typedef enum {

@@ -220,6 +220,7 @@ INT0_vect:
 
 	    reti
 ;--------------------------------------------------------------------------------------------------
+#if(K_ENABLE_TIMERS > 0)
 TIM0_COMPA_vect:
 		push  r31
 		push  r30		
@@ -359,6 +360,7 @@ TIM0_OVF_vect:
 		pop  r30		
 		pop  r31
 		reti
+#endif
 	
 .end
 #endif

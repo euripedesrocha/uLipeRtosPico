@@ -39,11 +39,12 @@ void port_init_machine(void)
 	/* interrupts initally shutdown */
 	GIMSK  = 0;
 	SREG   = 0;
-
+#if(K_ENABLE_TIMERS > 0)
 	/* enable timer and match engine */
 	TCCR0A  = 0;
 	TCCR0B  = 0x00;
 	TIMSK  |= 0x02;
+#endif
 }
 
 
@@ -62,20 +63,20 @@ void port_timer_load_append(archtype_t append_val)
 	OCR0A  = (reload_val  & 0xFF);	
 }
 
-extern uint32_t port_timer_halt(void)
+uint32_t port_timer_halt(void)
 {
 	uint32_t ret = TCNT0;
 	TCCR0B = 0;
 	return(ret);
 }
 
-extern void port_timer_resume(void)
+void port_timer_resume(void)
 {
 	TCCR0B = 0x07;
 }
 
 
-extern void timer_match_handler(void)
+void timer_match_handler(void)
 {
 	extern tcb_t timer_tcb;
 	kernel_irq_in();
@@ -84,7 +85,7 @@ extern void timer_match_handler(void)
 	kernel_irq_out();
 }
 
-extern void timer_ovf_handler(void)
+void timer_ovf_handler(void)
 {
 	kernel_irq_in();
 	kernel_irq_out();

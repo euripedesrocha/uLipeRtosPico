@@ -1,13 +1,14 @@
-@
-@			ULIPE RTOS PICO
-@	file k_port_avr_tiny_a.S
-@   brief specific machine instruction level code
-@
-@
-
-
 #include "../../ulipe_rtos_kconfig.h"
 #if(ARCH_TYPE_AVR_TINY> 0)
+
+;
+;			ULIPE RTOS PICO
+;	file k_port_avr_tiny_a.S
+;   brief specific machine instruction level code
+;
+;
+
+
 
 #define __SPL 		0x3d
 #define __SPH  		0x3e
@@ -17,7 +18,7 @@
 #define __GIFR    	0x3A
 
 
-		@extern kernel variables
+		;extern kernel variables
 		.extern k_current_task
 		.extern k_high_prio_task
 		.extern k_running
@@ -25,7 +26,7 @@
 		.extern timer_ovf_handler
 
 
-		@export symbols
+		;export symbols
 		.global port_irq_lock
 		.global port_irq_unlock
 		.global port_from_isr
@@ -45,20 +46,20 @@ port_irq_lock:
 		in	r24, __SREG
 		cli
     	ret
-@------------------------------------------------------------------------------------------------
+;------------------------------------------------------------------------------------------------
 port_irq_unlock:
 		out __SREG,r24 
     	ret
-@------------------------------------------------------------------------------------------------
+;------------------------------------------------------------------------------------------------
 port_from_isr:
 
     	ret
 
-@--------------------------------------------------------------------------------------------------
+;--------------------------------------------------------------------------------------------------
 port_set_break:
    		ret
 
-@--------------------------------------------------------------------------------------------------
+;--------------------------------------------------------------------------------------------------
 port_start_kernel:
 		push r18
 		push r19
@@ -67,22 +68,22 @@ port_start_kernel:
 		push r22
 		push r23
 		push r24
-		push r25						@ allocate workspace (we dont want to corrupt stack here)
+		push r25						; allocate workspace (we dont want to corrupt stack here)
 		cli
 
-		ldi r24, #0x01					
-		sts r24, k_running				@ kernel running!
-		lds r24, k_high_prio_task		@ obtains the first task ready to run and
-		lds r25, k_high_prio_task + 1	@ make it the current task
-		sts r24, k_current_task			@	
-		sts r25, k_current_task	+ 1		@
-		movw r30, r24					@
-		ld   r24, z+					@
-		ld   r25, z						@
-		out  __SPL, r24					@ Load the first task context 
-		out	 __SPH, r25					@ it is resides on stack
+		ldi r24, 0x01					
+		sts k_running,r24				; kernel running!
+		lds r24, k_high_prio_task		; obtains the first task ready to run and
+		lds r25, k_high_prio_task + 1	; make it the current task
+		sts k_current_task,r24			;	
+		sts k_current_task	+ 1,r25		;
+		movw r30, r24					;
+		ld   r24, z+					;
+		ld   r25, z						;
+		out  __SPL, r24					; Load the first task context 
+		out	 __SPH, r25					; it is resides on stack
 
-		pop  r0							@ restore the registers (which holds the initial context)
+		pop  r0							; restore the registers (which holds the initial context)
 		pop  r1		
 		pop  r2		
 		pop  r3		
@@ -114,11 +115,11 @@ port_start_kernel:
 		pop  r29		
 		pop  r30		
 		pop  r31
-		out  r31, __SREG
+		out  __SREG,r31
 		pop  r31
 		ret
 
-@--------------------------------------------------------------------------------------------------
+;--------------------------------------------------------------------------------------------------
 INT0_vect:
 		push  r31
 		in 	  r31, __SREG
@@ -153,30 +154,36 @@ INT0_vect:
 		push  r3		
 		push  r2		
 		push  r1		
-		push  r0						@ save all cpu regs			
+		push  r0						; save all cpu regs			
 
-		cbi __GIFR,6
-		cbi __GIMSK,6
+		in r24, __GIFR
+		andi r24, ~0x40
+		out __GIFR, r24 
+
+		in r24, __GIMSK
+		andi r24, ~0x40
+		out __GIMSK, r24 
+
 		 
-		in  r24, __SPL					@ 	
-		in	r25, __SPH					@
-		lds r22, k_current_task			@ Save the current context to its owner tcb
-		lds r23, k_current_task + 1		@
-		movw r30, r22					@
-		st  r24,z+						@
-		st  r25,z 						@
+		in  r24, __SPL					; 	
+		in	r25, __SPH					;
+		lds r22, k_current_task			; Save the current context to its owner tcb
+		lds r23, k_current_task + 1		;
+		movw r30, r22					;
+		st  z+,r24						;
+		st  z, r25 						;
 
-		lds r24, k_high_prio_task		@ obtains the next ready to run task
-		lds r25, k_high_prio_task + 1	@ make it the current task
-		sts r24, k_current_task			@	
-		sts r25, k_current_task	+ 1		@
-		movw r30, r24					@
-		ld   r24, z+					@
-		ld   r25, z						@
-		out  __SPL,r24					@ Loads the task context 
-		out	 __SPH,r25					@ 
+		lds r24, k_high_prio_task		; obtains the next ready to run task
+		lds r25, k_high_prio_task + 1	; make it the current task
+		sts k_current_task,r24			;	
+		sts k_current_task	+ 1,r25		;
+		movw r30, r24					;
+		ld   r24, z+					;
+		ld   r25, z						;
+		out  __SPL,r24					; Loads the task context 
+		out	 __SPH,r25					; 
 
-		pop  r0							@ restore all cpu regs 
+		pop  r0							; restore all cpu regs 
 		pop  r1		
 		pop  r2		
 		pop  r3		
@@ -208,11 +215,11 @@ INT0_vect:
 		pop  r29		
 		pop  r30		
 		pop  r31
-		out  r31, __SREG
+		out  __SREG,r31
 		pop  r31
 
 	    reti
-@--------------------------------------------------------------------------------------------------
+;--------------------------------------------------------------------------------------------------
 TIM0_COMPA_vect:
 		push  r31
 		push  r30		
@@ -282,7 +289,7 @@ TIM0_COMPA_vect:
 		pop  r30		
 		pop  r31
 		reti
-@--------------------------------------------------------------------------------------------------
+;--------------------------------------------------------------------------------------------------
 TIM0_OVF_vect:
 		push  r31
 		push  r30		

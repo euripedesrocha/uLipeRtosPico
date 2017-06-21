@@ -1,3 +1,6 @@
+#include "../../ulipe_rtos_kconfig.h"
+#if(ARCH_TYPE_ARM_CM0 > 0)
+
 @
 @			ULIPE RTOS PICO
 @	file k_port_cm0_a.S
@@ -6,8 +9,6 @@
 @
 
 
-#include "../../ulipe_rtos_kconfig.h"
-#if(ARCH_TYPE_ARM_CM0 > 0)
 
 		.thumb
 		.syntax unified

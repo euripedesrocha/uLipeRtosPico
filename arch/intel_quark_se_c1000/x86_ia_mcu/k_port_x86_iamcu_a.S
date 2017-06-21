@@ -1,3 +1,5 @@
+#include "../../../ulipe_rtos_kconfig.h"
+#if(ARCH_TYPE_QUARK_IAMCU > 0)
 /**
  * 							ULIPE RTOS PICO
  *
@@ -8,8 +10,6 @@
  *
  */
  			
-#include "../../../ulipe_rtos_kconfig.h"
-#if(ARCH_TYPE_QUARK_IAMCU > 0)
 	
 #define PORT_START_VECTOR	$0x20
 #define PORT_SWAP_VECTOR	$0x21

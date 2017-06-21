@@ -76,7 +76,7 @@ extern void port_init_machine(void);
  *  @param
  *  @return
  */
-extern void port_start_timer(archtype_t reload_val);
+extern void port_start_timer(uint32_t reload_val);
 
 
 /**
@@ -85,7 +85,7 @@ extern void port_start_timer(archtype_t reload_val);
  *  @param
  *  @return
  */
-extern void port_timer_load_append(archtype_t append_val);
+extern void port_timer_load_append(uint32_t append_val);
 
 
 /**

@@ -73,14 +73,7 @@ static void timer_rebuild_timeline(ktimer_t *t, archtype_t *key)
 	ULIPE_ASSERT(t != NULL);
 	ULIPE_ASSERT(key != NULL);
 	archtype_t cmd;
-	archtype_t tim = port_timer_halt();
 
-
-	t->load_val = tim + t->timer_to_wait;
-	t->running  = true;
-	t->expired  = false;
-
-	port_timer_resume();
 
 	/* put the new timer on timeline list */
 	sys_dlist_append(&k_timed_list, &t->timer_list_link);
@@ -89,6 +82,13 @@ static void timer_rebuild_timeline(ktimer_t *t, archtype_t *key)
 	/* check if timer is not running */
 	if(no_timers) {
 		cmd = K_TIMER_LOAD_FRESH;
+
+		t->load_val = t->timer_to_wait;
+		t->running  = true;
+		t->expired  = false;
+
+
+		
 	} else {
 		cmd = K_TIMER_REFRESH;
 		/* memorize the point of timeline when timer was added, we
@@ -96,6 +96,13 @@ static void timer_rebuild_timeline(ktimer_t *t, archtype_t *key)
 		 * to be loaded on timer IP when this timer 
 		 * will be selected
 		 */
+			uint32_t tim = port_timer_halt();
+
+
+			t->load_val = tim + t->timer_to_wait;
+			t->running  = true;
+			t->expired  = false;
+
 	}
 	port_irq_unlock(*key);
 	thread_set_signals(&timer_tcb,cmd);
@@ -132,7 +139,7 @@ void timer_dispatcher(void *args)
 		if(!signals) {
 			signals = thread_wait_signals(NULL, K_TIMER_LOAD_FRESH | K_TIMER_DISPATCH | K_TIMER_REFRESH, 
 					k_wait_match_any, &err);
-			ULIPE_ASSERT(err == k_status_ok);
+			ULIPE_ASSERT(err != k_status_error);
 
 		}
 
@@ -141,6 +148,7 @@ void timer_dispatcher(void *args)
 		if(signals & K_TIMER_DISPATCH) {
 			signals &= ~(K_TIMER_DISPATCH);
 			clear_msk |= K_TIMER_DISPATCH;
+			port_timer_halt();
 
 			/*
 			 * we know how timer needs to be woken
@@ -183,6 +191,7 @@ void timer_dispatcher(void *args)
 				no_timers = true;
 			} else {
 				port_timer_load_append(actual_timer->load_val);
+				port_timer_resume();
 			}
 
 		}
@@ -193,7 +202,7 @@ void timer_dispatcher(void *args)
 			clear_msk |= K_TIMER_REFRESH;
 			no_timers = false;
 
-
+			port_timer_halt();
 			key = port_irq_lock();
 
 
@@ -204,6 +213,8 @@ void timer_dispatcher(void *args)
 				port_timer_load_append(actual_timer->load_val);
 
 			}
+			port_irq_unlock(key);
+			port_timer_resume();
 
 		}
 
@@ -222,9 +233,7 @@ void timer_dispatcher(void *args)
 
 
 			/* no timers running so put a new match value */
-			port_timer_load_append(actual_timer->load_val);
-
-
+			port_start_timer(actual_timer->load_val);
 			/* start the timeline running */
 			no_timers = false;
 		}
@@ -248,8 +257,13 @@ k_status_t timer_start(ktimer_t *t)
 		ret = k_status_invalid_param;
 		goto cleanup;
 	}
+	
+	if(t->running){
+		ret = k_timer_running;
+		goto cleanup;
+	}
 
-	if(!t->load_val) {
+	if(!t->timer_to_wait) {
 		/* timer not loaded cannot start */
 		ret = k_status_invalid_param;
 		goto cleanup;
@@ -389,7 +403,7 @@ cleanup:
 }
 
 
-k_status_t timer_set_load(ktimer_t *t, archtype_t load_val)
+k_status_t timer_set_load(ktimer_t *t, uint32_t load_val)
 {
 	k_status_t ret = k_status_ok;
 	archtype_t key;

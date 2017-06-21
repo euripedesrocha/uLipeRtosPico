@@ -23,9 +23,10 @@
 /* general kernel configuration */
 #define K_MINIMAL_STACK_VAL				64
 #define K_TIMER_DISPATCHER_PRIORITY		-1
-#define K_TIMER_DISPATCHER_STACK_SIZE	256
+#define K_TIMER_DISPATCHER_STACK_SIZE	128
 #define K_ENABLE_SEMAPHORE				1
 #define K_ENABLE_MESSAGING				1
+#define K_ENABLE_TIMERS					1
 
 
 #endif

@@ -12,77 +12,84 @@
 #include "include/arch/k_port_avr_tiny_defs.h"
 
 #if(ARCH_TYPE_AVR_TINY > 0)
+#include <avr/io.h>
+#include <avr/interrupt.h>
 
 
 
 archtype_t *port_create_stack_frame(archtype_t *stack, thread_t thr_func, void *cookie)
 {
-    avr_tiny_xcpt_contents_t *ptr = ((avr_tiny_xcpt_contents_t *)stack) - 1;
+    avr_tiny_xcpt_contents_t *ptr = ((avr_tiny_xcpt_contents_t *)stack);
+	--ptr;
 
     ptr->sreg = 0x80;
+	ptr->r0  = 0x0;	
+	ptr->r4  = 0x44;
+	ptr->r5  = 0x55;	
     ptr->r24 = (uint8_t)((uint16_t)cookie & 0xff); 
     ptr->r25 = (uint8_t)(((uint16_t)cookie >> 8) & 0xff); 
-    ptr->pc  = (uint16_t)thr_func;
-
+    ptr->pcl  = ((uint16_t)thr_func) & 0xff ;
+    ptr->pch  = ((uint16_t)thr_func >> 8) & 0xff ;
     return((archtype_t *)ptr);
 }
 
 void port_swap_req(void)
 {
 	/* force int0 external interrupt */
-	GIMSK |= (1 << 6);
-	GIFR  |= (1 << 6);
+	EIMSK |= (1 << INTF0);
+	EIFR  |= (1 << INTF0);
 }
 
 void port_init_machine(void)
 {
 	/* interrupts initally shutdown */
-	GIMSK  = 0;
-	SREG   = 0;
+	EIMSK = 0;
+	EIFR  = 0;
 #if(K_ENABLE_TIMERS > 0)
 	/* enable timer and match engine */
-	TCCR0A  = 0;
-	TCCR0B  = 0x00;
-	TIMSK  |= 0x02;
+	TCCR1A  = 0;
+	TCCR1B  = 0x00;
+	TIMSK1  = (1 << OCIE1A) | (1 << TOIE1); 
 #endif
 }
 
 
 #if(K_ENABLE_TIMERS > 0)
 
-void port_start_timer(archtype_t reload_val)
+void port_start_timer(uint32_t reload_val)
 {
-	TCNT0  = 0;
-	OCR0A  = (reload_val  & 0xFF);
-	TIMSK |= 0x10;
-	TCCR0B = 0x07;
+	TCNT1  = 0;
+	OCR1A  = (reload_val  & 0xFFFF);
+	TIMSK1  = (1 << OCIE1A) | (1 << TOIE1); 
+	TCCR1B = 0x05;
 }
 
-void port_timer_load_append(archtype_t append_val)
+void port_timer_load_append(uint32_t append_val)
 {
-	OCR0A  = (reload_val  & 0xFF);	
+	OCR1A  = (append_val  & 0xFFFF);	
 }
 
 uint32_t port_timer_halt(void)
 {
-	uint32_t ret = TCNT0;
-	TCCR0B = 0;
+	TIMSK1  = 0; 
+	TCCR1B = 0;
+	uint32_t ret = TCNT1;
 	return(ret);
 }
 
 void port_timer_resume(void)
 {
-	TCCR0B = 0x07;
+	TIMSK1  = (1 << OCIE1A) | (1 << TOIE1); 
+	TCCR1B = 0x05;
 }
 
 
 void timer_match_handler(void)
 {
 	extern tcb_t timer_tcb;
-	kernel_irq_in();
 	/* request timeline handling */
+	port_timer_halt();
 	thread_set_signals(&timer_tcb, K_TIMER_DISPATCH);
-	kernel_irq_out();
 }
 
 void timer_ovf_handler(void)
@@ -91,6 +98,19 @@ void timer_ovf_handler(void)
 	kernel_irq_out();
 }
 
+
+ISR(TIMER1_COMPA_vect)
+{
+	kernel_irq_in();	
+	timer_match_handler();
+	kernel_irq_out();
+}
+
+ISR(TIMER1_OVF_vect)
+{
+	(void)0;
+	//timer_ovf_handler();
+}
 
 #endif
 

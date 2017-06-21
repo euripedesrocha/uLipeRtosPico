@@ -1,6 +1,8 @@
 #include "../../ulipe_rtos_kconfig.h"
 #if(ARCH_TYPE_AVR_TINY> 0)
 
+#include <avr/io.h>
+
 ;
 ;			ULIPE RTOS PICO
 ;	file k_port_avr_tiny_a.S
@@ -13,9 +15,10 @@
 #define __SPL 		0x3d
 #define __SPH  		0x3e
 #define __SREG		0x3F
-#define __MCUCR   	0x35
-#define __GIMSK   	0x3B
-#define __GIFR    	0x3A
+
+#define __EIMSK		0x1D
+#define __EIFR		0x1C
+
 
 
 		;extern kernel variables
@@ -34,8 +37,6 @@
 		.global port_set_break
         .global port_swap
 		.global INT0_vect 
-		.global TIM0_COMPA_vect
-		.global TIM0_OVF_vect
 
 
 
@@ -52,7 +53,7 @@ port_irq_unlock:
     	ret
 ;------------------------------------------------------------------------------------------------
 port_from_isr:
-
+		ldi r24, 0
     	ret
 
 ;--------------------------------------------------------------------------------------------------
@@ -156,13 +157,13 @@ INT0_vect:
 		push  r1		
 		push  r0						; save all cpu regs			
 
-		in r24, __GIFR
-		andi r24, ~0x40
-		out __GIFR, r24 
+		in r24, __EIMSK
+		andi r24, 0xFE
+		out __EIMSK, r24 
 
-		in r24, __GIMSK
-		andi r24, ~0x40
-		out __GIMSK, r24 
+		in r24, __EIFR
+		andi r24, 0xFE
+		out __EIFR, r24 
 
 		 
 		in  r24, __SPL					; 	
@@ -220,147 +221,6 @@ INT0_vect:
 
 	    reti
 ;--------------------------------------------------------------------------------------------------
-#if(K_ENABLE_TIMERS > 0)
-TIM0_COMPA_vect:
-		push  r31
-		push  r30		
-		push  r29		
-		push  r28		
-		push  r27		
-		push  r26		
-		push  r25		
-		push  r24		
-		push  r23		
-		push  r22		
-		push  r21		
-		push  r20		
-		push  r19		
-		push  r18		
-		push  r17		
-		push  r16		
-		push  r15		
-		push  r14		
-		push  r13		
-		push  r12		
-		push  r11		
-		push  r10		
-		push  r9		
-		push  r8		
-		push  r7		
-		push  r6		
-		push  r5		
-		push  r4	
-		push  r3		
-		push  r2		
-		push  r1		
-		push  r0							
-
-		call  timer_match_handler
-
-		pop  r0							
-		pop  r1		
-		pop  r2		
-		pop  r3		
-		pop  r4	
-		pop  r5		
-		pop  r6		
-		pop  r7		
-		pop  r8		
-		pop  r9		
-		pop  r10		
-		pop  r11		
-		pop  r12		
-		pop  r13		
-		pop  r14		
-		pop  r15		
-		pop  r16		
-		pop  r17		
-		pop  r18		
-		pop  r19		
-		pop  r20		
-		pop  r21		
-		pop  r22		
-		pop  r23		
-		pop  r24		
-		pop  r25		
-		pop  r26		
-		pop  r27		
-		pop  r28		
-		pop  r29		
-		pop  r30		
-		pop  r31
-		reti
-;--------------------------------------------------------------------------------------------------
-TIM0_OVF_vect:
-		push  r31
-		push  r30		
-		push  r29		
-		push  r28		
-		push  r27		
-		push  r26		
-		push  r25		
-		push  r24		
-		push  r23		
-		push  r22		
-		push  r21		
-		push  r20		
-		push  r19		
-		push  r18		
-		push  r17		
-		push  r16		
-		push  r15		
-		push  r14		
-		push  r13		
-		push  r12		
-		push  r11		
-		push  r10		
-		push  r9		
-		push  r8		
-		push  r7		
-		push  r6		
-		push  r5		
-		push  r4	
-		push  r3		
-		push  r2		
-		push  r1		
-		push  r0							
-
-		call  timer_ovf_handler
-
-		pop  r0							
-		pop  r1		
-		pop  r2		
-		pop  r3		
-		pop  r4	
-		pop  r5		
-		pop  r6		
-		pop  r7		
-		pop  r8		
-		pop  r9		
-		pop  r10		
-		pop  r11		
-		pop  r12		
-		pop  r13		
-		pop  r14		
-		pop  r15		
-		pop  r16		
-		pop  r17		
-		pop  r18		
-		pop  r19		
-		pop  r20		
-		pop  r21		
-		pop  r22		
-		pop  r23		
-		pop  r24		
-		pop  r25		
-		pop  r26		
-		pop  r27		
-		pop  r28		
-		pop  r29		
-		pop  r30		
-		pop  r31
-		reti
-#endif
 	
 .end
 #endif

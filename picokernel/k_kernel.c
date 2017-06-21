@@ -292,7 +292,7 @@ k_status_t k_sched_and_swap(void)
 	uint32_t stk_usage = (k_high_prio_task->stack_top - k_high_prio_task->stack_base);
 
 	/* stack monitor used during debug */
-	ULIPE_ASSERT( stk_usage <=  k_high_prio_task->stack_size * 4);
+	ULIPE_ASSERT( stk_usage <=  k_high_prio_task->stack_size * sizeof(archtype_t));
 
 #endif
 
@@ -379,8 +379,12 @@ void kernel_irq_in(void)
 	/* this function only can be called if os is executing  and from an isr*/
 	if(!k_running)
 		return;
+#if(ARCH_TYPE_AVR_TINY > 0)
+	(void)0;
+#else 		
 	if(!port_from_isr())
 		return;
+#endif
 
 	if(irq_counter < (archtype_t)0xFFFFFFFF)
 		irq_counter++;
@@ -391,8 +395,13 @@ void kernel_irq_out(void)
 	/* this function only can be called if os is executing  and from an isr*/
 	if(!k_running)
 		return;
+
+#if(ARCH_TYPE_AVR_TINY > 0)
+	(void)0;
+#else
 	if(!port_from_isr())
 		return;
+#endif
 
 	if(irq_counter > (archtype_t)0)
 		irq_counter--;

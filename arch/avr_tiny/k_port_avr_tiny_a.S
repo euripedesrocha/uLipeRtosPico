@@ -16,9 +16,13 @@
 #define __SPH  		0x3e
 #define __SREG		0x3F
 
-#define __EIMSK		0x1D
-#define __EIFR		0x1C
-
+#if (ARCH_ENABLE_AVR_TINY_SPECS > 0)
+	#define __EIMSK		0x3B
+	#define __EIFR		0x3A
+#else
+	#define __EIMSK		0x1D
+	#define __EIFR		0x1C
+#endif
 
 
 		;extern kernel variables
@@ -157,6 +161,16 @@ INT0_vect:
 		push  r1		
 		push  r0						; save all cpu regs			
 
+#if (ARCH_ENABLE_AVR_TINY_SPECS > 0)
+		in r24, __EIMSK
+		andi r24, ~(1 << 6)
+		out __EIMSK, r24 
+
+		in r24, __EIFR
+		andi r24, ~(1 << 6)
+		out __EIFR, r24 
+#else
+
 		in r24, __EIMSK
 		andi r24, 0xFE
 		out __EIMSK, r24 
@@ -164,7 +178,7 @@ INT0_vect:
 		in r24, __EIFR
 		andi r24, 0xFE
 		out __EIFR, r24 
-
+#endif
 		 
 		in  r24, __SPL					; 	
 		in	r25, __SPH					;
@@ -224,3 +238,4 @@ INT0_vect:
 	
 .end
 #endif
+

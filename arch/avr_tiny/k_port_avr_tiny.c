@@ -35,13 +35,24 @@ archtype_t *port_create_stack_frame(archtype_t *stack, thread_t thr_func, void *
 
 void port_swap_req(void)
 {
+#if (ARCH_ENABLE_AVR_TINY_SPECS > 0)	
+	GIMSK |= (1 << 6);
+	GIFR  |= (1 << 6);
+
+#else
 	/* force int0 external interrupt */
 	EIMSK |= (1 << INTF0);
 	EIFR  |= (1 << INTF0);
+#endif
 }
 
 void port_init_machine(void)
 {
+
+#if (ARCH_ENABLE_AVR_TINY_SPECS > 0)
+	GIMSK = 0;
+	GIFR  = 0;
+#else	
 	/* interrupts initally shutdown */
 	EIMSK = 0;
 	EIFR  = 0;
@@ -51,10 +62,11 @@ void port_init_machine(void)
 	TCCR1B  = 0x00;
 	TIMSK1  = (1 << OCIE1A) | (1 << TOIE1); 
 #endif
+#endif
 }
 
 
-#if(K_ENABLE_TIMERS > 0)
+#if(K_ENABLE_TIMERS > 0) && !defined(ARCH_ENABLE_AVR_TINY_SPECS)
 
 void port_start_timer(uint32_t reload_val)
 {
@@ -111,7 +123,8 @@ ISR(TIMER1_OVF_vect)
 	(void)0;
 	//timer_ovf_handler();
 }
-
+else 
+	#error "Tiny AVR does not suppor tickless timers yet"
 #endif
 
 uint8_t port_bit_fs_scan(archtype_t reg)
@@ -130,3 +143,4 @@ uint8_t port_bit_ls_scan(archtype_t reg)
 	return(ret);
 }
 #endif
+

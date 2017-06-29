@@ -101,7 +101,7 @@ static inline void ulipe_assert(bool x)
 #if K_DEBUG > 0
 #define ULIPE_ASSERT(x) ulipe_assert(x)
 #else
-#define ULIPE_ASSERT(x) (void)x
+#define ULIPE_ASSERT(x)
 #endif
 
 

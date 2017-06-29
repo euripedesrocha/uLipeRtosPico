@@ -192,12 +192,6 @@ k_status_t thread_suspend(tcb_t *t)
 {
 	k_status_t ret = k_status_ok;
 
-	if(t->thread_wait & K_THR_SUSPENDED) {
-		/* thread is already suspended */
-		ret = k_thread_susp;
-		goto cleanup;
-	}
-
 	if(port_from_isr()){
 		/* suspend cannot be called from ISR */
 		ret = k_status_illegal_from_isr;
@@ -210,6 +204,14 @@ k_status_t thread_suspend(tcb_t *t)
 		/* null thread can be the current */
 		t = k_current_task;
 		ULIPE_ASSERT(t!= NULL);
+	}
+
+
+	if(t->thread_wait & K_THR_SUSPENDED) {
+		/* thread is already suspended */
+		port_irq_unlock(key);
+		ret = k_thread_susp;
+		goto cleanup;
 	}
 
 

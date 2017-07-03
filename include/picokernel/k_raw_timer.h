@@ -16,6 +16,7 @@
 #define K_TIMER_LOAD_FRESH		0x01
 #define K_TIMER_DISPATCH 		0x02
 #define K_TIMER_REFRESH			0x04
+#define K_TIMER_TICK			0x08
 
 /* timer callback function type */
 typedef void (*ktimer_callback_t) (void * t);
@@ -83,6 +84,14 @@ k_status_t timer_set_callback(ktimer_t *t, ktimer_callback_t cb);
  *  @return
  */
 k_status_t timer_set_load(ktimer_t *t, uint32_t load_val);
+
+/**
+ *  @fn ticker_timer_wait()
+ *  @brief wait for a specified ticks
+ *  @param
+ *  @return
+ */
+k_status_t ticker_timer_wait(uint32_t ticks);
 
 #endif
 #endif

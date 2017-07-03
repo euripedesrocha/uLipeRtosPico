@@ -21,6 +21,7 @@
 #define K_THR_PEND_SIGNAL_ANY 		(0x20)
 #define K_THR_PEND_SIGNAL_ALL_C 	(0x40)
 #define K_THR_PEND_SIGNAL_ANY_C 	(0x80)
+#define K_THR_PEND_TICKER	 		(0x100)
 
 
 
@@ -44,6 +45,7 @@ typedef struct ktcb{
 	int8_t thread_prio;
 	bool created;
 	uint32_t stack_size;
+	uint32_t wake_tick;
 	archtype_t signals_wait;
 	archtype_t signals_actual;
 	archtype_t timer_wait;
@@ -65,6 +67,7 @@ typedef struct ktcb{
 				.thread_prio=priority,											\
 				.thread_wait=0,													\
 				.created=false,													\
+				.wake_tick=0,													\
 		}
 
 

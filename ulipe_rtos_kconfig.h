@@ -30,6 +30,8 @@
 #define K_TIMER_DISPATCHER_STACK_SIZE	128
 #define K_ENABLE_SEMAPHORE	1
 #define K_ENABLE_MESSAGING	1
-#define K_ENABLE_TIMERS		1
+#define K_ENABLE_TICKER     0
+#define K_ENABLE_TIMERS		0
+
 
 #endif

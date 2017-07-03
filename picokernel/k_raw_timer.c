@@ -8,21 +8,26 @@
 
 #include "ulipe_rtos_pico.h"
 
+#if (K_ENABLE_TICKER > 0)
+
+#define K_TIMER_NO_WAKEUP_TASK (archtype_t)0xFFFFFFFF
+
 
 #if(K_ENABLE_TIMERS > 0)
-
-#define K_TIMER_NO_WAKEUP_TASK (archtype_t)0
-
-
 /* static variables */
 static k_list_t k_timed_list;
 static archtype_t k_elapsed_time = 0;
 static bool no_timers = true;
+#endif
+
+uint32_t tick_count = 0;
+tcb_t * next_task_wake = NULL;
+static k_list_t k_ticker_list;
+
 
 THREAD_CONTROL_BLOCK_DECLARE(timer_tcb, K_TIMER_DISPATCHER_STACK_SIZE, K_TIMER_DISPATCHER_PRIORITY);
 
 /** private functions */
-
 
 /**
  *  @fn timer_period_sort()
@@ -30,6 +35,37 @@ THREAD_CONTROL_BLOCK_DECLARE(timer_tcb, K_TIMER_DISPATCHER_STACK_SIZE, K_TIMER_D
  *  @param
  *  @return
  */
+static void timer_step_tick(void) 
+{
+	k_list_t *head;
+	tcb_t *ret = NULL;
+
+	tick_count++;
+	/* no timer to run */
+	if(sys_dlist_is_empty(&k_ticker_list)) {
+		goto cleanup;
+	}
+
+	/* walk to list and check if task needs to be woken */
+	SYS_DLIST_FOR_EACH_CONTAINER(&k_ticker_list, ret, thr_link) {
+		if((next_task_wake->wake_tick >= ret->wake_tick) && (ret->wake_tick != 0)) {
+			next_task_wake = ret;
+		}
+	}
+
+cleanup:
+	return;
+}
+
+/**
+ *  @fn timer_period_sort()
+ *  @brief	sort all active timers on list to find which has the least time to wait
+ *  @param
+ *  @return
+ */
+
+#if(K_ENABLE_TIMERS > 0)
+ 
 static ktimer_t *timer_period_sort(k_list_t *tlist)
 {
 	ktimer_t *ret = NULL;
@@ -109,6 +145,7 @@ static void timer_rebuild_timeline(ktimer_t *t, archtype_t *key)
 	*key = port_irq_lock();
 
 }
+#endif
 
 /**
  *  @fn timer_dispatcher()
@@ -123,10 +160,12 @@ void timer_dispatcher(void *args)
 	ktimer_t *actual_timer;
 	archtype_t signals = 0, clear_msk =0;
 
+#if(K_ENABLE_TIMERS > 0)
 	archtype_t key = port_irq_lock();
 	sys_dlist_init(&k_timed_list);
 	actual_timer = NULL;
 	port_irq_unlock(key);
+#endif
 
 	for(;;){
 		/* The dispatcher manages the incoming commands for kernel timer, 
@@ -143,7 +182,40 @@ void timer_dispatcher(void *args)
 
 		}
 
+		if(signals & K_TIMER_TICK) {
+			signals &= ~(K_TIMER_TICK);
+			clear_msk |= K_TIMER_TICK;
 
+			/* check if exist some thread to wake */
+			archtype_t key = port_irq_lock();
+			timer_step_tick();
+
+
+			/* check if time to wakeup */
+			if(tick_count >= next_task_wake->wake_tick) {
+				/* put this thread on ready list making it ready*/
+				next_task_wake->thread_wait &= ~(THR_PEND_TICKER);
+				sys_dlist_remove(&next_task_wake->thr_link);
+				k_status_t err = k_make_ready(thr);
+				ULIPE_ASSERT(err == k_status_ok);
+			}
+
+
+			/* get the next task */
+			k_list_t *head = sys_dlist_peek_head(k_ticker_list);
+			ULIPE_ASSERT(head != NULL);	
+			
+			/* no need to sort the nearest task 
+			 * which will wakeup will found on next
+			 * tick 
+			 */
+			next_task_wake = CONTAINER_OF(head, tcb_t, thr_link);
+
+			port_irq_unlock(key);
+
+		}
+
+#if(K_ENABLE_TIMERS > 0)		
 		/* select commands with priority */
 		if(signals & K_TIMER_DISPATCH) {
 			signals &= ~(K_TIMER_DISPATCH);
@@ -237,7 +309,7 @@ void timer_dispatcher(void *args)
 			/* start the timeline running */
 			no_timers = false;
 		}
-
+#endif
 		thread_clr_signals(&timer_tcb, clear_msk);
 		clear_msk = 0;
 
@@ -247,6 +319,7 @@ void timer_dispatcher(void *args)
 
 
 /** public functions */
+#if(K_ENABLE_TIMERS > 0)
 
 k_status_t timer_start(ktimer_t *t)
 {
@@ -437,4 +510,35 @@ cleanup:
 	return(ret);
 }
 
+#endif
+
+
+k_status_t ticker_timer_wait(uint32_t ticks)
+{
+	k_status_t ret = k_status_ok;
+	if(!ticks) {
+		ret = k_status_invalid_param
+		return(ret);
+	}
+
+	tcb_t *thr = thread_get_current();
+	ULIPE_ASSERT(t != NULL);
+
+	archtype_t key = port_irq_lock();
+
+	ret = k_make_not_ready(thr);
+	ULIPE_ASSERT(ret == k_status_ok);
+	thr->wake_tick = tick_count + ticks;
+	thr->thread_wait |= THR_PEND_TICKER;
+
+	/* put the new timer on ticker list */
+	sys_dlist_append(&k_ticker_list, &thr->thr_link);
+
+	port_irq_unlock(key);
+	/* reescheduling is needed */
+	ret = k_sched_and_swap();
+	ULIPE_ASSERT(ret == k_status_ok);	
+cleanup:
+	return(ret);
+}
 #endif

@@ -339,7 +339,7 @@ k_status_t kernel_init(void)
 	k_status_t err = thread_create(&k_idle_thread,NULL, &idle_thread);
 	ULIPE_ASSERT(err == k_status_ok);
 
-#if(K_ENABLE_TIMERS > 0)
+#if(K_ENABLE_TICKER > 0)
 	err = thread_create(&timer_dispatcher,NULL, &timer_tcb);
 	ULIPE_ASSERT(err == k_status_ok);
 #endif

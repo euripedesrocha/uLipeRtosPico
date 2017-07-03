@@ -61,8 +61,22 @@ void port_init_machine(void)
 	TCCR1A  = 0;
 	TCCR1B  = 0x00;
 	TIMSK1  = (1 << OCIE1A) | (1 << TOIE1); 
+#if (K_ENABLE_TICKER > 0)
+	#if !defined(K_MACHINE_CLOCK) || !defined(K_TICKER_RATE)
+	#error "The SoC clock and ticker rate needs to be defined to use tick feature!"
+	#endif
+
+	TCCR0A  = 0;
+	TCCR0B  = 0x00;
+	TIMSK0  = (1 << OCIE0A) | (1 << TOIE0); 
+	OCR0A = K_MACHINE_CLOCK / (K_TICKER_RATE * 1024);
+	TCCR0B  = 0x07;	
+
 #endif
 #endif
+#endif
+
+
 }
 
 
@@ -123,8 +137,24 @@ ISR(TIMER1_OVF_vect)
 	(void)0;
 	//timer_ovf_handler();
 }
-else 
-	#error "Tiny AVR does not suppor tickless timers yet"
+#endif
+
+
+#if (K_ENABLE_TICKER > 0)
+
+void timer_tick_handler(void)
+{
+	extern tcb_t timer_tcb;
+	thread_set_signals(&timer_tcb, K_TIMER_TICK);	
+}
+
+
+ISR(TIMER0_COMPA_vect)
+{
+	kernel_irq_in();	
+	timer_tick_handler();
+	kernel_irq_out();
+}
 #endif
 
 uint8_t port_bit_fs_scan(archtype_t reg)

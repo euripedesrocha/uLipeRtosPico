@@ -54,7 +54,33 @@ void port_init_machine(void)
 	SCB->SHP[11] = 0xFF;
 	SCB->SHP[7]  = 0xFF;
 
+#if (K_ENABLE_TICKER > 0)
+	#if !defined(K_MACHINE_CLOCK) || !defined(K_TICKER_RATE)
+	#error "The SoC clock and ticker rate needs to be defined to use tick feature!"
+	#endif
+
+	SysTick->CTRL = 0;
+	SysTick->LOAD = (K_MACHINE_CLOCK / K_TICKER_RATE);
+	SysTick->CTRL = 0x07;
+#endif
 }
+
+#if (K_ENABLE_TICKER > 0)
+
+void timer_tick_handler(void)
+{
+	extern tcb_t timer_tcb;
+	thread_set_signals(&timer_tcb, K_TIMER_TICK);	
+}
+
+
+void SysTick_Handler(void)
+{
+	kernel_irq_in();	
+	timer_tick_handler();
+	kernel_irq_out();
+}
+#endif
 
 
 #if(K_ENABLE_TIMERS > 0)

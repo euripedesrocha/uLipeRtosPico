@@ -16,11 +16,6 @@
 /* architecture definition */
 #define ARCH_TYPE_AVR_TINY	1
 
-/* enable avr tiny specific code (disabled for use with atmega 64 or below)
- */
-#define ARCH_ENABLE_AVR_TINY_SPECS	0
-
-
 /* architecture data width */
 #define K_ARCH_MEM_WIDTH_BYTE	1
 
@@ -30,8 +25,5 @@
 #define K_TIMER_DISPATCHER_STACK_SIZE	128
 #define K_ENABLE_SEMAPHORE	1
 #define K_ENABLE_MESSAGING	1
-#define K_ENABLE_TICKER     0
-#define K_ENABLE_TIMERS		0
-
 
 #endif

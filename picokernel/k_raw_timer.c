@@ -37,7 +37,6 @@ THREAD_CONTROL_BLOCK_DECLARE(timer_tcb, K_TIMER_DISPATCHER_STACK_SIZE, K_TIMER_D
  */
 static void timer_step_tick(void) 
 {
-	k_list_t *head;
 	tcb_t *ret = NULL;
 
 	tick_count++;
@@ -48,7 +47,11 @@ static void timer_step_tick(void)
 
 	/* walk to list and check if task needs to be woken */
 	SYS_DLIST_FOR_EACH_CONTAINER(&k_ticker_list, ret, thr_link) {
-		if((next_task_wake->wake_tick >= ret->wake_tick) && (ret->wake_tick != 0)) {
+		if(next_task_wake == NULL) {
+			next_task_wake = ret;
+		}
+
+		if((next_task_wake->wake_tick > ret->wake_tick) && (ret->wake_tick != 0)) {
 			next_task_wake = ret;
 		}
 	}
@@ -157,15 +160,20 @@ void timer_dispatcher(void *args)
 {
 	(void)args;
 	k_status_t err;
-	ktimer_t *actual_timer;
 	archtype_t signals = 0, clear_msk =0;
 
-#if(K_ENABLE_TIMERS > 0)
 	archtype_t key = port_irq_lock();
+
+#if(K_ENABLE_TIMERS > 0)
+	ktimer_t *actual_timer;
 	sys_dlist_init(&k_timed_list);
 	actual_timer = NULL;
-	port_irq_unlock(key);
 #endif
+
+	sys_dlist_init(&k_ticker_list);
+	next_task_wake = NULL;
+	port_irq_unlock(key);
+
 
 	for(;;){
 		/* The dispatcher manages the incoming commands for kernel timer, 
@@ -176,7 +184,7 @@ void timer_dispatcher(void *args)
 		 * a timer poll, and after sorts the timer list for the next wakeup
 		 */
 		if(!signals) {
-			signals = thread_wait_signals(NULL, K_TIMER_LOAD_FRESH | K_TIMER_DISPATCH | K_TIMER_REFRESH, 
+			signals = thread_wait_signals(NULL, K_TIMER_LOAD_FRESH | K_TIMER_DISPATCH | K_TIMER_REFRESH | K_TIMER_TICK,
 					k_wait_match_any, &err);
 			ULIPE_ASSERT(err != k_status_error);
 
@@ -192,24 +200,42 @@ void timer_dispatcher(void *args)
 
 
 			/* check if time to wakeup */
-			if(tick_count >= next_task_wake->wake_tick) {
+			if((tick_count >= next_task_wake->wake_tick) && (next_task_wake != NULL)) {
 				/* put this thread on ready list making it ready*/
-				next_task_wake->thread_wait &= ~(THR_PEND_TICKER);
+				next_task_wake->thread_wait &= ~(K_THR_PEND_TICKER);
 				sys_dlist_remove(&next_task_wake->thr_link);
-				k_status_t err = k_make_ready(thr);
+				k_status_t err = k_make_ready(next_task_wake);
 				ULIPE_ASSERT(err == k_status_ok);
+
+				/* get the next task */
+				k_list_t *head = sys_dlist_peek_head(&k_ticker_list);
+				if(!head) {
+					next_task_wake = NULL;
+				} else {
+					next_task_wake = CONTAINER_OF(head, tcb_t, thr_link);
+				}
+
+
+				/* remove all expired tasks from delayed list */
+				while((tick_count >= next_task_wake->wake_tick) && (next_task_wake != NULL)) {
+					/* put this thread on ready list making it ready*/
+					next_task_wake->thread_wait &= ~(K_THR_PEND_TICKER);
+					sys_dlist_remove(&next_task_wake->thr_link);
+					k_status_t err = k_make_ready(next_task_wake);
+					ULIPE_ASSERT(err == k_status_ok);
+
+					/* get the next task */
+					k_list_t *head = sys_dlist_peek_head(&k_ticker_list);
+					if(!head) {
+						next_task_wake = NULL;
+					} else {
+						next_task_wake = CONTAINER_OF(head, tcb_t, thr_link);
+					}
+				}
+
 			}
 
 
-			/* get the next task */
-			k_list_t *head = sys_dlist_peek_head(k_ticker_list);
-			ULIPE_ASSERT(head != NULL);	
-			
-			/* no need to sort the nearest task 
-			 * which will wakeup will found on next
-			 * tick 
-			 */
-			next_task_wake = CONTAINER_OF(head, tcb_t, thr_link);
 
 			port_irq_unlock(key);
 
@@ -517,19 +543,19 @@ k_status_t ticker_timer_wait(uint32_t ticks)
 {
 	k_status_t ret = k_status_ok;
 	if(!ticks) {
-		ret = k_status_invalid_param
-		return(ret);
+		ret = k_status_invalid_param;
+		goto cleanup;
 	}
 
 	tcb_t *thr = thread_get_current();
-	ULIPE_ASSERT(t != NULL);
+	ULIPE_ASSERT(thr != NULL);
 
 	archtype_t key = port_irq_lock();
 
 	ret = k_make_not_ready(thr);
 	ULIPE_ASSERT(ret == k_status_ok);
 	thr->wake_tick = tick_count + ticks;
-	thr->thread_wait |= THR_PEND_TICKER;
+	thr->thread_wait |= K_THR_PEND_TICKER;
 
 	/* put the new timer on ticker list */
 	sys_dlist_append(&k_ticker_list, &thr->thr_link);

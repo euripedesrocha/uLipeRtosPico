@@ -41,7 +41,8 @@ typedef void (*thread_t) (void *arg);
 typedef struct ktcb{
 	archtype_t *stack_top;
 	archtype_t *stack_base;
-	uint8_t thread_wait;
+	archtype_t stk_usage;
+	uint16_t thread_wait;
 	int8_t thread_prio;
 	bool created;
 	uint32_t stack_size;

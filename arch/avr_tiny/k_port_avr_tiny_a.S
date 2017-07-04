@@ -31,6 +31,8 @@
 		.extern k_running
 		.extern timer_match_handler
 		.extern timer_ovf_handler
+		.extern irq_nesting
+		.extern irq_counter
 
 
 		;export symbols
@@ -48,16 +50,36 @@
 
 
 port_irq_lock:
+		push r22
+		lds  r22,irq_counter
+		cpi  r22, #0
+		brne port_irq_lock_0
+		lds  r22,
 		in	r24, __SREG
 		cli
+port_irq_lock_0:
+		pop	r22
     	ret
 ;------------------------------------------------------------------------------------------------
 port_irq_unlock:
+		push r22
+		lds  r22, irq_counter
+		cpi	 r22, #0
+		brne port_irq_unlock_0
 		out __SREG,r24 
+port_irq_unlock_0:
+		pop	r22
     	ret
 ;------------------------------------------------------------------------------------------------
 port_from_isr:
-		ldi r24, 0
+		push r22
+		ldi r24, #0
+		lds	 r22, irq_counter
+		cpi	 r22, #0
+		breq port_from_isr_0
+		ldi	 r24, #1
+port_from_isr:
+		pop	r22
     	ret
 
 ;--------------------------------------------------------------------------------------------------

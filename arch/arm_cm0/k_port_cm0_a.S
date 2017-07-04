@@ -17,6 +17,8 @@
 		.extern k_current_task
 		.extern k_high_prio_task
 		.extern k_running
+		.extern irq_counter
+		.extern irq_nesting
 
 
 		@export symbols
@@ -35,22 +37,38 @@
 
 		.thumb_func
 port_irq_lock:
-		mrs 	r0, ipsr
+		ldr 	r1, =irq_nesting
+		ldr		r2,[r1]
+		mrs		r0, ipsr
 		cmp		r0, #0
-		bne 	port_irq_lock_0
+		bne		port_irq_lock_0
 		mrs 	r0, primask
+		cmp		r2, #254
+		bge		port_irq_lock_0
+		adds 	r2, #1
+		cmp		r2, #1
+		bne		port_irq_lock_0
 		cpsid 	i
 port_irq_lock_0:
+		str		r2, [r1]
 		bx		lr
 
 @------------------------------------------------------------------------------------------------
 		.thumb_func
 port_irq_unlock:
-		mrs 	r0, ipsr
-		cmp		r0, #0
+		ldr 	r1,=irq_nesting
+		ldr		r2,[r1]
+		mrs		r3, ipsr
+		cmp		r3, #0
+		bne		port_irq_unlock_0
+		cmp		r2,	#0
+		beq		port_irq_unlock_0
+		subs	r2, #1
+		cmp		r2, #0
 		bne		port_irq_unlock_0
 		msr 	primask,r0
 port_irq_unlock_0:
+		str		r2,[r1]
 		bx 		lr
 
 @------------------------------------------------------------------------------------------------

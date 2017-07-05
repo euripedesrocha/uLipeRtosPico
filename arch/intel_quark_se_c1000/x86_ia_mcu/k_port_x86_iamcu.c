@@ -14,7 +14,6 @@
 
 /* provide idt descriptor symbol */
 static port_intr_gate_desc_t port_idt_table[IDTPORT_IDT_SIZE] = {0};
-extern void port_first_swap(void);
 extern void port_swap(void);
 
 
@@ -209,10 +208,12 @@ extern void port_init_machine(void)
 
 
 	/* installs exceptions handlers */
-	idt_set_intr_gate_desc(PORT_START_VECTOR, (uint32_t)port_first_swap);
 	idt_set_intr_gate_desc(PORT_SWAP_VECTOR, (uint32_t)port_swap);
 
 }
+#if(K_ENABLE_TIMERS > 0) || (K_ENABLE_TICKER > 0)
+#error "x86IAMCU: this architecture has no builtin timers implemented!"
+#endif
 
 #if(K_ENABLE_TIMERS > 0)
 

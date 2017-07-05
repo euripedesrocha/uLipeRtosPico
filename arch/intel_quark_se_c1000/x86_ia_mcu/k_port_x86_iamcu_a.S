@@ -11,14 +11,14 @@
  */
  			
 	
-#define PORT_START_VECTOR	$0x20
-#define PORT_SWAP_VECTOR	$0x21
+#define PORT_SWAP_VECTOR	$0x20
 
 
 		@external  kernel variables
 		.extern k_current_task
 		.extern k_high_prio_task
 		.extern k_running
+		.extern irq_counter
 
 
 		@export symbols
@@ -30,7 +30,6 @@
 		.global port_set_break
 		.global	port_bit_fs_scan
 		.global port_bit_ls_scan
-		.global port_first_swap
 		.global port_swap
 
 
@@ -38,9 +37,16 @@
 		.section .text
 
 port_irq_lock:							@ 
+		pushl  	%ebp					@
+		movl  	%ebp, %esp				@
+		movl	-4(%ebp),%eax 			@
+		cmpl	$0, irq_counter			@ is in a ISR?
+		jne		port_irq_lock_0			@ no need to lock irq inside in a ISR
 		pushfl 							@ save interrupt states
 		cli								@
 		popl 	%eax 					@ uses pop instruction making the current eflags
+port_irq_lock_0:
+		popl	%ebp
 		ret 							@ to fall in eax reg
 
 
@@ -49,6 +55,8 @@ port_irq_unlock:
 		pushl  	%ebp					@
 		movl  	%ebp, %esp				@
 		movl	-4(%ebp),%eax 			@
+		cmpl	$0, irq_counter			@ is in a ISR?
+		jne		port_irq_lock_0			@ no need to lock irq inside in a ISR
 		testl   $0x200, %eax 			@ test if interrupts needs to be enabled
 		jz		port_irq_unlock_0		@ only enable if it already was enabled
 		seti   							@ before to lock it
@@ -58,6 +66,15 @@ port_irq_unlock_0:
 
 @------------------------------------------------------------------------------------------------
 port_from_isr:
+		pushl  	%ebp					@
+		movl  	%ebp, %esp				@
+		movl	-4(%ebp),%eax 			@
+		movl	$0, %eax				@
+		cmpl	$0, irq_counter			@
+		jne		port_from_isr_0			@
+		movl	$1, %eax
+port_from_isr_0:
+		popl    %ebp					@
 		ret
 
 @--------------------------------------------------------------------------------------------------
@@ -99,24 +116,8 @@ port_bit_ls_scan_cleanup:
 
 @--------------------------------------------------------------------------------------------------
 port_start_kernel:
-		pushl %ebp					@
-		movl  %ebp, %esp			@
-		seti 						@ enable interrupt acceptance by CPU
-		int   PORT_START_VECTOR		@ call the start kernel handler
-		nop
-		nop
-		nop
-		ret 
-@--------------------------------------------------------------------------------------------------
-port_swap_req:
-		int PORT_SWAP_VECTOR	 	@request a sw interrupt where the swap 
-		nop							@handler was previously installed
-		nop
-		ret
-
-
-@--------------------------------------------------------------------------------------------------
-port_first_swap:
+		pushl 	%ebp						@
+		movl  	%ebp, %esp					@
 		movl	k_high_prio_task, %ecx		@find the first task ready to run
 		movl	(%ecx), %eax
 		movl	(%eax), %esp				@marks os as running 
@@ -126,7 +127,15 @@ port_first_swap:
 		movl	(%ecx), (%eax)				@
 		popfl 								@setup initial eflags
 		popal								@first context
-		iret	
+		ret
+
+@--------------------------------------------------------------------------------------------------
+port_swap_req:
+		int PORT_SWAP_VECTOR	 	@request a sw interrupt where the swap
+		nop							@handler was previously installed
+		nop
+		ret
+
 
 @--------------------------------------------------------------------------------------------------
 port_swap:

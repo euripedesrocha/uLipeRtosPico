@@ -104,8 +104,7 @@ typedef struct {
 #define QM_IOAPIC ((qm_ioapic_reg_t *)QM_IOAPIC_BASE)
 
 
-#define PORT_START_VECTOR	0x20
-#define PORT_SWAP_VECTOR	0x21
+#define PORT_SWAP_VECTOR	0x20
 #define PORT_INITIAL_EFLAGS 0x200
 
 /*

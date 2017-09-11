@@ -225,26 +225,12 @@ k_status_t k_make_not_ready(tcb_t *thr)
 
 
 
-
-	if(thr->thread_prio < 0) {
-		uint8_t upper_prio = (((uint8_t)thr->thread_prio * -1 ) + K_PRIORITY_LEVELS -1 );
-		sys_dlist_remove(&thr->thr_link);
-
-		if(sys_dlist_is_empty(&k_rdy_list.list_head[upper_prio])){
-			k_rdy_list.bitmap &= ~(1 <<upper_prio);
-			if(!(k_rdy_list.bitmap & 0x70)) {
-				k_rdy_list.bitmap &= ~(1 << ((2 * K_PRIORITY_LEVELS)-1));
-			}
-		}
-
-	} else {
-		sys_dlist_remove(&thr->thr_link);
-		if(sys_dlist_is_empty(&k_rdy_list.list_head[thr->thread_prio])) {
-			k_rdy_list.bitmap &= ~(1 << thr->thread_prio);
-		}
-
-
+	sys_dlist_remove(&thr->thr_link);
+	if(sys_dlist_is_empty(&k_rdy_list.list_head[thr->thread_prio])) {
+		k_rdy_list.bitmap &= ~(1 << thr->thread_prio);
 	}
+
+
 
 	return(err);
 
@@ -347,7 +333,7 @@ void k_work_list_init(k_work_list_t *l)
 
 
 	l->bitmap = 0;
-	for(uint8_t i=0; i < ((2 * K_PRIORITY_LEVELS) - 1); i++)
+	for(uint8_t i=0; i < K_PRIORITY_LEVELS ; i++)
 		sys_dlist_init(&l->list_head[i]);
 }
 
@@ -378,7 +364,7 @@ k_status_t kernel_init(void)
 	ULIPE_ASSERT(err == k_status_ok);
 
 	k_make_not_ready(&idle_thread);
-	idle_thread.thread_prio = 0x80;
+	idle_thread.thread_prio = K_IDLE_THREAD_PRIO;
 
 #if(K_ENABLE_TICKER > 0)
 	err = thread_create(&timer_dispatcher,NULL, &timer_tcb);

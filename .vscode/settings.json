@@ -1,7 +1,0 @@
-{
-    "files.associations": {
-        "k_raw_timer.c": "cpp",
-        "k_kernel.c": "cpp",
-        "k_raw_timer.h": "c"
-    }
-}

@@ -17,20 +17,15 @@
 #define ARCH_TYPE_ARM_CM0	1
 #define K_SVC_MAX_PRIO		255
 #define K_MACHINE_CLOCK		48000000
-#define K_TICKER_RATE		10
+#define K_TICKER_RATE		100
 
 /* architecture data width */
-#define K_ARCH_MEM_WIDTH_WORD	1
+#define K_ARCH_MEM_WIDTH_WORD	        1
 
 
 /* general kernel configuration */
-<<<<<<< HEAD
-#define K_MINIMAL_STACK_VAL	64
-#define K_TIMER_DISPATCHER_PRIORITY	15
-=======
-#define K_MINIMAL_STACK_VAL			64
-#define K_TIMER_DISPATCHER_PRIORITY	-1
->>>>>>> ffe4ef66baf8e81422e3a5f4195057ce531f1a8f
+#define K_MINIMAL_STACK_VAL	            64
+#define K_TIMER_DISPATCHER_PRIORITY	    15
 #define K_TIMER_DISPATCHER_STACK_SIZE	128
 #define K_ENABLE_SEMAPHORE	1
 #define K_ENABLE_MESSAGING	1

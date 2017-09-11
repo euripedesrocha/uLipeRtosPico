@@ -41,14 +41,9 @@ typedef void (*thread_t) (void *arg);
 typedef struct ktcb{
 	archtype_t *stack_top;
 	archtype_t *stack_base;
-<<<<<<< HEAD
-	uint8_t thread_wait;
-	uint8_t thread_prio;
-=======
 	archtype_t stk_usage;
 	uint16_t thread_wait;
 	int8_t thread_prio;
->>>>>>> ffe4ef66baf8e81422e3a5f4195057ce531f1a8f
 	bool created;
 	uint32_t stack_size;
 	uint32_t wake_tick;
@@ -161,6 +156,8 @@ k_status_t thread_set_prio(tcb_t *t, int8_t prio);
  *  @return
  */
 tcb_t *thread_get_current(void);
+
+
 
 
 

@@ -10,6 +10,8 @@
 
 
 
+
+
 		.thumb
 		.syntax unified
 
@@ -17,12 +19,7 @@
 		.extern k_current_task
 		.extern k_high_prio_task
 		.extern k_running
-<<<<<<< HEAD
 		.extern irq_lock_nest
-=======
-		.extern irq_counter
-		.extern irq_nesting
->>>>>>> ffe4ef66baf8e81422e3a5f4195057ce531f1a8f
 
 
 		@export symbols
@@ -41,7 +38,6 @@
 
 		.thumb_func
 port_irq_lock:
-<<<<<<< HEAD
 		ldr 	r1, =irq_lock_nest
 		ldr		r2, [r1]
 		cmp		r2, #0
@@ -50,28 +46,11 @@ port_irq_lock:
 port_irq_lock_0:
 		adds r2, #1
 		str  r2, [r1]
-=======
-		ldr 	r1, =irq_nesting
-		ldr		r2,[r1]
-		mrs		r0, ipsr
-		cmp		r0, #0
-		bne		port_irq_lock_0
-		mrs 	r0, primask
-		cmp		r2, #254
-		bge		port_irq_lock_0
-		adds 	r2, #1
-		cmp		r2, #1
-		bne		port_irq_lock_0
-		cpsid 	i
-port_irq_lock_0:
-		str		r2, [r1]
->>>>>>> ffe4ef66baf8e81422e3a5f4195057ce531f1a8f
 		bx		lr
 
 @------------------------------------------------------------------------------------------------
 		.thumb_func
 port_irq_unlock:
-<<<<<<< HEAD
 		ldr 	r1, =irq_lock_nest
 		ldr		r2, [r1]
 		subs	r2, #1
@@ -80,21 +59,6 @@ port_irq_unlock:
 		cpsie   I
 port_irq_unlock_0:
 		str  r2, [r1]
-=======
-		ldr 	r1,=irq_nesting
-		ldr		r2,[r1]
-		mrs		r3, ipsr
-		cmp		r3, #0
-		bne		port_irq_unlock_0
-		cmp		r2,	#0
-		beq		port_irq_unlock_0
-		subs	r2, #1
-		cmp		r2, #0
-		bne		port_irq_unlock_0
-		msr 	primask,r0
-port_irq_unlock_0:
-		str		r2,[r1]
->>>>>>> ffe4ef66baf8e81422e3a5f4195057ce531f1a8f
 		bx 		lr
 
 @------------------------------------------------------------------------------------------------

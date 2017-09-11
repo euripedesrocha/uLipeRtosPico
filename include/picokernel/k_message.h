@@ -73,4 +73,8 @@ k_status_t message_remove(kmsg_t *msg, void *data, uint32_t *size,bool peek, msg
 
 
 #endif
+
+
 #endif
+
+

@@ -10,11 +10,9 @@
 #include "ulipe_rtos_pico.h"
 
 /**static variables **/
-<<<<<<< HEAD
-THREAD_CONTROL_BLOCK_DECLARE(idle_thread, 32, K_IDLE_THREAD_PRIO);
-=======
 THREAD_CONTROL_BLOCK_DECLARE(idle_thread, 64/sizeof(archtype_t), 0);
->>>>>>> ffe4ef66baf8e81422e3a5f4195057ce531f1a8f
+
+
 
 static k_work_list_t k_rdy_list;
 static k_list_t k_timed_list;
@@ -77,16 +75,9 @@ static tcb_t *k_sched(k_work_list_t *l)
 
 	ULIPE_ASSERT(l != NULL);
 
-<<<<<<< HEAD
 	/* no tasks ready, just hint to kernel to load the idle task */
 	if(!l->bitmap)
 		goto cleanup;
-=======
-	/* no ready task, switch to idle */
-	if(!l->bitmap){
-		goto cleanup;
-	}
->>>>>>> ffe4ef66baf8e81422e3a5f4195057ce531f1a8f
 
 	/*
 	 * The scheduling alghoritm uses a classical multilevel
@@ -103,20 +94,6 @@ static tcb_t *k_sched(k_work_list_t *l)
 	if(head != NULL)
 		ret = CONTAINER_OF(head, tcb_t, thr_link);
 
-<<<<<<< HEAD
-=======
-	if(l->bitmap & (1 << (2 * (K_PRIORITY_LEVELS)- 1))) {
-		uint8_t prio = (l->bitmap & 0x70) >> (K_PRIORITY_LEVELS - 1);
-		prio = ((K_PRIORITY_LEVELS - 1) - k_clz_table[prio]);
-		head = sys_dlist_peek_head(&l->list_head[prio + K_PRIORITY_LEVELS - 1]);
-		ret = CONTAINER_OF(head, tcb_t, thr_link);
-
-	} else {
-		uint8_t prio = ((K_PRIORITY_LEVELS - 1) - k_clz_table[l->bitmap]);
-		head = sys_dlist_peek_head(&l->list_head[prio]);
-		ret = CONTAINER_OF(head, tcb_t, thr_link);
-	}
->>>>>>> ffe4ef66baf8e81422e3a5f4195057ce531f1a8f
 cleanup:
 	return(ret);
 }

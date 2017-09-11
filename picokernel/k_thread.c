@@ -507,3 +507,5 @@ tcb_t *thread_get_current(void)
 	ret = k_current_task;
 	return(ret);
 }
+
+

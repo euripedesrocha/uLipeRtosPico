@@ -96,5 +96,7 @@ k_status_t timer_set_load(ktimer_t *t, uint32_t load_val);
  */ 
 k_status_t ticker_timer_wait(uint32_t ticks);
 
+
+
 #endif
 #endif

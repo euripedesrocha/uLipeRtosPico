@@ -47,31 +47,6 @@
 
 		.section .text
 
-<<<<<<< HEAD
-=======
-
-port_irq_lock:
-		push r22
-		lds  r22,irq_counter
-		cpi  r22, #0
-		brne port_irq_lock_0
-		lds  r22,
-		in	r24, __SREG
-		cli
-port_irq_lock_0:
-		pop	r22
-    	ret
-;------------------------------------------------------------------------------------------------
-port_irq_unlock:
-		push r22
-		lds  r22, irq_counter
-		cpi	 r22, #0
-		brne port_irq_unlock_0
-		out __SREG,r24 
-port_irq_unlock_0:
-		pop	r22
-    	ret
->>>>>>> ffe4ef66baf8e81422e3a5f4195057ce531f1a8f
 ;------------------------------------------------------------------------------------------------
 port_from_isr:
 		push r22
@@ -259,7 +234,9 @@ INT0_vect:
 
 	    reti
 ;--------------------------------------------------------------------------------------------------
-	
+
+
+
 .end
 #endif
 

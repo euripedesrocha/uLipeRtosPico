@@ -252,3 +252,5 @@ k_status_t semaphore_give(ksema_t *s, uint32_t count)
 cleanup:
 	return(ret);
 }
+
+

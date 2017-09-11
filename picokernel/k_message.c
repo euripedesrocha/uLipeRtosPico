@@ -117,6 +117,8 @@ k_status_t message_insert(kmsg_t *m, void *data, uint32_t size, msg_opt_t opt)
 		}
 	}
 
+	
+
 
 	/* regular use case, insert a new frame on message
 	 * queue and wake up a possible thread set

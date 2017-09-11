@@ -39,6 +39,8 @@ archtype_t *port_create_stack_frame(archtype_t *stack, thread_t thr_func, void *
 	return((archtype_t *)ptr);
 }
 
+
+
 void port_swap_req(void)
 {
 	/* triggers a sofware interrupt */

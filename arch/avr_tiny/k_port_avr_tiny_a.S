@@ -32,7 +32,6 @@
 		.extern timer_match_handler
 		.extern timer_ovf_handler
 
-
 		;export symbols
 		.global port_irq_lock
 		.global port_irq_unlock
@@ -46,15 +45,6 @@
 
 		.section .text
 
-
-port_irq_lock:
-		in	r24, __SREG
-		cli
-    	ret
-;------------------------------------------------------------------------------------------------
-port_irq_unlock:
-		out __SREG,r24 
-    	ret
 ;------------------------------------------------------------------------------------------------
 port_from_isr:
 		ldi r24, 0

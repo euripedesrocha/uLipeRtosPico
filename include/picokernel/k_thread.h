@@ -42,7 +42,7 @@ typedef struct ktcb{
 	archtype_t *stack_top;
 	archtype_t *stack_base;
 	uint8_t thread_wait;
-	int8_t thread_prio;
+	uint8_t thread_prio;
 	bool created;
 	uint32_t stack_size;
 	uint32_t wake_tick;
@@ -51,6 +51,7 @@ typedef struct ktcb{
 	archtype_t timer_wait;
 	k_list_t thr_link;
 }tcb_t;
+
 
 /**
  *  @fn THREAD_CONTROL_BLOCK_DECLARE()

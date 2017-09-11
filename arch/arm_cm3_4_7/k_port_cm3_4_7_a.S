@@ -24,6 +24,8 @@
 		.global port_from_isr
 		.global port_start_kernel
 		.global port_set_break
+		.global port_bit_fs_scan
+		.global port_bit_ls_scan
 		.global SVC_Handler
 		.global PendSV_Handler
 
@@ -34,22 +36,27 @@
 
 		.thumb_func
 port_irq_lock:
-		mrs 	r0, ipsr
-		cmp		r0, #0
-		bne 	port_irq_lock_0
-		mrs 	r0, primask
-		cpsid 	i
+		ldr 	r1, =irq_lock_nest
+		ldr		r2, [r1]
+		cmp		r2, #0
+		bne		port_irq_lock_0
+		cpsid   I
 port_irq_lock_0:
+		adds r2, #1
+		str  r2, [r1]
 		bx		lr
 
 @------------------------------------------------------------------------------------------------
 		.thumb_func
 port_irq_unlock:
-		mrs 	r0, ipsr
-		cmp		r0, #0
-		bne		port_irq_unlock_0
-		msr 	primask,r0
+		ldr 	r1, =irq_lock_nest
+		ldr		r2, [r1]
+		subs	r2, #1
+		cmp		r2, #0
+		bne		port_irq_lock_0
+		cpsie   I
 port_irq_unlock_0:
+		str  r2, [r1]
 		bx 		lr
 
 @------------------------------------------------------------------------------------------------
@@ -70,6 +77,19 @@ port_set_break:
 		cpsid 	I
 		bkpt  	#0
 		b		.
+
+@--------------------------------------------------------------------------------------------------
+		.thumb_func
+port_bit_fs_scan:
+		clz r0, r0
+		bx  lr
+
+@--------------------------------------------------------------------------------------------------
+		.thumb_func
+port_bit_ls_scan:
+		rbit r0, r0
+		clz  r0, r0
+		bx   lr
 
 @--------------------------------------------------------------------------------------------------
 		.thumb_func

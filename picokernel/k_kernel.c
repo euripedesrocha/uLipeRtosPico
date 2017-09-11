@@ -10,18 +10,14 @@
 #include "ulipe_rtos_pico.h"
 
 /**static variables **/
-THREAD_CONTROL_BLOCK_DECLARE(idle_thread, 32, 0);
+THREAD_CONTROL_BLOCK_DECLARE(idle_thread, 32, K_IDLE_THREAD_PRIO);
 
 static k_work_list_t k_rdy_list;
 static k_list_t k_timed_list;
 
 static bool k_configured;
 static archtype_t irq_counter;
-static const uint8_t k_clz_table[(1 << K_PRIORITY_LEVELS)] = {0x04, 0x03, 0x02, 0x02,
-															  0x01, 0x01, 0x01, 0x01,
-															  0x00, 0x00, 0x00, 0x00,
-															  0x00, 0x00, 0x00, 0x00};
-
+uint32_t irq_lock_nest;
 
 /** public variables **/
 bool k_running = false;
@@ -65,6 +61,9 @@ static tcb_t *k_sched(k_work_list_t *l)
 
 	ULIPE_ASSERT(l != NULL);
 
+	/* no tasks ready, just hint to kernel to load the idle task */
+	if(!l->bitmap)
+		goto cleanup;
 
 	/*
 	 * The scheduling alghoritm uses a classical multilevel
@@ -75,21 +74,13 @@ static tcb_t *k_sched(k_work_list_t *l)
 	 * get the head of the list indexed to this prio and
 	 * finally access the tcb
 	 */
+	uint8_t prio = (K_PRIORITY_LEVELS - 1) - port_bit_fs_scan(l->bitmap);
+	
+	head = sys_dlist_peek_head(&l->list_head[prio]);
+	if(head != NULL)
+		ret = CONTAINER_OF(head, tcb_t, thr_link);
 
-	if(l->bitmap & (1 << (2 * (K_PRIORITY_LEVELS)- 1))) {
-		uint8_t prio = (l->bitmap & 0x70) >> (K_PRIORITY_LEVELS - 1);
-		prio = ((K_PRIORITY_LEVELS - 1) - k_clz_table[prio]);
-		head = sys_dlist_peek_head(&l->list_head[prio + K_PRIORITY_LEVELS - 1]);
-		if(head != NULL)
-			ret = CONTAINER_OF(head, tcb_t, thr_link);
-
-	} else {
-		uint8_t prio = ((K_PRIORITY_LEVELS - 1) - k_clz_table[l->bitmap]);
-		head = sys_dlist_peek_head(&l->list_head[prio]);
-		if(head != NULL)
-			ret = CONTAINER_OF(head, tcb_t, thr_link);
-
-	}
+cleanup:
 	return(ret);
 }
 
@@ -111,15 +102,9 @@ k_status_t k_pend_obj(tcb_t *thr, k_work_list_t *obj_list)
 	 * 3 bits to insert in system level priorities list
 	 */
 
-	if(thr->thread_prio < 0) {
-		uint8_t upper_prio = (((uint8_t)thr->thread_prio * -1 ) + K_PRIORITY_LEVELS - 1);
-		obj_list->bitmap |= (1 << ((2 * K_PRIORITY_LEVELS)-1))+(1 << (upper_prio));
-		sys_dlist_append(&obj_list->list_head[upper_prio], &thr->thr_link);
+	obj_list->bitmap |= (1 << thr->thread_prio);
+	sys_dlist_append(&obj_list->list_head[thr->thread_prio], &thr->thr_link);
 
-	} else {
-		obj_list->bitmap |= (1 << thr->thread_prio);
-		sys_dlist_append(&obj_list->list_head[thr->thread_prio], &thr->thr_link);
-	}
 
 	return(err);
 
@@ -139,34 +124,19 @@ tcb_t * k_unpend_obj(k_work_list_t *obj_list)
 	 * work list to obtain which is the highest priority task
 	 * waiting for a kernel object and remove it from list
 	 */
-
-
 	thr = k_sched(obj_list);
 	if(thr == NULL)
 		goto cleanup;
 
-
-	if(thr->thread_prio < 0) {
-		uint8_t upper_prio = (((uint8_t)thr->thread_prio * -1 ) + K_PRIORITY_LEVELS - 1);
-		sys_dlist_remove(&thr->thr_link);
-
-		if(sys_dlist_is_empty(&obj_list->list_head[upper_prio])) {
-			obj_list->bitmap &= ~(1 << upper_prio);
-			if(!(obj_list->bitmap & 0x70))
-				obj_list->bitmap &= ~(1 << ((2 * K_PRIORITY_LEVELS)-1));
-		}
-
-	} else {
-		sys_dlist_remove(&thr->thr_link);
-		if(sys_dlist_is_empty(&obj_list->list_head[thr->thread_prio])){
-			obj_list->bitmap &= ~(1 << thr->thread_prio);
-		}
+	sys_dlist_remove(&thr->thr_link);
+	if(sys_dlist_is_empty(&obj_list->list_head[thr->thread_prio])){
+		obj_list->bitmap &= ~(1 << thr->thread_prio);
 	}
-
 
 cleanup:
 	return(thr);
 }
+
 
 k_status_t k_make_ready(tcb_t *thr)
 {
@@ -186,16 +156,8 @@ k_status_t k_make_ready(tcb_t *thr)
 	 * both cases, for negative priority we remove the signal and use its upper
 	 * 3 bits to insert in system level priorities list
 	 */
-
-	if(thr->thread_prio < 0) {
-		uint8_t upper_prio = (((uint8_t)thr->thread_prio * -1 ) + K_PRIORITY_LEVELS - 1);
-		k_rdy_list.bitmap |= (1 << ((2 * K_PRIORITY_LEVELS)-1))+(1 << upper_prio);
-		sys_dlist_append(&k_rdy_list.list_head[upper_prio], &thr->thr_link);
-
-	} else {
-		k_rdy_list.bitmap |= (1 << thr->thread_prio);
-		sys_dlist_append(&k_rdy_list.list_head[thr->thread_prio], &thr->thr_link);
-	}
+	k_rdy_list.bitmap |= (1 << thr->thread_prio);
+	sys_dlist_append(&k_rdy_list.list_head[thr->thread_prio], &thr->thr_link);
 
 
 cleanup:
@@ -318,6 +280,8 @@ void k_work_list_init(k_work_list_t *l)
 
 k_status_t kernel_init(void)
 {
+	irq_lock_nest = 0;
+
 	archtype_t key = port_irq_lock();
 
 	/* no priority ready */

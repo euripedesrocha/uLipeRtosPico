@@ -117,19 +117,74 @@ extern void timer_ovf_handler(void)
 
 #endif
 
-uint8_t port_bit_fs_scan(archtype_t reg)
+uint8_t port_bit_fs_scan(archtype_t x)
 {
 	/* clz not implemented for this architecture */
-	uint8_t ret = k_status_ok;
-	ULIPE_ASSERT(false);
+	uint8_t ret = 32;
+
+	if(!reg) 
+		goto cleanup;
+
+
+	static uint8_t const clz_lkup[] = {
+		32, 31, 30, 30, 29, 29, 29, 29,
+		28, 28, 28, 28, 28, 28, 28, 28
+	};
+
+    uint32_t n;
+	
+    /*
+     * Scan if bit is in top word
+     */
+    if (x >= (1 << 16)) {
+		if (x >= (1 << 24)) {
+			if (x >= (1 << 28)) {
+				n = 28;
+			}
+			else {
+				n = 24;
+			}
+		}
+		else {
+			if (x >= (1 << 20)) {
+				n = 20;
+			}
+			else {
+				n = 16;
+			}
+		}
+    }
+    else {
+        /* now scan if the bit is on rightmost byte */
+		if (x >= (1 << 8)) {
+			if (x >= (1 << 12)) {
+				n = 12;
+			}
+			else {
+				n = 8;
+			}
+		}
+        else {
+            if (x >= (1 << 4)) {
+                n = 4;
+            }
+            else {
+                n = 0;
+            }
+        }
+    }
+
+	ret = (uint8_t)(clz_lkup[x >> n] - n);
+cleanup:
 	return(ret);
 }
 
 uint8_t port_bit_ls_scan(archtype_t reg)
 {
 	/* ctz is not as well */
-	uint8_t ret=k_status_ok;
-	ULIPE_ASSERT(false);
-	return(ret);
+    uint32_t mask = ~(arg - 1);
+    arg = mask & arg;
+	return(port_bit_fs_scan(arg));
 }
+
 #endif

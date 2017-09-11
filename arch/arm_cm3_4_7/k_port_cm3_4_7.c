@@ -120,20 +120,5 @@ extern void timer_ovf_handler(void)
 
 #endif
 
-uint8_t port_bit_fs_scan(archtype_t reg)
-{
-	/* clz not implemented for this architecture */
-	uint8_t ret = k_status_ok;
-	ULIPE_ASSERT(false);
-	return(ret);
-}
-
-uint8_t port_bit_ls_scan(archtype_t reg)
-{
-	/* ctz is not as well */
-	uint8_t ret=k_status_ok;
-	ULIPE_ASSERT(false);
-	return(ret);
-}
 
 #endif

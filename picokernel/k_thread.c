@@ -111,8 +111,7 @@ k_status_t thread_create(thread_t func, void *arg,tcb_t *tcb)
 	 * allocated with THREAD_CONTROL_BLOCK_DECLARE() otherwise
 	 * the thread will not created
 	 */
-	if((tcb->thread_prio > (K_PRIORITY_LEVELS - 1)) ||
-			(tcb->thread_prio < (-(K_PRIORITY_LEVELS - 1)))){
+	if(tcb->thread_prio > (K_PRIORITY_LEVELS - 1)){
 		ret = k_status_invalid_param;
 		goto cleanup;
 	}
@@ -448,8 +447,7 @@ k_status_t thread_set_prio(tcb_t *t, int8_t prio)
 {
 	k_status_t ret = k_status_ok;
 
-	if((prio > (K_PRIORITY_LEVELS - 1)) ||
-			(prio < (-1 * (K_PRIORITY_LEVELS - 1)))){
+	if(prio > (K_PRIORITY_LEVELS - 1)){
 		ret = k_status_invalid_param;
 		goto cleanup;
 	}

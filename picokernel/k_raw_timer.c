@@ -28,7 +28,6 @@ static k_list_t k_ticker_list;
 THREAD_CONTROL_BLOCK_DECLARE(timer_tcb, K_TIMER_DISPATCHER_STACK_SIZE, K_TIMER_DISPATCHER_PRIORITY);
 
 /** private functions */
-
 /**
  *  @fn timer_period_sort()
  *  @brief	sort all active timers on list to find which has the least time to wait

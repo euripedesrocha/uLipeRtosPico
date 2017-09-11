@@ -47,10 +47,6 @@ void port_swap_req(void)
 
 void port_init_machine(void)
 {
-	/* sets the system interrupts on system control block */
-	SCB->CCR = 0x200;
-	SCB->SHP[0] =  K_PORT_PENDSV_NVIC_PRIO << 24;
-	SCB->SHP[1] = (K_PORT_PENDSV_NVIC_PRIO | (K_PORT_TICKER_NVIC_PRIO << 8)) << 16;
 #if (K_ENABLE_TICKER > 0)
 	#if !defined(K_MACHINE_CLOCK) || !defined(K_TICKER_RATE)
 	#error "The SoC clock and ticker rate needs to be defined to use tick feature!"
@@ -60,6 +56,11 @@ void port_init_machine(void)
 	SysTick->LOAD = (K_MACHINE_CLOCK / K_TICKER_RATE);
 	SysTick->CTRL = 0x07;
 #endif
+
+	/* sets the system interrupts on system control block */
+	SCB->CCR = 0x200;
+	SCB->SHP[0] =  K_PORT_PENDSV_NVIC_PRIO << 24;
+	SCB->SHP[1] = (K_PORT_PENDSV_NVIC_PRIO | (K_PORT_TICKER_NVIC_PRIO << 8)) << 16;
 }
 
 #if (K_ENABLE_TICKER > 0)

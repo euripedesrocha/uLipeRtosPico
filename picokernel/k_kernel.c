@@ -10,7 +10,11 @@
 #include "ulipe_rtos_pico.h"
 
 /**static variables **/
+<<<<<<< HEAD
 THREAD_CONTROL_BLOCK_DECLARE(idle_thread, 32, K_IDLE_THREAD_PRIO);
+=======
+THREAD_CONTROL_BLOCK_DECLARE(idle_thread, 64/sizeof(archtype_t), 0);
+>>>>>>> ffe4ef66baf8e81422e3a5f4195057ce531f1a8f
 
 static k_work_list_t k_rdy_list;
 static k_list_t k_timed_list;
@@ -23,9 +27,10 @@ uint32_t irq_lock_nest;
 bool k_running = false;
 tcb_t *k_current_task;
 tcb_t *k_high_prio_task;
+archtype_t irq_nesting = 0;
 
 
-#if(K_ENABLE_TIMERS > 0)
+#if((K_ENABLE_TICKER > 0) || (K_ENABLE_TIMERS > 0))
 extern tcb_t timer_tcb;
 extern void timer_dispatcher(void *args);
 #endif
@@ -44,8 +49,9 @@ static void k_idle_thread(void *arg)
 {
 	/** todo: implement low power handling here */
 	(void)arg;
-	for(;;)
-		thread_yield();
+	for(;;) {
+
+	}
 }
 
 /**
@@ -56,14 +62,31 @@ static void k_idle_thread(void *arg)
  */
 static tcb_t *k_sched(k_work_list_t *l)
 {
-	tcb_t *ret = NULL;
+	tcb_t *ret = &idle_thread;
 	k_list_t *head;
+
+#if K_DEBUG > 0
+	if(k_running) {
+		k_current_task->stk_usage = (k_current_task->stack_top - k_current_task->stack_base);
+		/* stack monitor used during debug */
+		ULIPE_ASSERT( k_current_task->stk_usage * sizeof(archtype_t) <=  k_current_task->stack_size * sizeof(archtype_t));
+	}
+#endif
+
+
 
 	ULIPE_ASSERT(l != NULL);
 
+<<<<<<< HEAD
 	/* no tasks ready, just hint to kernel to load the idle task */
 	if(!l->bitmap)
 		goto cleanup;
+=======
+	/* no ready task, switch to idle */
+	if(!l->bitmap){
+		goto cleanup;
+	}
+>>>>>>> ffe4ef66baf8e81422e3a5f4195057ce531f1a8f
 
 	/*
 	 * The scheduling alghoritm uses a classical multilevel
@@ -80,6 +103,20 @@ static tcb_t *k_sched(k_work_list_t *l)
 	if(head != NULL)
 		ret = CONTAINER_OF(head, tcb_t, thr_link);
 
+<<<<<<< HEAD
+=======
+	if(l->bitmap & (1 << (2 * (K_PRIORITY_LEVELS)- 1))) {
+		uint8_t prio = (l->bitmap & 0x70) >> (K_PRIORITY_LEVELS - 1);
+		prio = ((K_PRIORITY_LEVELS - 1) - k_clz_table[prio]);
+		head = sys_dlist_peek_head(&l->list_head[prio + K_PRIORITY_LEVELS - 1]);
+		ret = CONTAINER_OF(head, tcb_t, thr_link);
+
+	} else {
+		uint8_t prio = ((K_PRIORITY_LEVELS - 1) - k_clz_table[l->bitmap]);
+		head = sys_dlist_peek_head(&l->list_head[prio]);
+		ret = CONTAINER_OF(head, tcb_t, thr_link);
+	}
+>>>>>>> ffe4ef66baf8e81422e3a5f4195057ce531f1a8f
 cleanup:
 	return(ret);
 }
@@ -92,6 +129,14 @@ k_status_t k_pend_obj(tcb_t *thr, k_work_list_t *obj_list)
 	k_status_t err = k_status_ok;
 	ULIPE_ASSERT(thr != NULL);
 	ULIPE_ASSERT(obj_list != NULL);
+
+#if K_DEBUG > 0
+	if(k_running) {
+		k_current_task->stk_usage = (k_current_task->stack_top - k_current_task->stack_base);
+		/* stack monitor used during debug */
+		ULIPE_ASSERT( k_current_task->stk_usage * sizeof(archtype_t) <=  k_current_task->stack_size * sizeof(archtype_t));
+	}
+#endif
 
 
 
@@ -115,6 +160,14 @@ tcb_t * k_unpend_obj(k_work_list_t *obj_list)
 	tcb_t *thr = k_status_ok;
 	ULIPE_ASSERT(obj_list != NULL);
 
+#if K_DEBUG > 0
+	if(k_running) {
+		k_current_task->stk_usage = (k_current_task->stack_top - k_current_task->stack_base);
+		/* stack monitor used during debug */
+		ULIPE_ASSERT( k_current_task->stk_usage * sizeof(archtype_t) <=  k_current_task->stack_size * sizeof(archtype_t));
+	}
+#endif
+
 
 	/*
 	 * unpend a obj is a little bit complex relative to a
@@ -125,8 +178,10 @@ tcb_t * k_unpend_obj(k_work_list_t *obj_list)
 	 * waiting for a kernel object and remove it from list
 	 */
 	thr = k_sched(obj_list);
-	if(thr == NULL)
+	if(thr == &idle_thread) {
+		thr = NULL;
 		goto cleanup;
+	}
 
 	sys_dlist_remove(&thr->thr_link);
 	if(sys_dlist_is_empty(&obj_list->list_head[thr->thread_prio])){
@@ -143,6 +198,13 @@ k_status_t k_make_ready(tcb_t *thr)
 	k_status_t err = k_status_ok;
 	ULIPE_ASSERT(thr != NULL);
 
+#if K_DEBUG > 0
+	if(k_running) {
+		k_current_task->stk_usage = (k_current_task->stack_top - k_current_task->stack_base);
+		/* stack monitor used during debug */
+		ULIPE_ASSERT( k_current_task->stk_usage * sizeof(archtype_t) <=  k_current_task->stack_size * sizeof(archtype_t));
+	}
+#endif
 
 	/* to make ready evaluate if task does not waits for
 	 * any more objects
@@ -176,6 +238,16 @@ k_status_t k_make_not_ready(tcb_t *thr)
 	 *
 	 */
 
+#if K_DEBUG > 0
+	if(k_running) {
+		k_current_task->stk_usage = (k_current_task->stack_top - k_current_task->stack_base);
+		/* stack monitor used during debug */
+		ULIPE_ASSERT( k_current_task->stk_usage * sizeof(archtype_t) <=  k_current_task->stack_size * sizeof(archtype_t));
+	}
+#endif
+
+
+
 
 	if(thr->thread_prio < 0) {
 		uint8_t upper_prio = (((uint8_t)thr->thread_prio * -1 ) + K_PRIORITY_LEVELS -1 );
@@ -205,6 +277,17 @@ bool k_yield(tcb_t *t)
 {
 	k_status_t err = k_status_ok;
 	ULIPE_ASSERT(t != NULL);
+
+#if K_DEBUG > 0
+	if(k_running) {
+		k_current_task->stk_usage = (k_current_task->stack_top - k_current_task->stack_base);
+		/* stack monitor used during debug */
+		ULIPE_ASSERT( k_current_task->stk_usage * sizeof(archtype_t) <=  k_current_task->stack_size * sizeof(archtype_t));
+	}
+#endif
+
+
+
 	bool resched = false;
 
 
@@ -247,16 +330,20 @@ k_status_t k_sched_and_swap(void)
 
 
 	k_high_prio_task = k_sched(&k_rdy_list);
+	if(k_high_prio_task == NULL) {
+		/* no other tasks ready to run, puts the idle thread */
+		k_high_prio_task = &idle_thread;
+	}
 
-	ULIPE_ASSERT(k_high_prio_task != NULL);
 
 #if K_DEBUG > 0
-	uint32_t stk_usage = (k_high_prio_task->stack_top - k_high_prio_task->stack_base);
-
-	/* stack monitor used during debug */
-	ULIPE_ASSERT( stk_usage <=  k_high_prio_task->stack_size * sizeof(archtype_t));
-
+	if(k_running) {
+		k_current_task->stk_usage = (k_current_task->stack_top - k_current_task->stack_base);
+		/* stack monitor used during debug */
+		ULIPE_ASSERT( k_current_task->stk_usage * sizeof(archtype_t) <=  k_current_task->stack_size * sizeof(archtype_t));
+	}
 #endif
+
 
 
 	if(k_high_prio_task != k_current_task) {
@@ -272,6 +359,16 @@ cleanup:
 
 void k_work_list_init(k_work_list_t *l)
 {
+
+#if K_DEBUG > 0
+	if(k_running) {
+		k_current_task->stk_usage = (k_current_task->stack_top - k_current_task->stack_base);
+		/* stack monitor used during debug */
+		ULIPE_ASSERT( k_current_task->stk_usage * sizeof(archtype_t) <=  k_current_task->stack_size * sizeof(archtype_t));
+	}
+#endif
+
+
 	l->bitmap = 0;
 	for(uint8_t i=0; i < ((2 * K_PRIORITY_LEVELS) - 1); i++)
 		sys_dlist_init(&l->list_head[i]);
@@ -303,6 +400,9 @@ k_status_t kernel_init(void)
 	k_status_t err = thread_create(&k_idle_thread,NULL, &idle_thread);
 	ULIPE_ASSERT(err == k_status_ok);
 
+	k_make_not_ready(&idle_thread);
+	idle_thread.thread_prio = 0x80;
+
 #if(K_ENABLE_TICKER > 0)
 	err = thread_create(&timer_dispatcher,NULL, &timer_tcb);
 	ULIPE_ASSERT(err == k_status_ok);
@@ -320,8 +420,6 @@ k_status_t kernel_start(void)
 		/* kernel must be configured before start */
 		goto cleanup;
 
-	archtype_t key = port_irq_lock();
-
 	/* init architecture stuff */
 	port_init_machine();
 
@@ -333,13 +431,21 @@ k_status_t kernel_start(void)
 	/* start kernel (this function will never return) */
 	port_start_kernel();
 
-	(void)key;
 cleanup:
 	return(k_status_error);
 }
 
 void kernel_irq_in(void)
 {
+
+#if K_DEBUG > 0
+	if(k_running) {
+		k_current_task->stk_usage = (k_current_task->stack_top - k_current_task->stack_base);
+		/* stack monitor used during debug */
+		ULIPE_ASSERT( k_current_task->stk_usage * sizeof(archtype_t) <=  k_current_task->stack_size * sizeof(archtype_t));
+	}
+#endif
+
 	/* this function only can be called if os is executing  and from an isr*/
 	if(!k_running)
 		return;
@@ -356,21 +462,27 @@ void kernel_irq_in(void)
 
 void kernel_irq_out(void)
 {
+
+#if K_DEBUG > 0
+	if(k_running) {
+		k_current_task->stk_usage = (k_current_task->stack_top - k_current_task->stack_base);
+		/* stack monitor used during debug */
+		ULIPE_ASSERT( k_current_task->stk_usage * sizeof(archtype_t) <=  k_current_task->stack_size * sizeof(archtype_t));
+	}
+#endif
+
 	/* this function only can be called if os is executing  and from an isr*/
 	if(!k_running)
 		return;
 
-#if(ARCH_TYPE_AVR_TINY > 0)
-	(void)0;
-#else
 	if(!port_from_isr())
 		return;
-#endif
 
-	if(irq_counter > (archtype_t)0)
+	if(irq_counter > (archtype_t)0) {
 		irq_counter--;
+		/* all isrs attended, perform a system reeschedule */
+		if(!irq_counter)
+			k_sched_and_swap();
+	}
 
-	/* all isrs attended, perform a system reeschedule */
-	if(!irq_counter)
-		k_sched_and_swap();
 }

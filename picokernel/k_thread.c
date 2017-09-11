@@ -139,6 +139,7 @@ k_status_t thread_create(thread_t func, void *arg,tcb_t *tcb)
 	/* initialize stack contents */
 	tcb->stack_top = port_create_stack_frame(tcb->stack_base + (archtype_t)tcb->stack_size, func, arg);
 	ULIPE_ASSERT(tcb->stack_top != NULL);
+	tcb->stk_usage = tcb->stack_top - tcb->stack_base;
 
 
 	/* insert the created thread on ready list */

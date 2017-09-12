@@ -15,14 +15,15 @@ The kernel uses a fully preemptive-cooperative schedule policy, and supports up 
 
 - Real time all functions are O(1), preemptive-cooperative microkernel;
 - Fast context switching time, below to 100ns @ 50MHz processor clock;
-- Tickless operation;
+- Tickless optional operation;
 - Static kernel object allocation;
-- Supports up to 4 priority levels, 3 sys prio for high perfomance tasks;
+- Supports up to 32 priority levels (0 - 31);
 - Threads with same priorities will run in cooperative way;
 - Thread signals with set, clear, any and match capabilities;
 - Counting semaphores;
 - Binary semaphores with optional priority ceilling offering mutex primitives;
 - Message queues;
+- Soft timers with tickless feature (hardware timer provided by user);
 - Unlimited kernel objects (limited by processor memory);
 - Port file formed by two simple files in C and Assembly, simple to port;
 - Single header kernel, put on you application and enjoy.

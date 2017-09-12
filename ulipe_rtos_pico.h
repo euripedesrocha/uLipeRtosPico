@@ -86,6 +86,7 @@ typedef uint64_t archtype_t;
 #include "include/picokernel/k_message.h"
 #include "include/picokernel/k_raw_timer.h"
 #include "include/picokernel/k_sema.h"
+#include "include/picokernel/k_memp.h"
 
 
 

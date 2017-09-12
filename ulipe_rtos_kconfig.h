@@ -32,5 +32,6 @@
 #define K_ENABLE_TICKER					1
 #define K_ENABLE_TIMERS					1
 #define K_ENABLE_TIMER_GENERIC_SUPPORT	1
+#define K_ENABLE_MEMORY_POOLS			1
 
 #endif

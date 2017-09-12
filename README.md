@@ -24,6 +24,7 @@ The kernel uses a fully preemptive-cooperative schedule policy, and supports up 
 - Binary semaphores with optional priority ceilling offering mutex primitives;
 - Message queues;
 - Soft timers with tickless feature (hardware timer provided by user);
+- O(1), low & constant overhead fixed size memory pool (up to 1024 elements per pool);
 - Unlimited kernel objects (limited by processor memory);
 - Port file formed by two simple files in C and Assembly, simple to port;
 - Single header kernel, put on you application and enjoy.
@@ -31,7 +32,7 @@ The kernel uses a fully preemptive-cooperative schedule policy, and supports up 
 # Recommended processor resources
 
 - 2KB of Code targeted memory(ROM);
-- 128B of Data memory (RAM)
+- 128B of Data memory (RAM) or 372B of Data memory(RAM) in case of mempool use;
 
 
 # Basic Usage

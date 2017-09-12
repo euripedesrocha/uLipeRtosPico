@@ -14,7 +14,9 @@
 #define K_DEBUG 						1
 
 /* architecture definition */
+#define ARCH_TYPE_ARM_CM0				0
 #define ARCH_TYPE_ARM_CM3_4_7			1
+
 #define K_SVC_MAX_PRIO					255
 #define K_MACHINE_CLOCK					12000000
 #define K_TICKER_RATE					1000

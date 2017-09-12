@@ -1,6 +1,6 @@
 # uLipeRtosPico
 Simple preemptive-cooperative, realtime, multitask kernel made just for fun.
-uLipeRtosPico is a subset of uLipeRTOS, but is small and powerful real time kernel, currently implemented for arm cortex M and intel x86 IAMCU architectures.
+uLipeRtosPico is a subset of uLipeRTOS, but is small and powerful real time kernel, currently implemented for arm cortex M and AVR 8 bits processors.
 The kernel uses a fully preemptive-cooperative schedule policy, and supports up to 32 priority levels for maximum flexibility.
 
 # Low memory footprint:

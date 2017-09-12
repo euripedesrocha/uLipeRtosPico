@@ -18,8 +18,14 @@
 #if(K_ENABLE_TIMERS > 0)
 /* static variables */
 static k_list_t k_timed_list;
+
+#ifndef K_ENABLE_TIMER_GENERIC_SUPPORT
 static archtype_t k_elapsed_time = 0;
 static bool no_timers = true;
+#else
+ktimer_t *actual_timer;
+#endif
+
 #endif
 
 uint32_t tick_count = 0;
@@ -40,24 +46,41 @@ static void timer_step_tick(void)
 {
 	tcb_t *ret = NULL;
 
+
 	tick_count++;
 	/* no timer to run */
-	if(sys_dlist_is_empty(&k_ticker_list)) {
-		goto cleanup;
+	if(!sys_dlist_is_empty(&k_ticker_list)) {
+
+		/* walk to list and check if task needs to be woken */
+		SYS_DLIST_FOR_EACH_CONTAINER(&k_ticker_list, ret, thr_link) {
+			if(next_task_wake == NULL) {
+				next_task_wake = ret;
+			}
+
+			if((next_task_wake->wake_tick > ret->wake_tick) && (ret->wake_tick != 0)) {
+				next_task_wake = ret;
+			}
+		}
 	}
 
-	/* walk to list and check if task needs to be woken */
-	SYS_DLIST_FOR_EACH_CONTAINER(&k_ticker_list, ret, thr_link) {
-		if(next_task_wake == NULL) {
-			next_task_wake = ret;
-		}
+#if (K_ENABLE_TIMER_GENERIC_SUPPORT > 0)
+	ktimer_t *tim = NULL;
 
-		if((next_task_wake->wake_tick > ret->wake_tick) && (ret->wake_tick != 0)) {
-			next_task_wake = ret;
+	if(!sys_dlist_is_empty(&k_timed_list)) {
+
+		SYS_DLIST_FOR_EACH_CONTAINER(&k_timed_list, tim, timer_list_link) {
+			if(actual_timer == NULL) {
+				actual_timer = tim;
+			}
+
+			if((actual_timer->load_val > tim->load_val) && (tim->load_val != 0)) {
+				actual_timer = tim;
+			}
 		}
 	}
 
-cleanup:
+#endif
+
 	return;
 }
 
@@ -69,7 +92,8 @@ cleanup:
  */
 
 #if(K_ENABLE_TIMERS > 0)
- 
+
+#ifndef K_ENABLE_TIMER_GENERIC_SUPPORT
 static ktimer_t *timer_period_sort(k_list_t *tlist)
 {
 	ktimer_t *ret = NULL;
@@ -150,6 +174,7 @@ static void timer_rebuild_timeline(ktimer_t *t, archtype_t *key)
 
 }
 #endif
+#endif
 
 /**
  *  @fn timer_dispatcher()
@@ -166,7 +191,6 @@ void timer_dispatcher(void *args)
 	archtype_t key = port_irq_lock();
 
 #if(K_ENABLE_TIMERS > 0)
-	ktimer_t *actual_timer;
 	sys_dlist_init(&k_timed_list);
 	actual_timer = NULL;
 #endif
@@ -233,16 +257,57 @@ void timer_dispatcher(void *args)
 						next_task_wake = CONTAINER_OF(head, tcb_t, thr_link);
 					}
 				}
-
 			}
 
+#if(K_ENABLE_TIMER_GENERIC_SUPPORT > 0)
 
+			if((tick_count >= actual_timer->load_val) && (actual_timer != NULL)) {
+				/* put this thread on ready list making it ready*/
+				sys_dlist_remove(&actual_timer->timer_list_link);
+
+				if(actual_timer->cb != NULL)
+					actual_timer->cb(actual_timer->user_data, actual_timer);
+
+				actual_timer->running = false;
+				actual_timer->expired = true;
+
+				/* get the next task */
+				k_list_t *head = sys_dlist_peek_head(&k_timed_list);
+				if(!head) {
+					actual_timer = NULL;
+				} else {
+					actual_timer = CONTAINER_OF(head, ktimer_t, timer_list_link);
+				}
+
+
+
+				while((tick_count >= actual_timer->load_val) && (actual_timer != NULL)) {
+					/* put this thread on ready list making it ready*/
+					sys_dlist_remove(&actual_timer->timer_list_link);
+
+					if(actual_timer->cb != NULL)
+						actual_timer->cb(actual_timer->user_data, actual_timer);
+
+					actual_timer->running = false;
+					actual_timer->expired = true;
+
+					/* get the next task */
+					k_list_t *head = sys_dlist_peek_head(&k_timed_list);
+					if(!head) {
+						actual_timer = NULL;
+					} else {
+						actual_timer = CONTAINER_OF(head, ktimer_t, timer_list_link);
+					}
+				}
+
+			}
+#endif
 
 			port_irq_unlock(key);
 
 		}
 
-#if(K_ENABLE_TIMERS > 0)		
+#if((K_ENABLE_TIMERS > 0) && (K_ENABLE_TIMER_GENERIC_SUPPORT<= 0))
 		/* select commands with priority */
 		if(signals & K_TIMER_DISPATCH) {
 			signals &= ~(K_TIMER_DISPATCH);
@@ -253,7 +318,7 @@ void timer_dispatcher(void *args)
 			 * we know how timer needs to be woken
 			 */
 			if(actual_timer->cb)
-				actual_timer->cb(actual_timer);
+				actual_timer->cb(actual_timer->user_data,actual_timer);
 
 			/*
 			 * thread waiting for it adds to ready list 
@@ -382,10 +447,19 @@ k_status_t timer_start(ktimer_t *t)
 
 	t->expired = false;
 
+
+#if (K_ENABLE_TIMER_GENERIC_SUPPORT > 0)
+	t->load_val = t->timer_to_wait + tick_count;
+	sys_dlist_append(&k_timed_list, &t->timer_list_link);
+
+#else
+
 	/* new valid timer added to list 
 	 * insert it on timeline
 	 */
+
 	timer_rebuild_timeline(t, &key);
+#endif
 
 	port_irq_unlock(key);
 
@@ -395,11 +469,85 @@ cleanup:
 }
 
 
+k_status_t timer_stop(ktimer_t *t)
+{
+	k_status_t ret = k_status_ok;
+	archtype_t key;
+
+	if(t == NULL) {
+		ret = k_status_invalid_param;
+		goto cleanup;
+	}
+
+	if(t->expired){
+		ret = k_timer_expired;
+		goto cleanup;
+	}
+
+
+
+	key = port_irq_lock();
+
+	if(!t->created) {
+		t->created = true;
+		k_work_list_init(&t->threads_pending);
+		sys_dlist_init(&t->timer_list_link);
+
+	}
+
+
+	t->running = false;
+	t->expired = true;
+
+
+#if (K_ENABLE_TIMER_GENERIC_SUPPORT > 0)
+	sys_dlist_remove(&t->timer_list_link);
+
+	/* get the next task */
+	k_list_t *head = sys_dlist_peek_head(&k_timed_list);
+	if(!head) {
+		actual_timer = NULL;
+	} else {
+		actual_timer = CONTAINER_OF(head, ktimer_t, timer_list_link);
+	}
+
+#else
+	port_timer_halt();
+	sys_dlist_remove(&t->timer_list_link);
+
+	/* new valid timer added to list
+	 * insert it on timeline
+	 */
+	actual_timer= timer_period_sort(&k_timed_list);
+	if(actual_timer == NULL) {
+		/* no timers to run */
+		no_timers = true;
+	} else {
+		port_timer_load_append(actual_timer->load_val);
+		port_timer_resume();
+	}
+
+#endif
+
+	port_irq_unlock(key);
+
+cleanup:
+	return(ret);
+
+}
+
 
 k_status_t timer_poll(ktimer_t *t)
 {
 	k_status_t ret = k_status_ok;
+
+/* timer in generic support not allows the poll function,
+ * use the ticker timer wait
+ */
+#ifndef K_ENABLE_TIMER_GENERIC_SUPPORT
+
 	archtype_t key;
+
 
 	if(t == NULL) {
 		ret = k_status_invalid_param;
@@ -457,13 +605,15 @@ k_status_t timer_poll(ktimer_t *t)
 	ULIPE_ASSERT(ret == k_status_ok);	
 
 cleanup:
+#endif
+
 	return(ret);
 
 }
 
 
 
-k_status_t timer_set_callback(ktimer_t *t, ktimer_callback_t cb)
+k_status_t timer_set_callback(ktimer_t *t, ktimer_callback_t cb, void *user_data)
 {
 	k_status_t ret = k_status_ok;
 	archtype_t key;
@@ -488,13 +638,15 @@ k_status_t timer_set_callback(ktimer_t *t, ktimer_callback_t cb)
 	}
 
 
-	if(t->expired) {
-		ret = k_timer_expired;
+	if(t->running) {
+		ret = k_timer_running;
 		port_irq_unlock(key);
 		goto cleanup;
 	}
 
 	t->cb = cb;
+	if(user_data)
+		t->user_data = user_data;
 
 	port_irq_unlock(key);
 

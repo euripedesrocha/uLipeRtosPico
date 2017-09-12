@@ -55,7 +55,7 @@ port_irq_unlock:
 		ldr		r2, [r1]
 		subs	r2, #1
 		cmp		r2, #0
-		bne		port_irq_lock_0
+		bne		port_irq_unlock_0
 		cpsie   I
 port_irq_unlock_0:
 		str  r2, [r1]

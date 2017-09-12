@@ -363,6 +363,11 @@ k_status_t kernel_init(void)
 	k_status_t err = thread_create(&k_idle_thread,NULL, &idle_thread);
 	ULIPE_ASSERT(err == k_status_ok);
 
+#if(K_ENABLE_DYNAMIC_ALLOCATOR > 0)
+	extern void k_heap_init(void);
+	k_heap_init();
+#endif
+
 	k_make_not_ready(&idle_thread);
 	idle_thread.thread_prio = K_IDLE_THREAD_PRIO;
 

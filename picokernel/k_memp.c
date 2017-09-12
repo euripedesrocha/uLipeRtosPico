@@ -1,7 +1,12 @@
 /**
- * @brief simple memory based on small block approach
+ * 							ULIPE RTOS PICO
+ *
+ *  @file k_memp.h
+ *
+ *  @brief fixed size memory block allocator
+ *
+ *
  */
-
 
 #include "ulipe_rtos_pico.h"
 
@@ -48,7 +53,6 @@ void *k_block_alloc(pool_info_t *mem){
 
 	port_irq_unlock(key);
 
-cleanup:
 	/* return the block address */
 	return(ret);
 }
@@ -56,6 +60,10 @@ cleanup:
 
 
 void k_block_free(pool_info_t *mem, void *p){
+
+
+	archtype_t key = port_irq_lock();
+
 
 	/* check pointer */
 	if((p != NULL) && (mem != NULL)) {
@@ -77,6 +85,9 @@ void k_block_free(pool_info_t *mem, void *p){
 			mem->numblocks++;
 		}
 	}
+
+
+	port_irq_unlock(key);
 
 	p = NULL;
 }

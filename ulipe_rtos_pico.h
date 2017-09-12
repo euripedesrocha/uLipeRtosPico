@@ -79,6 +79,12 @@ typedef uint64_t archtype_t;
 #endif
 
 
+#if(K_ENABLE_DYNAMIC_ALLOCATOR > 0)
+#error "FATAL: Dynamic allocator is under development, please use memory pool instead!"
+#ifndef K_HEAP_SIZE
+#define K_HEAP_SIZE 1024
+#endif
+#endif
 
 #include "include/picokernel/k_thread.h"
 #include "include/picokernel/k_port.h"
@@ -87,7 +93,7 @@ typedef uint64_t archtype_t;
 #include "include/picokernel/k_raw_timer.h"
 #include "include/picokernel/k_sema.h"
 #include "include/picokernel/k_memp.h"
-
+#include "include/picokernel/k_mem_dyn.h"
 
 
 /** assertion mechanism */

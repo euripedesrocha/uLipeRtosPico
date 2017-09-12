@@ -1,6 +1,13 @@
 /**
- * @brief simple memory based on small block approach
+ * 							ULIPE RTOS PICO
+ *
+ *  @file k_memp.h
+ *
+ *  @brief fixed size memory block allocator
+ *
+ *
  */
+
 
 #ifndef __K_MEMP_H
 #define __K_MEMP_H

@@ -44,6 +44,7 @@ typedef enum {
 	/* semaphore status */
 	k_sema_not_available,
 	k_sema_illegal_use_celling,
+	k_mutex_already_available,
 
 	/* queue status */
 	k_queue_empty,
@@ -92,6 +93,7 @@ typedef uint64_t archtype_t;
 #include "include/picokernel/k_message.h"
 #include "include/picokernel/k_raw_timer.h"
 #include "include/picokernel/k_sema.h"
+#include "include/picokernel/k_mutex.h"
 #include "include/picokernel/k_memp.h"
 #include "include/picokernel/k_mem_dyn.h"
 

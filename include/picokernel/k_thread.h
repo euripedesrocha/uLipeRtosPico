@@ -22,6 +22,7 @@
 #define K_THR_PEND_SIGNAL_ALL_C 	(0x40)
 #define K_THR_PEND_SIGNAL_ANY_C 	(0x80)
 #define K_THR_PEND_TICKER	 		(0x100)
+#define K_THR_PEND_MTX		 		(0x200)
 
 
 
@@ -147,7 +148,7 @@ k_status_t thread_yield(void);
  *  @param
  *  @return
  */
-k_status_t thread_set_prio(tcb_t *t, int8_t prio);
+k_status_t thread_set_prio(tcb_t *t, uint8_t prio);
 
 /**
  *  @fn thread_get_current()

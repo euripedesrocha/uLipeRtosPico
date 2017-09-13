@@ -444,7 +444,7 @@ cleanup:
 }
 
 
-k_status_t thread_set_prio(tcb_t *t, int8_t prio)
+k_status_t thread_set_prio(tcb_t *t, uint8_t prio)
 {
 	k_status_t ret = k_status_ok;
 

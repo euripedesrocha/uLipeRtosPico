@@ -9,25 +9,26 @@ The kernel uses a fully preemptive-cooperative schedule policy, and supports up 
   - fully static allocation of kernel objects less than 40 bytes per one(user controls ram usage during compile time);
 
   *built on GCC_ARM 5.2 with -Os option
-  *built on GCC i586 4.8 with -Os option
   
 # Main Features
 
-- Real time all functions are O(1), preemptive-cooperative microkernel;
-- Fast context switching time, below to 100ns @ 50MHz processor clock;
+- Real time, all functions has predictable execution time;
+- Fast and predictable execution time context switching;
 - Tickless optional operation;
 - Static kernel object allocation;
 - Supports up to 32 priority levels (0 - 31);
-- Threads with same priorities will run in cooperative way;
+- Preemtpive kernel policy;
+- Cooperative kernel policy with same priority threads;
 - Thread signals with set, clear, any and match capabilities;
 - Counting semaphores;
-- Binary semaphores with optional priority ceilling offering mutex primitives;
+- Binary semaphores;
+- Mutual exclusion semaphores with priority ceilling protocol;
 - Message queues;
 - Soft timers with tickless feature (hardware timer provided by user);
-- O(1), low & constant overhead fixed size memory pool (up to 1024 elements per pool);
+- Constant time, low & constant overhead fixed size memory pool (up to 1024 elements per pool);
 - Unlimited kernel objects (limited by processor memory);
 - Port file formed by two simple files in C and Assembly, simple to port;
-- Single header kernel, put on you application and enjoy.
+- Glue header kernel, just put master file in your application and enjoy.
 
 # Recommended processor resources
 

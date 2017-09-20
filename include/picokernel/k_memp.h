@@ -45,7 +45,7 @@ void k_block_free(pool_info_t *mem, void *p);
 
 /* declares a fully initialized memory pool structure */
 #define MEMPOOL_DECLARE(name, b_size, __numblocks)					\
-	unsigned char pool_##name[b_size * __numblocks ] = {0};			\
+	static unsigned char pool_##name[b_size * __numblocks ] = {0};	\
 	pool_info_t name = {											\
 	.bitmap_h =   0xFFFFFFFF,										\
 	.bitmap_l[0] = 0xFFFFFFFF,										\

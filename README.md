@@ -26,6 +26,7 @@ The kernel uses a fully preemptive-cooperative schedule policy, and supports up 
 - Message queues;
 - Soft timers with tickless feature (hardware timer provided by user);
 - Constant time, low & constant overhead fixed size memory pool (up to 1024 elements per pool);
+- Workqueues, suitable form to defer asynchronous jobs and create event driven state machines;
 - Unlimited kernel objects (limited by processor memory);
 - Port file formed by two simple files in C and Assembly, simple to port;
 - Glue header kernel, just put master file in your application and enjoy.

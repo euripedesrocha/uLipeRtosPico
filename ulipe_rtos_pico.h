@@ -50,12 +50,18 @@ typedef enum {
 	k_queue_empty,
 	k_queue_full,
 
+	/* wqueue status */
+	k_wqueue_already_exists,
+
 	/* timer status */
 	k_timer_expired,
 	k_timer_running,
 	k_timer_stopped,
 	k_timer_busy,
 
+
+	/* kernel configuration */
+	k_not_available_with_current_config,
 }k_status_t;
 
 
@@ -87,6 +93,12 @@ typedef uint64_t archtype_t;
 #endif
 #endif
 
+#if(K_ENABLE_WORKQUEUES > 0)
+#ifndef K_WQUEUES_STACK_SIZE
+#define K_WQUEUES_STACK_SIZE 128
+#endif
+#endif
+
 #include "include/picokernel/k_thread.h"
 #include "include/picokernel/k_port.h"
 #include "include/picokernel/k_kernel.h"
@@ -96,6 +108,8 @@ typedef uint64_t archtype_t;
 #include "include/picokernel/k_mutex.h"
 #include "include/picokernel/k_memp.h"
 #include "include/picokernel/k_mem_dyn.h"
+#include "include/picokernel/k_wqueue.h"
+
 
 
 /** assertion mechanism */

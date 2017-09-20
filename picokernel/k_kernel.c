@@ -426,6 +426,10 @@ void kernel_irq_in(void)
 
 	if(irq_counter < (archtype_t)0xFFFFFFFF)
 		irq_counter++;
+
+	if(irq_lock_nest < (archtype_t)0xFFFFFFFF)
+		irq_lock_nest++;
+
 }
 
 void kernel_irq_out(void)
@@ -445,6 +449,10 @@ void kernel_irq_out(void)
 
 	if(!port_from_isr())
 		return;
+
+	if(irq_lock_nest > (archtype_t)0)
+		irq_lock_nest--;
+
 
 	if(irq_counter > (archtype_t)0) {
 		irq_counter--;

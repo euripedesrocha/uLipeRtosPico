@@ -83,6 +83,20 @@ void SysTick_Handler(void)
 #endif
 
 
+#if(K_ENABLE_TICKLESS_IDLE > 0)
+void port_start_ticker(uint32_t reload_val)
+{
+
+}
+
+
+uint32_t port_halt_ticker(void)
+{
+
+}
+
+#endif
+
 #if(K_ENABLE_TIMERS > 0)
 
 void port_start_timer(archtype_t reload_val)

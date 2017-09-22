@@ -19,7 +19,7 @@
 
 
 /* define kernel working lists */
-typedef struct {
+typedef struct k_work_list{
 	uint32_t bitmap;
 	k_list_t list_head[K_PRIORITY_LEVELS];
 }k_work_list_t;

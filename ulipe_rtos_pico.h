@@ -99,6 +99,16 @@ typedef uint64_t archtype_t;
 #endif
 #endif
 
+#if(K_ENABLE_TICKLESS_IDLE > 0)
+#ifndef K_MAX_LOW_POWER_PERIOD
+#define K_MAX_LOW_POWER_PERIOD	100
+#endif
+
+#define K_HW_TIMER_COUNTS_PER_TICK (K_MACHINE_CLOCK / K_TICKER_RATE)
+extern void user_lowpower_entry(void *arg);
+extern void user_lowpower_exit(void *arg);
+#endif
+
 #include "include/picokernel/k_thread.h"
 #include "include/picokernel/k_port.h"
 #include "include/picokernel/k_kernel.h"

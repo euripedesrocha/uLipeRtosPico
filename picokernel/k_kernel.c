@@ -10,7 +10,7 @@
 #include "ulipe_rtos_pico.h"
 
 /**static variables **/
-THREAD_CONTROL_BLOCK_DECLARE(idle_thread, 64/sizeof(archtype_t), 0);
+THREAD_CONTROL_BLOCK_DECLARE(idle_thread, 64, 0);
 
 
 
@@ -26,6 +26,8 @@ bool k_running = false;
 tcb_t *k_current_task;
 tcb_t *k_high_prio_task;
 archtype_t irq_nesting = 0;
+
+static k_wakeup_info_t wu_info;
 
 
 #if((K_ENABLE_TICKER > 0) || (K_ENABLE_TIMERS > 0))
@@ -43,12 +45,27 @@ extern void timer_dispatcher(void *args);
  *  @param
  *  @return
  */
-static void k_idle_thread(void *arg)
+static void k_idle_thread(void *kernel_info)
 {
-	/** todo: implement low power handling here */
-	(void)arg;
-	for(;;) {
+	k_wakeup_info_t *info = (k_wakeup_info_t *)kernel_info;
+	ulipe_assert(info != NULL);
 
+
+	for(;;) {
+#if (K_ENABLE_TICKLESS_IDLE > 0)
+		/* kernel can sleep ? */
+		if((info->next_thread_wake == NULL) && (info->next_timer == NULL)) {
+			/* simplest case, we need only to enter in sleep for user defined time
+			 * the tasks sleep for defined time is future implementation
+			 */
+
+
+
+		}
+
+#else
+		(void)info;
+#endif
 	}
 }
 
@@ -359,8 +376,16 @@ k_status_t kernel_init(void)
 
 	port_irq_unlock(key);
 
+	extern tcb_t *next_task_wake;
+	extern uint32_t tick_count;
+	extern ktimer_t *actual_timer;
+
+	wu_info.next_thread_wake = next_task_wake;
+	wu_info.next_timer = actual_timer;
+	wu_info.tick_cntr = &tick_count;
+
 	/* creates the idle thread */
-	k_status_t err = thread_create(&k_idle_thread,NULL, &idle_thread);
+	k_status_t err = thread_create(&k_idle_thread,&wu_info, &idle_thread);
 	ULIPE_ASSERT(err == k_status_ok);
 
 #if(K_ENABLE_DYNAMIC_ALLOCATOR > 0)

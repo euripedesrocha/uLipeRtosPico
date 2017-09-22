@@ -38,6 +38,13 @@ typedef struct ktimer{
 }ktimer_t;
 
 
+/* kernel execution information */
+typedef struct k_wakeup_info {
+	tcb_t *next_thread_wake;
+	ktimer_t *next_timer;
+	uint32_t *tick_cntr;
+}k_wakeup_info_t;
+
 
 /**
  *  @fn TIMER_CONTROL_BLOCK_DECLARE()

@@ -40,4 +40,10 @@
 #define K_ENABLE_WORKQUEUES				1
 #define K_WQUEUES_STACK_SIZE 			128
 
+
+/* Tickless idle support */
+#define K_ENABLE_TICKLESS_IDLE			0
+#define K_MAX_LOW_POWER_PERIOD			(500)
+
+
 #endif

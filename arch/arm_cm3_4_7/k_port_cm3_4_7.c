@@ -65,6 +65,22 @@ void port_init_machine(void)
 #endif
 }
 
+#if(K_ENABLE_TICKLESS_IDLE > 0)
+void port_start_ticker(uint32_t reload_val)
+{
+
+}
+
+
+uint32_t port_halt_ticker(void)
+{
+
+}
+
+#endif
+
+
+
 #if (K_ENABLE_TICKER > 0)
 
 void timer_tick_handler(void)

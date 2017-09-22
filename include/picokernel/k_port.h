@@ -122,6 +122,28 @@ extern void timer_match_handler(void);
  */
 extern void timer_ovf_handler(void);
 
+#if(K_ENABLE_TICKLESS_IDLE > 0)
+/**
+ *  @fn port_start_ticker()
+ *  @brief inits machine specific timer. if zero received, stop ticker
+ *  @param
+ *  @return
+ */
+extern void port_start_ticker(uint32_t reload_val);
+
+
+/**
+ *  @fn port_halt_ticker()
+ *  @brief stops timer counting amd return its current value
+ *  @param
+ *  @return
+ */
+extern uint32_t port_halt_ticker(void);
+
+
+
+#endif
+
 /**
  *  @fn port_bit_fs_scan()
  *  @brief perform bit forward scan

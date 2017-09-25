@@ -45,7 +45,7 @@ The kernel uses a fully preemptive-cooperative schedule policy, and supports up 
 - Add the folders as sources: uLipeRtosPico/picokernel and uLipeRtosPico/picokernel and uLipeRtosPico/arch;
 - Create your own ulipe_rtos_kconfig.h with some properties or use the default config:
 
-```
+``` cpp
 
 
 /* architecture definition */
@@ -69,7 +69,7 @@ The kernel uses a fully preemptive-cooperative schedule policy, and supports up 
 
 - Play witth the following demo:
 
-```
+``` cpp
 #include "ulipe_rtos_pico.h"
 
 THREAD_CONTROL_BLOCK_DECLARE(th1, 64, 3);

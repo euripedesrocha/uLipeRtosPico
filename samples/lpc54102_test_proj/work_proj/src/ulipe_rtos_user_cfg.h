@@ -1,19 +1,5 @@
-/**
- * 							ULIPE RTOS PICO
- *
- *  @file ulipe_rtos_kconfig.h
- *
- *  @brief kernel configuration file
- *
- *
- */
-#ifndef __ULIPE_RTOS_KCONFIG_H
-#define __ULIPE_RTOS_KCONFIG_H
-
-
-
-/* if no configuration was provided by user, load the default one */
-#ifndef K_USER_CONFIG
+#ifndef __ULIPE_RTOS_USER_CFG_H
+#define __ULIPE_RTOS_USER_CFG_H
 
 /* kernel debugging */
 #define K_DEBUG 						1
@@ -47,8 +33,5 @@
 #define K_ENABLE_TICKLESS_IDLE			0
 #define K_MAX_LOW_POWER_PERIOD			(500)
 
-#else
-#include "ulipe_rtos_user_cfg.h"
-#endif
 
 #endif

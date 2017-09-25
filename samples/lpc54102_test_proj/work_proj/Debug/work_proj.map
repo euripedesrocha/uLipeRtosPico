@@ -1,0 +1,1673 @@
+Archive member included to satisfy reference by file (symbol)
+
+/home/venturus/devel/uLipeRtosPico/samples/lpc54102_test_proj/lpc_board_lpcxpresso_54102/Debug/liblpc_board_lpcxpresso_54102.a(board.o)
+                              ./src/work_proj.o (Board_LED_Set)
+/home/venturus/devel/uLipeRtosPico/samples/lpc54102_test_proj/lpc_board_lpcxpresso_54102/Debug/liblpc_board_lpcxpresso_54102.a(board_sysinit.o)
+                              ./src/sysinit.o (Board_SystemInit)
+/home/venturus/devel/uLipeRtosPico/samples/lpc54102_test_proj/lpc_chip_5410x/Debug/liblpc_chip_5410x.a(chip_5410x.o)
+                              ./src/work_proj.o (SystemCoreClockUpdate)
+/home/venturus/devel/uLipeRtosPico/samples/lpc54102_test_proj/lpc_chip_5410x/Debug/liblpc_chip_5410x.a(clock_5410x.o)
+                              board_sysinit.o (symbol from plugin) (Chip_Clock_SetCLKOUTSource)
+/home/venturus/devel/uLipeRtosPico/samples/lpc54102_test_proj/lpc_chip_5410x/Debug/liblpc_chip_5410x.a(fpu_init.o)
+                              ./src/sysinit.o (fpuInit)
+/home/venturus/devel/uLipeRtosPico/samples/lpc54102_test_proj/lpc_chip_5410x/Debug/liblpc_chip_5410x.a(gpio_5410x.o)
+                              board.o (symbol from plugin) (Chip_GPIO_Init)
+/home/venturus/devel/uLipeRtosPico/samples/lpc54102_test_proj/lpc_chip_5410x/Debug/liblpc_chip_5410x.a(iocon_5410x.o)
+                              board_sysinit.o (symbol from plugin) (Chip_IOCON_SetPinMuxing)
+/home/venturus/devel/uLipeRtosPico/samples/lpc54102_test_proj/lpc_chip_5410x/Debug/liblpc_chip_5410x.a(pll_5410x.o)
+                              clock_5410x.o (symbol from plugin) (Chip_Clock_GetSystemPLLInClockRate)
+/home/venturus/devel/uLipeRtosPico/samples/lpc54102_test_proj/lpc_chip_5410x/Debug/liblpc_chip_5410x.a(syscon_5410x.o)
+                              gpio_5410x.o (symbol from plugin) (Chip_SYSCON_PeriphReset)
+/home/venturus/devel/uLipeRtosPico/samples/lpc54102_test_proj/lpc_chip_5410x/Debug/liblpc_chip_5410x.a(sysinit_5410x.o)
+                              board_sysinit.o (symbol from plugin) (Chip_SetupIrcClocking)
+/home/venturus/devel/uLipeRtosPico/samples/lpc54102_test_proj/lpc_chip_5410x/libs/libpower_m4f_hard.a(power_library.o)
+                              pll_5410x.o (symbol from plugin) (Chip_POWER_SetVoltage)
+/usr/local/mcuxpressoide-10.0.0_344/ide/tools/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/fpu/libcr_c.a(memcpy.o)
+                              ./uLipeRtosPico/picokernel/k_message.o (memcpy)
+/usr/local/mcuxpressoide-10.0.0_344/ide/tools/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/fpu/libcr_c.a(__weak__main.o)
+                              ./src/cr_startup_lpc5410x.o (__main)
+/usr/local/mcuxpressoide-10.0.0_344/ide/tools/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/fpu/libcr_c.a(strcpy.o)
+                              ./src/work_proj.o (strcpy)
+/usr/local/mcuxpressoide-10.0.0_344/ide/tools/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/fpu/libcr_c.a(strlen.o)
+                              board.o (symbol from plugin) (strlen)
+/usr/local/mcuxpressoide-10.0.0_344/ide/tools/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7e-m/fpu/libcr_eabihelpers.a(memcpy.o)
+                              /usr/local/mcuxpressoide-10.0.0_344/ide/tools/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/fpu/libcr_c.a(memcpy.o) (__aeabi_memcpy)
+/usr/local/mcuxpressoide-10.0.0_344/ide/tools/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7e-m/fpu/libcr_eabihelpers.a(division_64.o)
+                              /tmp/cceTJhbM.ltrans0.ltrans.o (__aeabi_uldivmod)
+/usr/local/mcuxpressoide-10.0.0_344/ide/tools/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7e-m/fpu/libcr_eabihelpers.a(division_idiv0.o)
+                              /usr/local/mcuxpressoide-10.0.0_344/ide/tools/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7e-m/fpu/libcr_eabihelpers.a(division_64.o) (__aeabi_idiv0)
+
+Allocating common symbols
+Common symbol       size              file
+
+SystemCoreClock     0x4               chip_5410x.o (symbol from plugin)
+ITM_RxBuffer        0x4               board.o (symbol from plugin)
+
+Discarded input sections
+
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_kernel.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_kernel.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_kernel.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_kernel.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_kernel.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_kernel.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_kernel.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_kernel.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_kernel.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_kernel.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_kernel.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_kernel.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_kernel.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_kernel.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_kernel.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_kernel.o
+ .text          0x00000000        0x0 ./uLipeRtosPico/picokernel/k_kernel.o
+ .data          0x00000000        0x0 ./uLipeRtosPico/picokernel/k_kernel.o
+ .bss           0x00000000        0x0 ./uLipeRtosPico/picokernel/k_kernel.o
+ .bss.irq_nesting
+                0x00000000        0x4 ./uLipeRtosPico/picokernel/k_kernel.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_mem_dyn.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_mem_dyn.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_mem_dyn.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_mem_dyn.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_mem_dyn.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_mem_dyn.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_mem_dyn.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_mem_dyn.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_mem_dyn.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_mem_dyn.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_mem_dyn.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_mem_dyn.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_mem_dyn.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_mem_dyn.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_mem_dyn.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_mem_dyn.o
+ .text          0x00000000        0x0 ./uLipeRtosPico/picokernel/k_mem_dyn.o
+ .data          0x00000000        0x0 ./uLipeRtosPico/picokernel/k_mem_dyn.o
+ .bss           0x00000000        0x0 ./uLipeRtosPico/picokernel/k_mem_dyn.o
+ .debug_info    0x00000000       0x72 ./uLipeRtosPico/picokernel/k_mem_dyn.o
+ .debug_abbrev  0x00000000       0x27 ./uLipeRtosPico/picokernel/k_mem_dyn.o
+ .debug_aranges
+                0x00000000       0x18 ./uLipeRtosPico/picokernel/k_mem_dyn.o
+ .debug_macro   0x00000000       0xef ./uLipeRtosPico/picokernel/k_mem_dyn.o
+ .debug_macro   0x00000000      0x8b0 ./uLipeRtosPico/picokernel/k_mem_dyn.o
+ .debug_macro   0x00000000       0x10 ./uLipeRtosPico/picokernel/k_mem_dyn.o
+ .debug_macro   0x00000000      0x12d ./uLipeRtosPico/picokernel/k_mem_dyn.o
+ .debug_macro   0x00000000      0x5b2 ./uLipeRtosPico/picokernel/k_mem_dyn.o
+ .debug_macro   0x00000000       0x22 ./uLipeRtosPico/picokernel/k_mem_dyn.o
+ .debug_macro   0x00000000       0x16 ./uLipeRtosPico/picokernel/k_mem_dyn.o
+ .debug_macro   0x00000000       0x4b ./uLipeRtosPico/picokernel/k_mem_dyn.o
+ .debug_macro   0x00000000       0x8e ./uLipeRtosPico/picokernel/k_mem_dyn.o
+ .debug_macro   0x00000000       0x4c ./uLipeRtosPico/picokernel/k_mem_dyn.o
+ .debug_macro   0x00000000       0x1c ./uLipeRtosPico/picokernel/k_mem_dyn.o
+ .debug_macro   0x00000000       0x10 ./uLipeRtosPico/picokernel/k_mem_dyn.o
+ .debug_macro   0x00000000       0x28 ./uLipeRtosPico/picokernel/k_mem_dyn.o
+ .debug_macro   0x00000000       0x10 ./uLipeRtosPico/picokernel/k_mem_dyn.o
+ .debug_macro   0x00000000       0x16 ./uLipeRtosPico/picokernel/k_mem_dyn.o
+ .debug_macro   0x00000000       0x10 ./uLipeRtosPico/picokernel/k_mem_dyn.o
+ .debug_macro   0x00000000       0x10 ./uLipeRtosPico/picokernel/k_mem_dyn.o
+ .debug_line    0x00000000      0x2f2 ./uLipeRtosPico/picokernel/k_mem_dyn.o
+ .debug_str     0x00000000     0x506d ./uLipeRtosPico/picokernel/k_mem_dyn.o
+ .comment       0x00000000       0x6f ./uLipeRtosPico/picokernel/k_mem_dyn.o
+ .ARM.attributes
+                0x00000000       0x39 ./uLipeRtosPico/picokernel/k_mem_dyn.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_memp.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_memp.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_memp.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_memp.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_memp.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_memp.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_memp.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_memp.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_memp.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_memp.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_memp.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_memp.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_memp.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_memp.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_memp.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_memp.o
+ .text          0x00000000        0x0 ./uLipeRtosPico/picokernel/k_memp.o
+ .data          0x00000000        0x0 ./uLipeRtosPico/picokernel/k_memp.o
+ .bss           0x00000000        0x0 ./uLipeRtosPico/picokernel/k_memp.o
+ .debug_macro   0x00000000      0x8b0 ./uLipeRtosPico/picokernel/k_memp.o
+ .debug_macro   0x00000000       0x10 ./uLipeRtosPico/picokernel/k_memp.o
+ .debug_macro   0x00000000      0x12d ./uLipeRtosPico/picokernel/k_memp.o
+ .debug_macro   0x00000000      0x5b2 ./uLipeRtosPico/picokernel/k_memp.o
+ .debug_macro   0x00000000       0x22 ./uLipeRtosPico/picokernel/k_memp.o
+ .debug_macro   0x00000000       0x16 ./uLipeRtosPico/picokernel/k_memp.o
+ .debug_macro   0x00000000       0x4b ./uLipeRtosPico/picokernel/k_memp.o
+ .debug_macro   0x00000000       0x8e ./uLipeRtosPico/picokernel/k_memp.o
+ .debug_macro   0x00000000       0x4c ./uLipeRtosPico/picokernel/k_memp.o
+ .debug_macro   0x00000000       0x1c ./uLipeRtosPico/picokernel/k_memp.o
+ .debug_macro   0x00000000       0x10 ./uLipeRtosPico/picokernel/k_memp.o
+ .debug_macro   0x00000000       0x28 ./uLipeRtosPico/picokernel/k_memp.o
+ .debug_macro   0x00000000       0x10 ./uLipeRtosPico/picokernel/k_memp.o
+ .debug_macro   0x00000000       0x16 ./uLipeRtosPico/picokernel/k_memp.o
+ .debug_macro   0x00000000       0x10 ./uLipeRtosPico/picokernel/k_memp.o
+ .debug_macro   0x00000000       0x10 ./uLipeRtosPico/picokernel/k_memp.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_message.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_message.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_message.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_message.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_message.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_message.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_message.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_message.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_message.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_message.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_message.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_message.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_message.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_message.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_message.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_message.o
+ .text          0x00000000        0x0 ./uLipeRtosPico/picokernel/k_message.o
+ .data          0x00000000        0x0 ./uLipeRtosPico/picokernel/k_message.o
+ .bss           0x00000000        0x0 ./uLipeRtosPico/picokernel/k_message.o
+ .text.ulipe_assert
+                0x00000000       0x24 ./uLipeRtosPico/picokernel/k_message.o
+ .text.message_handle_pend
+                0x00000000       0xbc ./uLipeRtosPico/picokernel/k_message.o
+ .text.message_insert
+                0x00000000      0x190 ./uLipeRtosPico/picokernel/k_message.o
+ .text.message_remove
+                0x00000000      0x19c ./uLipeRtosPico/picokernel/k_message.o
+ .debug_info    0x00000000      0x520 ./uLipeRtosPico/picokernel/k_message.o
+ .debug_abbrev  0x00000000      0x18f ./uLipeRtosPico/picokernel/k_message.o
+ .debug_aranges
+                0x00000000       0x38 ./uLipeRtosPico/picokernel/k_message.o
+ .debug_ranges  0x00000000       0x28 ./uLipeRtosPico/picokernel/k_message.o
+ .debug_macro   0x00000000       0xef ./uLipeRtosPico/picokernel/k_message.o
+ .debug_macro   0x00000000      0x8b0 ./uLipeRtosPico/picokernel/k_message.o
+ .debug_macro   0x00000000       0x10 ./uLipeRtosPico/picokernel/k_message.o
+ .debug_macro   0x00000000      0x12d ./uLipeRtosPico/picokernel/k_message.o
+ .debug_macro   0x00000000      0x5b2 ./uLipeRtosPico/picokernel/k_message.o
+ .debug_macro   0x00000000       0x22 ./uLipeRtosPico/picokernel/k_message.o
+ .debug_macro   0x00000000       0x16 ./uLipeRtosPico/picokernel/k_message.o
+ .debug_macro   0x00000000       0x4b ./uLipeRtosPico/picokernel/k_message.o
+ .debug_macro   0x00000000       0x8e ./uLipeRtosPico/picokernel/k_message.o
+ .debug_macro   0x00000000       0x4c ./uLipeRtosPico/picokernel/k_message.o
+ .debug_macro   0x00000000       0x1c ./uLipeRtosPico/picokernel/k_message.o
+ .debug_macro   0x00000000       0x10 ./uLipeRtosPico/picokernel/k_message.o
+ .debug_macro   0x00000000       0x28 ./uLipeRtosPico/picokernel/k_message.o
+ .debug_macro   0x00000000       0x10 ./uLipeRtosPico/picokernel/k_message.o
+ .debug_macro   0x00000000       0x16 ./uLipeRtosPico/picokernel/k_message.o
+ .debug_macro   0x00000000       0x10 ./uLipeRtosPico/picokernel/k_message.o
+ .debug_macro   0x00000000       0x10 ./uLipeRtosPico/picokernel/k_message.o
+ .debug_line    0x00000000      0x3af ./uLipeRtosPico/picokernel/k_message.o
+ .debug_str     0x00000000     0x53d7 ./uLipeRtosPico/picokernel/k_message.o
+ .comment       0x00000000       0x6f ./uLipeRtosPico/picokernel/k_message.o
+ .debug_frame   0x00000000       0xa0 ./uLipeRtosPico/picokernel/k_message.o
+ .ARM.attributes
+                0x00000000       0x39 ./uLipeRtosPico/picokernel/k_message.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_mutex.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_mutex.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_mutex.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_mutex.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_mutex.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_mutex.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_mutex.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_mutex.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_mutex.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_mutex.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_mutex.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_mutex.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_mutex.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_mutex.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_mutex.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_mutex.o
+ .text          0x00000000        0x0 ./uLipeRtosPico/picokernel/k_mutex.o
+ .data          0x00000000        0x0 ./uLipeRtosPico/picokernel/k_mutex.o
+ .bss           0x00000000        0x0 ./uLipeRtosPico/picokernel/k_mutex.o
+ .debug_macro   0x00000000      0x8b0 ./uLipeRtosPico/picokernel/k_mutex.o
+ .debug_macro   0x00000000       0x10 ./uLipeRtosPico/picokernel/k_mutex.o
+ .debug_macro   0x00000000      0x12d ./uLipeRtosPico/picokernel/k_mutex.o
+ .debug_macro   0x00000000      0x5b2 ./uLipeRtosPico/picokernel/k_mutex.o
+ .debug_macro   0x00000000       0x22 ./uLipeRtosPico/picokernel/k_mutex.o
+ .debug_macro   0x00000000       0x16 ./uLipeRtosPico/picokernel/k_mutex.o
+ .debug_macro   0x00000000       0x4b ./uLipeRtosPico/picokernel/k_mutex.o
+ .debug_macro   0x00000000       0x8e ./uLipeRtosPico/picokernel/k_mutex.o
+ .debug_macro   0x00000000       0x4c ./uLipeRtosPico/picokernel/k_mutex.o
+ .debug_macro   0x00000000       0x1c ./uLipeRtosPico/picokernel/k_mutex.o
+ .debug_macro   0x00000000       0x10 ./uLipeRtosPico/picokernel/k_mutex.o
+ .debug_macro   0x00000000       0x28 ./uLipeRtosPico/picokernel/k_mutex.o
+ .debug_macro   0x00000000       0x10 ./uLipeRtosPico/picokernel/k_mutex.o
+ .debug_macro   0x00000000       0x16 ./uLipeRtosPico/picokernel/k_mutex.o
+ .debug_macro   0x00000000       0x10 ./uLipeRtosPico/picokernel/k_mutex.o
+ .debug_macro   0x00000000       0x10 ./uLipeRtosPico/picokernel/k_mutex.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_raw_timer.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_raw_timer.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_raw_timer.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_raw_timer.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_raw_timer.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_raw_timer.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_raw_timer.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_raw_timer.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_raw_timer.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_raw_timer.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_raw_timer.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_raw_timer.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_raw_timer.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_raw_timer.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_raw_timer.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_raw_timer.o
+ .text          0x00000000        0x0 ./uLipeRtosPico/picokernel/k_raw_timer.o
+ .data          0x00000000        0x0 ./uLipeRtosPico/picokernel/k_raw_timer.o
+ .bss           0x00000000        0x0 ./uLipeRtosPico/picokernel/k_raw_timer.o
+ .text.timer_stop
+                0x00000000       0xa8 ./uLipeRtosPico/picokernel/k_raw_timer.o
+ .text.timer_poll
+                0x00000000       0x1c ./uLipeRtosPico/picokernel/k_raw_timer.o
+ .text.timer_set_load
+                0x00000000       0x74 ./uLipeRtosPico/picokernel/k_raw_timer.o
+ .debug_macro   0x00000000      0x8b0 ./uLipeRtosPico/picokernel/k_raw_timer.o
+ .debug_macro   0x00000000       0x10 ./uLipeRtosPico/picokernel/k_raw_timer.o
+ .debug_macro   0x00000000      0x12d ./uLipeRtosPico/picokernel/k_raw_timer.o
+ .debug_macro   0x00000000      0x5b2 ./uLipeRtosPico/picokernel/k_raw_timer.o
+ .debug_macro   0x00000000       0x22 ./uLipeRtosPico/picokernel/k_raw_timer.o
+ .debug_macro   0x00000000       0x16 ./uLipeRtosPico/picokernel/k_raw_timer.o
+ .debug_macro   0x00000000       0x4b ./uLipeRtosPico/picokernel/k_raw_timer.o
+ .debug_macro   0x00000000       0x8e ./uLipeRtosPico/picokernel/k_raw_timer.o
+ .debug_macro   0x00000000       0x4c ./uLipeRtosPico/picokernel/k_raw_timer.o
+ .debug_macro   0x00000000       0x1c ./uLipeRtosPico/picokernel/k_raw_timer.o
+ .debug_macro   0x00000000       0x10 ./uLipeRtosPico/picokernel/k_raw_timer.o
+ .debug_macro   0x00000000       0x28 ./uLipeRtosPico/picokernel/k_raw_timer.o
+ .debug_macro   0x00000000       0x10 ./uLipeRtosPico/picokernel/k_raw_timer.o
+ .debug_macro   0x00000000       0x16 ./uLipeRtosPico/picokernel/k_raw_timer.o
+ .debug_macro   0x00000000       0x10 ./uLipeRtosPico/picokernel/k_raw_timer.o
+ .debug_macro   0x00000000       0x10 ./uLipeRtosPico/picokernel/k_raw_timer.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_sema.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_sema.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_sema.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_sema.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_sema.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_sema.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_sema.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_sema.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_sema.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_sema.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_sema.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_sema.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_sema.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_sema.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_sema.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_sema.o
+ .text          0x00000000        0x0 ./uLipeRtosPico/picokernel/k_sema.o
+ .data          0x00000000        0x0 ./uLipeRtosPico/picokernel/k_sema.o
+ .bss           0x00000000        0x0 ./uLipeRtosPico/picokernel/k_sema.o
+ .debug_macro   0x00000000      0x8b0 ./uLipeRtosPico/picokernel/k_sema.o
+ .debug_macro   0x00000000       0x10 ./uLipeRtosPico/picokernel/k_sema.o
+ .debug_macro   0x00000000      0x12d ./uLipeRtosPico/picokernel/k_sema.o
+ .debug_macro   0x00000000      0x5b2 ./uLipeRtosPico/picokernel/k_sema.o
+ .debug_macro   0x00000000       0x22 ./uLipeRtosPico/picokernel/k_sema.o
+ .debug_macro   0x00000000       0x16 ./uLipeRtosPico/picokernel/k_sema.o
+ .debug_macro   0x00000000       0x4b ./uLipeRtosPico/picokernel/k_sema.o
+ .debug_macro   0x00000000       0x8e ./uLipeRtosPico/picokernel/k_sema.o
+ .debug_macro   0x00000000       0x4c ./uLipeRtosPico/picokernel/k_sema.o
+ .debug_macro   0x00000000       0x1c ./uLipeRtosPico/picokernel/k_sema.o
+ .debug_macro   0x00000000       0x10 ./uLipeRtosPico/picokernel/k_sema.o
+ .debug_macro   0x00000000       0x28 ./uLipeRtosPico/picokernel/k_sema.o
+ .debug_macro   0x00000000       0x10 ./uLipeRtosPico/picokernel/k_sema.o
+ .debug_macro   0x00000000       0x16 ./uLipeRtosPico/picokernel/k_sema.o
+ .debug_macro   0x00000000       0x10 ./uLipeRtosPico/picokernel/k_sema.o
+ .debug_macro   0x00000000       0x10 ./uLipeRtosPico/picokernel/k_sema.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_thread.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_thread.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_thread.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_thread.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_thread.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_thread.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_thread.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_thread.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_thread.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_thread.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_thread.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_thread.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_thread.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_thread.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_thread.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_thread.o
+ .text          0x00000000        0x0 ./uLipeRtosPico/picokernel/k_thread.o
+ .data          0x00000000        0x0 ./uLipeRtosPico/picokernel/k_thread.o
+ .bss           0x00000000        0x0 ./uLipeRtosPico/picokernel/k_thread.o
+ .text.thread_abort
+                0x00000000       0x70 ./uLipeRtosPico/picokernel/k_thread.o
+ .text.thread_suspend
+                0x00000000       0xa0 ./uLipeRtosPico/picokernel/k_thread.o
+ .text.thread_resume
+                0x00000000       0x74 ./uLipeRtosPico/picokernel/k_thread.o
+ .debug_macro   0x00000000      0x8b0 ./uLipeRtosPico/picokernel/k_thread.o
+ .debug_macro   0x00000000       0x10 ./uLipeRtosPico/picokernel/k_thread.o
+ .debug_macro   0x00000000      0x12d ./uLipeRtosPico/picokernel/k_thread.o
+ .debug_macro   0x00000000      0x5b2 ./uLipeRtosPico/picokernel/k_thread.o
+ .debug_macro   0x00000000       0x22 ./uLipeRtosPico/picokernel/k_thread.o
+ .debug_macro   0x00000000       0x16 ./uLipeRtosPico/picokernel/k_thread.o
+ .debug_macro   0x00000000       0x4b ./uLipeRtosPico/picokernel/k_thread.o
+ .debug_macro   0x00000000       0x8e ./uLipeRtosPico/picokernel/k_thread.o
+ .debug_macro   0x00000000       0x4c ./uLipeRtosPico/picokernel/k_thread.o
+ .debug_macro   0x00000000       0x1c ./uLipeRtosPico/picokernel/k_thread.o
+ .debug_macro   0x00000000       0x10 ./uLipeRtosPico/picokernel/k_thread.o
+ .debug_macro   0x00000000       0x28 ./uLipeRtosPico/picokernel/k_thread.o
+ .debug_macro   0x00000000       0x10 ./uLipeRtosPico/picokernel/k_thread.o
+ .debug_macro   0x00000000       0x16 ./uLipeRtosPico/picokernel/k_thread.o
+ .debug_macro   0x00000000       0x10 ./uLipeRtosPico/picokernel/k_thread.o
+ .debug_macro   0x00000000       0x10 ./uLipeRtosPico/picokernel/k_thread.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_wqueue.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_wqueue.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_wqueue.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_wqueue.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_wqueue.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_wqueue.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_wqueue.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_wqueue.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_wqueue.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_wqueue.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_wqueue.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_wqueue.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_wqueue.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_wqueue.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_wqueue.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/picokernel/k_wqueue.o
+ .text          0x00000000        0x0 ./uLipeRtosPico/picokernel/k_wqueue.o
+ .data          0x00000000        0x0 ./uLipeRtosPico/picokernel/k_wqueue.o
+ .bss           0x00000000        0x0 ./uLipeRtosPico/picokernel/k_wqueue.o
+ .debug_macro   0x00000000      0x8b0 ./uLipeRtosPico/picokernel/k_wqueue.o
+ .debug_macro   0x00000000       0x10 ./uLipeRtosPico/picokernel/k_wqueue.o
+ .debug_macro   0x00000000      0x12d ./uLipeRtosPico/picokernel/k_wqueue.o
+ .debug_macro   0x00000000      0x5b2 ./uLipeRtosPico/picokernel/k_wqueue.o
+ .debug_macro   0x00000000       0x22 ./uLipeRtosPico/picokernel/k_wqueue.o
+ .debug_macro   0x00000000       0x16 ./uLipeRtosPico/picokernel/k_wqueue.o
+ .debug_macro   0x00000000       0x4b ./uLipeRtosPico/picokernel/k_wqueue.o
+ .debug_macro   0x00000000       0x8e ./uLipeRtosPico/picokernel/k_wqueue.o
+ .debug_macro   0x00000000       0x4c ./uLipeRtosPico/picokernel/k_wqueue.o
+ .debug_macro   0x00000000       0x1c ./uLipeRtosPico/picokernel/k_wqueue.o
+ .debug_macro   0x00000000       0x10 ./uLipeRtosPico/picokernel/k_wqueue.o
+ .debug_macro   0x00000000       0x28 ./uLipeRtosPico/picokernel/k_wqueue.o
+ .debug_macro   0x00000000       0x10 ./uLipeRtosPico/picokernel/k_wqueue.o
+ .debug_macro   0x00000000       0x16 ./uLipeRtosPico/picokernel/k_wqueue.o
+ .debug_macro   0x00000000       0x10 ./uLipeRtosPico/picokernel/k_wqueue.o
+ .debug_macro   0x00000000       0x10 ./uLipeRtosPico/picokernel/k_wqueue.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/arch/avr_tiny/k_port_avr_tiny.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/arch/avr_tiny/k_port_avr_tiny.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/arch/avr_tiny/k_port_avr_tiny.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/arch/avr_tiny/k_port_avr_tiny.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/arch/avr_tiny/k_port_avr_tiny.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/arch/avr_tiny/k_port_avr_tiny.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/arch/avr_tiny/k_port_avr_tiny.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/arch/avr_tiny/k_port_avr_tiny.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/arch/avr_tiny/k_port_avr_tiny.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/arch/avr_tiny/k_port_avr_tiny.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/arch/avr_tiny/k_port_avr_tiny.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/arch/avr_tiny/k_port_avr_tiny.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/arch/avr_tiny/k_port_avr_tiny.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/arch/avr_tiny/k_port_avr_tiny.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/arch/avr_tiny/k_port_avr_tiny.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/arch/avr_tiny/k_port_avr_tiny.o
+ .text          0x00000000        0x0 ./uLipeRtosPico/arch/avr_tiny/k_port_avr_tiny.o
+ .data          0x00000000        0x0 ./uLipeRtosPico/arch/avr_tiny/k_port_avr_tiny.o
+ .bss           0x00000000        0x0 ./uLipeRtosPico/arch/avr_tiny/k_port_avr_tiny.o
+ .debug_info    0x00000000       0x72 ./uLipeRtosPico/arch/avr_tiny/k_port_avr_tiny.o
+ .debug_abbrev  0x00000000       0x27 ./uLipeRtosPico/arch/avr_tiny/k_port_avr_tiny.o
+ .debug_aranges
+                0x00000000       0x18 ./uLipeRtosPico/arch/avr_tiny/k_port_avr_tiny.o
+ .debug_macro   0x00000000       0xf9 ./uLipeRtosPico/arch/avr_tiny/k_port_avr_tiny.o
+ .debug_macro   0x00000000      0x8b0 ./uLipeRtosPico/arch/avr_tiny/k_port_avr_tiny.o
+ .debug_macro   0x00000000       0x10 ./uLipeRtosPico/arch/avr_tiny/k_port_avr_tiny.o
+ .debug_macro   0x00000000      0x12d ./uLipeRtosPico/arch/avr_tiny/k_port_avr_tiny.o
+ .debug_macro   0x00000000      0x5b2 ./uLipeRtosPico/arch/avr_tiny/k_port_avr_tiny.o
+ .debug_macro   0x00000000       0x22 ./uLipeRtosPico/arch/avr_tiny/k_port_avr_tiny.o
+ .debug_macro   0x00000000       0x16 ./uLipeRtosPico/arch/avr_tiny/k_port_avr_tiny.o
+ .debug_macro   0x00000000       0x4b ./uLipeRtosPico/arch/avr_tiny/k_port_avr_tiny.o
+ .debug_macro   0x00000000       0x8e ./uLipeRtosPico/arch/avr_tiny/k_port_avr_tiny.o
+ .debug_macro   0x00000000       0x4c ./uLipeRtosPico/arch/avr_tiny/k_port_avr_tiny.o
+ .debug_macro   0x00000000       0x1c ./uLipeRtosPico/arch/avr_tiny/k_port_avr_tiny.o
+ .debug_macro   0x00000000       0x10 ./uLipeRtosPico/arch/avr_tiny/k_port_avr_tiny.o
+ .debug_macro   0x00000000       0x28 ./uLipeRtosPico/arch/avr_tiny/k_port_avr_tiny.o
+ .debug_macro   0x00000000       0x10 ./uLipeRtosPico/arch/avr_tiny/k_port_avr_tiny.o
+ .debug_macro   0x00000000       0x16 ./uLipeRtosPico/arch/avr_tiny/k_port_avr_tiny.o
+ .debug_macro   0x00000000       0x10 ./uLipeRtosPico/arch/avr_tiny/k_port_avr_tiny.o
+ .debug_macro   0x00000000       0x10 ./uLipeRtosPico/arch/avr_tiny/k_port_avr_tiny.o
+ .debug_line    0x00000000      0x345 ./uLipeRtosPico/arch/avr_tiny/k_port_avr_tiny.o
+ .debug_str     0x00000000     0x5090 ./uLipeRtosPico/arch/avr_tiny/k_port_avr_tiny.o
+ .comment       0x00000000       0x6f ./uLipeRtosPico/arch/avr_tiny/k_port_avr_tiny.o
+ .ARM.attributes
+                0x00000000       0x39 ./uLipeRtosPico/arch/avr_tiny/k_port_avr_tiny.o
+ .text          0x00000000        0x0 ./uLipeRtosPico/arch/avr_tiny/k_port_avr_tiny_a.o
+ .data          0x00000000        0x0 ./uLipeRtosPico/arch/avr_tiny/k_port_avr_tiny_a.o
+ .bss           0x00000000        0x0 ./uLipeRtosPico/arch/avr_tiny/k_port_avr_tiny_a.o
+ .ARM.attributes
+                0x00000000       0x25 ./uLipeRtosPico/arch/avr_tiny/k_port_avr_tiny_a.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7.o
+ .text          0x00000000        0x0 ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7.o
+ .data          0x00000000        0x0 ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7.o
+ .bss           0x00000000        0x0 ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7.o
+ .text.port_start_timer
+                0x00000000       0x14 ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7.o
+ .text.port_timer_load_append
+                0x00000000       0x14 ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7.o
+ .text.port_timer_halt
+                0x00000000       0x10 ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7.o
+ .text.port_timer_resume
+                0x00000000       0x10 ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7.o
+ .text.timer_match_handler
+                0x00000000       0x1c ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7.o
+ .text.timer_ovf_handler
+                0x00000000       0x10 ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7.o
+ .debug_macro   0x00000000      0x8b0 ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7.o
+ .debug_macro   0x00000000       0x10 ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7.o
+ .debug_macro   0x00000000      0x12d ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7.o
+ .debug_macro   0x00000000      0x5b2 ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7.o
+ .debug_macro   0x00000000       0x22 ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7.o
+ .debug_macro   0x00000000       0x16 ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7.o
+ .debug_macro   0x00000000       0x4b ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7.o
+ .debug_macro   0x00000000       0x8e ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7.o
+ .debug_macro   0x00000000       0x4c ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7.o
+ .debug_macro   0x00000000       0x1c ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7.o
+ .debug_macro   0x00000000       0x10 ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7.o
+ .debug_macro   0x00000000       0x28 ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7.o
+ .debug_macro   0x00000000       0x10 ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7.o
+ .debug_macro   0x00000000       0x16 ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7.o
+ .debug_macro   0x00000000       0x10 ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7.o
+ .debug_macro   0x00000000       0x10 ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7.o
+ .data          0x00000000        0x0 ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7_a.o
+ .bss           0x00000000        0x0 ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7_a.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/arch/arm_cm0/k_port_cm0.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/arch/arm_cm0/k_port_cm0.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/arch/arm_cm0/k_port_cm0.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/arch/arm_cm0/k_port_cm0.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/arch/arm_cm0/k_port_cm0.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/arch/arm_cm0/k_port_cm0.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/arch/arm_cm0/k_port_cm0.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/arch/arm_cm0/k_port_cm0.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/arch/arm_cm0/k_port_cm0.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/arch/arm_cm0/k_port_cm0.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/arch/arm_cm0/k_port_cm0.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/arch/arm_cm0/k_port_cm0.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/arch/arm_cm0/k_port_cm0.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/arch/arm_cm0/k_port_cm0.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/arch/arm_cm0/k_port_cm0.o
+ .group         0x00000000        0x8 ./uLipeRtosPico/arch/arm_cm0/k_port_cm0.o
+ .text          0x00000000        0x0 ./uLipeRtosPico/arch/arm_cm0/k_port_cm0.o
+ .data          0x00000000        0x0 ./uLipeRtosPico/arch/arm_cm0/k_port_cm0.o
+ .bss           0x00000000        0x0 ./uLipeRtosPico/arch/arm_cm0/k_port_cm0.o
+ .debug_info    0x00000000       0x72 ./uLipeRtosPico/arch/arm_cm0/k_port_cm0.o
+ .debug_abbrev  0x00000000       0x27 ./uLipeRtosPico/arch/arm_cm0/k_port_cm0.o
+ .debug_aranges
+                0x00000000       0x18 ./uLipeRtosPico/arch/arm_cm0/k_port_cm0.o
+ .debug_macro   0x00000000       0xf9 ./uLipeRtosPico/arch/arm_cm0/k_port_cm0.o
+ .debug_macro   0x00000000      0x8b0 ./uLipeRtosPico/arch/arm_cm0/k_port_cm0.o
+ .debug_macro   0x00000000       0x10 ./uLipeRtosPico/arch/arm_cm0/k_port_cm0.o
+ .debug_macro   0x00000000      0x12d ./uLipeRtosPico/arch/arm_cm0/k_port_cm0.o
+ .debug_macro   0x00000000      0x5b2 ./uLipeRtosPico/arch/arm_cm0/k_port_cm0.o
+ .debug_macro   0x00000000       0x22 ./uLipeRtosPico/arch/arm_cm0/k_port_cm0.o
+ .debug_macro   0x00000000       0x16 ./uLipeRtosPico/arch/arm_cm0/k_port_cm0.o
+ .debug_macro   0x00000000       0x4b ./uLipeRtosPico/arch/arm_cm0/k_port_cm0.o
+ .debug_macro   0x00000000       0x8e ./uLipeRtosPico/arch/arm_cm0/k_port_cm0.o
+ .debug_macro   0x00000000       0x4c ./uLipeRtosPico/arch/arm_cm0/k_port_cm0.o
+ .debug_macro   0x00000000       0x1c ./uLipeRtosPico/arch/arm_cm0/k_port_cm0.o
+ .debug_macro   0x00000000       0x10 ./uLipeRtosPico/arch/arm_cm0/k_port_cm0.o
+ .debug_macro   0x00000000       0x28 ./uLipeRtosPico/arch/arm_cm0/k_port_cm0.o
+ .debug_macro   0x00000000       0x10 ./uLipeRtosPico/arch/arm_cm0/k_port_cm0.o
+ .debug_macro   0x00000000       0x16 ./uLipeRtosPico/arch/arm_cm0/k_port_cm0.o
+ .debug_macro   0x00000000       0x10 ./uLipeRtosPico/arch/arm_cm0/k_port_cm0.o
+ .debug_macro   0x00000000       0x10 ./uLipeRtosPico/arch/arm_cm0/k_port_cm0.o
+ .debug_line    0x00000000      0x339 ./uLipeRtosPico/arch/arm_cm0/k_port_cm0.o
+ .debug_str     0x00000000     0x5084 ./uLipeRtosPico/arch/arm_cm0/k_port_cm0.o
+ .comment       0x00000000       0x6f ./uLipeRtosPico/arch/arm_cm0/k_port_cm0.o
+ .ARM.attributes
+                0x00000000       0x39 ./uLipeRtosPico/arch/arm_cm0/k_port_cm0.o
+ .text          0x00000000        0x0 ./uLipeRtosPico/arch/arm_cm0/k_port_cm0_a.o
+ .data          0x00000000        0x0 ./uLipeRtosPico/arch/arm_cm0/k_port_cm0_a.o
+ .bss           0x00000000        0x0 ./uLipeRtosPico/arch/arm_cm0/k_port_cm0_a.o
+ .ARM.attributes
+                0x00000000       0x25 ./uLipeRtosPico/arch/arm_cm0/k_port_cm0_a.o
+ .group         0x00000000        0x8 ./src/boot_multicore_slave.o
+ .text          0x00000000        0x0 ./src/boot_multicore_slave.o
+ .data          0x00000000        0x0 ./src/boot_multicore_slave.o
+ .bss           0x00000000        0x0 ./src/boot_multicore_slave.o
+ .debug_info    0x00000000       0x21 ./src/boot_multicore_slave.o
+ .debug_abbrev  0x00000000       0x13 ./src/boot_multicore_slave.o
+ .debug_aranges
+                0x00000000       0x18 ./src/boot_multicore_slave.o
+ .debug_macro   0x00000000       0x11 ./src/boot_multicore_slave.o
+ .debug_macro   0x00000000      0x8b0 ./src/boot_multicore_slave.o
+ .debug_line    0x00000000       0x3e ./src/boot_multicore_slave.o
+ .debug_str     0x00000000     0x25aa ./src/boot_multicore_slave.o
+ .comment       0x00000000       0x6f ./src/boot_multicore_slave.o
+ .ARM.attributes
+                0x00000000       0x39 ./src/boot_multicore_slave.o
+ .group         0x00000000        0x8 ./src/cr_startup_lpc5410x.o
+ .text          0x00000000        0x0 ./src/cr_startup_lpc5410x.o
+ .data          0x00000000        0x0 ./src/cr_startup_lpc5410x.o
+ .bss           0x00000000        0x0 ./src/cr_startup_lpc5410x.o
+ .debug_macro   0x00000000      0x8b0 ./src/cr_startup_lpc5410x.o
+ .group         0x00000000        0x8 ./src/crp.o
+ .group         0x00000000        0x8 ./src/crp.o
+ .text          0x00000000        0x0 ./src/crp.o
+ .data          0x00000000        0x0 ./src/crp.o
+ .bss           0x00000000        0x0 ./src/crp.o
+ .debug_macro   0x00000000      0x8b0 ./src/crp.o
+ .group         0x00000000        0x8 ./src/sysinit.o
+ .group         0x00000000        0x8 ./src/sysinit.o
+ .group         0x00000000        0x8 ./src/sysinit.o
+ .group         0x00000000        0x8 ./src/sysinit.o
+ .group         0x00000000        0x8 ./src/sysinit.o
+ .group         0x00000000        0x8 ./src/sysinit.o
+ .group         0x00000000        0x8 ./src/sysinit.o
+ .group         0x00000000        0x8 ./src/sysinit.o
+ .group         0x00000000        0x8 ./src/sysinit.o
+ .group         0x00000000        0x8 ./src/sysinit.o
+ .group         0x00000000        0x8 ./src/sysinit.o
+ .group         0x00000000        0x8 ./src/sysinit.o
+ .group         0x00000000        0x8 ./src/sysinit.o
+ .group         0x00000000        0x8 ./src/sysinit.o
+ .group         0x00000000        0x8 ./src/sysinit.o
+ .group         0x00000000        0x8 ./src/sysinit.o
+ .group         0x00000000        0x8 ./src/sysinit.o
+ .group         0x00000000        0x8 ./src/sysinit.o
+ .group         0x00000000        0x8 ./src/sysinit.o
+ .group         0x00000000        0x8 ./src/sysinit.o
+ .group         0x00000000        0x8 ./src/sysinit.o
+ .group         0x00000000        0x8 ./src/sysinit.o
+ .group         0x00000000        0x8 ./src/sysinit.o
+ .group         0x00000000        0x8 ./src/sysinit.o
+ .group         0x00000000        0x8 ./src/sysinit.o
+ .group         0x00000000        0x8 ./src/sysinit.o
+ .group         0x00000000        0x8 ./src/sysinit.o
+ .group         0x00000000        0x8 ./src/sysinit.o
+ .group         0x00000000        0x8 ./src/sysinit.o
+ .group         0x00000000        0x8 ./src/sysinit.o
+ .group         0x00000000        0x8 ./src/sysinit.o
+ .group         0x00000000        0x8 ./src/sysinit.o
+ .group         0x00000000        0x8 ./src/sysinit.o
+ .group         0x00000000        0x8 ./src/sysinit.o
+ .group         0x00000000        0x8 ./src/sysinit.o
+ .group         0x00000000        0x8 ./src/sysinit.o
+ .group         0x00000000        0x8 ./src/sysinit.o
+ .group         0x00000000        0x8 ./src/sysinit.o
+ .group         0x00000000        0x8 ./src/sysinit.o
+ .group         0x00000000        0x8 ./src/sysinit.o
+ .group         0x00000000        0x8 ./src/sysinit.o
+ .group         0x00000000        0x8 ./src/sysinit.o
+ .group         0x00000000        0x8 ./src/sysinit.o
+ .group         0x00000000        0x8 ./src/sysinit.o
+ .group         0x00000000        0x8 ./src/sysinit.o
+ .text          0x00000000        0x0 ./src/sysinit.o
+ .data          0x00000000        0x0 ./src/sysinit.o
+ .bss           0x00000000        0x0 ./src/sysinit.o
+ .debug_macro   0x00000000      0x8b0 ./src/sysinit.o
+ .debug_macro   0x00000000       0x10 ./src/sysinit.o
+ .debug_macro   0x00000000      0x12d ./src/sysinit.o
+ .debug_macro   0x00000000      0x5b2 ./src/sysinit.o
+ .debug_macro   0x00000000       0x22 ./src/sysinit.o
+ .group         0x00000000        0x8 ./src/work_proj.o
+ .group         0x00000000        0x8 ./src/work_proj.o
+ .group         0x00000000        0x8 ./src/work_proj.o
+ .group         0x00000000        0x8 ./src/work_proj.o
+ .group         0x00000000        0x8 ./src/work_proj.o
+ .group         0x00000000        0x8 ./src/work_proj.o
+ .group         0x00000000        0x8 ./src/work_proj.o
+ .group         0x00000000        0x8 ./src/work_proj.o
+ .group         0x00000000        0x8 ./src/work_proj.o
+ .group         0x00000000        0x8 ./src/work_proj.o
+ .group         0x00000000        0x8 ./src/work_proj.o
+ .group         0x00000000        0x8 ./src/work_proj.o
+ .group         0x00000000        0x8 ./src/work_proj.o
+ .group         0x00000000        0x8 ./src/work_proj.o
+ .group         0x00000000        0x8 ./src/work_proj.o
+ .group         0x00000000        0x8 ./src/work_proj.o
+ .group         0x00000000        0x8 ./src/work_proj.o
+ .group         0x00000000        0x8 ./src/work_proj.o
+ .group         0x00000000        0x8 ./src/work_proj.o
+ .group         0x00000000        0x8 ./src/work_proj.o
+ .group         0x00000000        0x8 ./src/work_proj.o
+ .group         0x00000000        0x8 ./src/work_proj.o
+ .group         0x00000000        0x8 ./src/work_proj.o
+ .group         0x00000000        0x8 ./src/work_proj.o
+ .group         0x00000000        0x8 ./src/work_proj.o
+ .group         0x00000000        0x8 ./src/work_proj.o
+ .group         0x00000000        0x8 ./src/work_proj.o
+ .group         0x00000000        0x8 ./src/work_proj.o
+ .group         0x00000000        0x8 ./src/work_proj.o
+ .group         0x00000000        0x8 ./src/work_proj.o
+ .group         0x00000000        0x8 ./src/work_proj.o
+ .group         0x00000000        0x8 ./src/work_proj.o
+ .group         0x00000000        0x8 ./src/work_proj.o
+ .group         0x00000000        0x8 ./src/work_proj.o
+ .group         0x00000000        0x8 ./src/work_proj.o
+ .group         0x00000000        0x8 ./src/work_proj.o
+ .group         0x00000000        0x8 ./src/work_proj.o
+ .group         0x00000000        0x8 ./src/work_proj.o
+ .group         0x00000000        0x8 ./src/work_proj.o
+ .group         0x00000000        0x8 ./src/work_proj.o
+ .group         0x00000000        0x8 ./src/work_proj.o
+ .group         0x00000000        0x8 ./src/work_proj.o
+ .group         0x00000000        0x8 ./src/work_proj.o
+ .group         0x00000000        0x8 ./src/work_proj.o
+ .group         0x00000000        0x8 ./src/work_proj.o
+ .group         0x00000000        0x8 ./src/work_proj.o
+ .group         0x00000000        0x8 ./src/work_proj.o
+ .group         0x00000000        0x8 ./src/work_proj.o
+ .group         0x00000000        0x8 ./src/work_proj.o
+ .group         0x00000000        0x8 ./src/work_proj.o
+ .group         0x00000000        0x8 ./src/work_proj.o
+ .group         0x00000000        0x8 ./src/work_proj.o
+ .group         0x00000000        0x8 ./src/work_proj.o
+ .group         0x00000000        0x8 ./src/work_proj.o
+ .group         0x00000000        0x8 ./src/work_proj.o
+ .group         0x00000000        0x8 ./src/work_proj.o
+ .group         0x00000000        0x8 ./src/work_proj.o
+ .text          0x00000000        0x0 ./src/work_proj.o
+ .data          0x00000000        0x0 ./src/work_proj.o
+ .bss           0x00000000        0x0 ./src/work_proj.o
+ .data.s3       0x00000000      0x110 ./src/work_proj.o
+ .data.tm3      0x00000000      0x120 ./src/work_proj.o
+ .text.tm3_handler
+                0x00000000       0x30 ./src/work_proj.o
+ .debug_macro   0x00000000      0x8b0 ./src/work_proj.o
+ .debug_macro   0x00000000       0x10 ./src/work_proj.o
+ .debug_macro   0x00000000      0x12d ./src/work_proj.o
+ .debug_macro   0x00000000      0x5b2 ./src/work_proj.o
+ .debug_macro   0x00000000       0x22 ./src/work_proj.o
+ .debug_macro   0x00000000       0x8f ./src/work_proj.o
+ .debug_macro   0x00000000       0x2d ./src/work_proj.o
+ .debug_macro   0x00000000       0x3b ./src/work_proj.o
+ .debug_macro   0x00000000       0x2d ./src/work_proj.o
+ .debug_macro   0x00000000       0x42 ./src/work_proj.o
+ .debug_macro   0x00000000      0xd39 ./src/work_proj.o
+ .debug_macro   0x00000000      0x1d9 ./src/work_proj.o
+ .debug_macro   0x00000000       0xca ./src/work_proj.o
+ .debug_macro   0x00000000       0x18 ./src/work_proj.o
+ .debug_macro   0x00000000       0x16 ./src/work_proj.o
+ .debug_macro   0x00000000      0x129 ./src/work_proj.o
+ .debug_macro   0x00000000       0x2d ./src/work_proj.o
+ .debug_macro   0x00000000       0x16 ./src/work_proj.o
+ .debug_macro   0x00000000       0x32 ./src/work_proj.o
+ .debug_macro   0x00000000       0xb8 ./src/work_proj.o
+ .debug_macro   0x00000000       0x70 ./src/work_proj.o
+ .debug_macro   0x00000000       0x6a ./src/work_proj.o
+ .debug_macro   0x00000000       0xc5 ./src/work_proj.o
+ .debug_macro   0x00000000       0x76 ./src/work_proj.o
+ .debug_macro   0x00000000       0x34 ./src/work_proj.o
+ .debug_macro   0x00000000      0x205 ./src/work_proj.o
+ .debug_macro   0x00000000       0x40 ./src/work_proj.o
+ .debug_macro   0x00000000       0x6a ./src/work_proj.o
+ .debug_macro   0x00000000       0x22 ./src/work_proj.o
+ .debug_macro   0x00000000       0x28 ./src/work_proj.o
+ .debug_macro   0x00000000       0x1c ./src/work_proj.o
+ .debug_macro   0x00000000       0x10 ./src/work_proj.o
+ .debug_macro   0x00000000       0x1f ./src/work_proj.o
+ .debug_macro   0x00000000      0x1f1 ./src/work_proj.o
+ .debug_macro   0x00000000      0x13a ./src/work_proj.o
+ .debug_macro   0x00000000       0x16 ./src/work_proj.o
+ .debug_macro   0x00000000      0x1f6 ./src/work_proj.o
+ .debug_macro   0x00000000      0x430 ./src/work_proj.o
+ .debug_macro   0x00000000       0x34 ./src/work_proj.o
+ .debug_macro   0x00000000       0x1c ./src/work_proj.o
+ .debug_macro   0x00000000      0x477 ./src/work_proj.o
+ .debug_macro   0x00000000       0x34 ./src/work_proj.o
+ .debug_macro   0x00000000       0x2e ./src/work_proj.o
+ .debug_macro   0x00000000       0x9a ./src/work_proj.o
+ .debug_macro   0x00000000       0x20 ./src/work_proj.o
+ .debug_macro   0x00000000       0x4b ./src/work_proj.o
+ .debug_macro   0x00000000       0x8e ./src/work_proj.o
+ .debug_macro   0x00000000       0x4c ./src/work_proj.o
+ .debug_macro   0x00000000       0x1c ./src/work_proj.o
+ .debug_macro   0x00000000       0x10 ./src/work_proj.o
+ .debug_macro   0x00000000       0x28 ./src/work_proj.o
+ .debug_macro   0x00000000       0x10 ./src/work_proj.o
+ .debug_macro   0x00000000       0x16 ./src/work_proj.o
+ .debug_macro   0x00000000       0x10 ./src/work_proj.o
+ .debug_macro   0x00000000       0x10 ./src/work_proj.o
+ .data          0x00000000        0x0 /tmp/cceTJhbM.ltrans0.ltrans.o
+ .text          0x00000000        0x0 board.o (symbol from plugin)
+ .text          0x00000000        0x0 board_sysinit.o (symbol from plugin)
+ .text          0x00000000        0x0 chip_5410x.o (symbol from plugin)
+ .text          0x00000000        0x0 clock_5410x.o (symbol from plugin)
+ .text          0x00000000        0x0 fpu_init.o (symbol from plugin)
+ .text          0x00000000        0x0 gpio_5410x.o (symbol from plugin)
+ .text          0x00000000        0x0 iocon_5410x.o (symbol from plugin)
+ .text          0x00000000        0x0 pll_5410x.o (symbol from plugin)
+ .text          0x00000000        0x0 syscon_5410x.o (symbol from plugin)
+ .text          0x00000000        0x0 sysinit_5410x.o (symbol from plugin)
+ .text          0x00000000        0x0 /home/venturus/devel/uLipeRtosPico/samples/lpc54102_test_proj/lpc_chip_5410x/libs/libpower_m4f_hard.a(power_library.o)
+ .data          0x00000000        0x0 /home/venturus/devel/uLipeRtosPico/samples/lpc54102_test_proj/lpc_chip_5410x/libs/libpower_m4f_hard.a(power_library.o)
+ .bss           0x00000000        0x0 /home/venturus/devel/uLipeRtosPico/samples/lpc54102_test_proj/lpc_chip_5410x/libs/libpower_m4f_hard.a(power_library.o)
+ .text.Chip_POWER_PDReloc
+                0x00000000       0x88 /home/venturus/devel/uLipeRtosPico/samples/lpc54102_test_proj/lpc_chip_5410x/libs/libpower_m4f_hard.a(power_library.o)
+ .text.__set_lpvd_level
+                0x00000000       0x70 /home/venturus/devel/uLipeRtosPico/samples/lpc54102_test_proj/lpc_chip_5410x/libs/libpower_m4f_hard.a(power_library.o)
+ .text.Chip_POWER_EnterPowerModeIramOnly
+                0x00000000       0x50 /home/venturus/devel/uLipeRtosPico/samples/lpc54102_test_proj/lpc_chip_5410x/libs/libpower_m4f_hard.a(power_library.o)
+ .text.Chip_POWER_SetPLL
+                0x00000000       0x48 /home/venturus/devel/uLipeRtosPico/samples/lpc54102_test_proj/lpc_chip_5410x/libs/libpower_m4f_hard.a(power_library.o)
+ .text.Chip_POWER_SetFLASHPower
+                0x00000000       0x4c /home/venturus/devel/uLipeRtosPico/samples/lpc54102_test_proj/lpc_chip_5410x/libs/libpower_m4f_hard.a(power_library.o)
+ .text.Chip_POWER_SetVoltage
+                0x00000000      0x23c /home/venturus/devel/uLipeRtosPico/samples/lpc54102_test_proj/lpc_chip_5410x/libs/libpower_m4f_hard.a(power_library.o)
+ .text.Chip_POWER_RelocAPI
+                0x00000000       0x10 /home/venturus/devel/uLipeRtosPico/samples/lpc54102_test_proj/lpc_chip_5410x/libs/libpower_m4f_hard.a(power_library.o)
+ .text.Chip_POWER_EnterPowerMode
+                0x00000000       0xbc /home/venturus/devel/uLipeRtosPico/samples/lpc54102_test_proj/lpc_chip_5410x/libs/libpower_m4f_hard.a(power_library.o)
+ .text.Chip_POWER_EnterPowerModeReloc
+                0x00000000       0x10 /home/venturus/devel/uLipeRtosPico/samples/lpc54102_test_proj/lpc_chip_5410x/libs/libpower_m4f_hard.a(power_library.o)
+ .text.Chip_POWER_SetVDLevel
+                0x00000000       0x34 /home/venturus/devel/uLipeRtosPico/samples/lpc54102_test_proj/lpc_chip_5410x/libs/libpower_m4f_hard.a(power_library.o)
+ .text.Chip_POWER_SetLPVDLevel
+                0x00000000       0x50 /home/venturus/devel/uLipeRtosPico/samples/lpc54102_test_proj/lpc_chip_5410x/libs/libpower_m4f_hard.a(power_library.o)
+ .text.NOTUSED_FUNC2
+                0x00000000        0xc /home/venturus/devel/uLipeRtosPico/samples/lpc54102_test_proj/lpc_chip_5410x/libs/libpower_m4f_hard.a(power_library.o)
+ .text.NOTUSED_FUNC3
+                0x00000000       0x10 /home/venturus/devel/uLipeRtosPico/samples/lpc54102_test_proj/lpc_chip_5410x/libs/libpower_m4f_hard.a(power_library.o)
+ .text.NOTUSED_FUNC5
+                0x00000000       0x8c /home/venturus/devel/uLipeRtosPico/samples/lpc54102_test_proj/lpc_chip_5410x/libs/libpower_m4f_hard.a(power_library.o)
+ .text.Chip_POWER_SetACLGate
+                0x00000000       0x28 /home/venturus/devel/uLipeRtosPico/samples/lpc54102_test_proj/lpc_chip_5410x/libs/libpower_m4f_hard.a(power_library.o)
+ .text.Chip_POWER_GetACLGate
+                0x00000000       0x24 /home/venturus/devel/uLipeRtosPico/samples/lpc54102_test_proj/lpc_chip_5410x/libs/libpower_m4f_hard.a(power_library.o)
+ .text.NOTUSED_FUNC6
+                0x00000000       0x24 /home/venturus/devel/uLipeRtosPico/samples/lpc54102_test_proj/lpc_chip_5410x/libs/libpower_m4f_hard.a(power_library.o)
+ .text.Chip_CPU_IsMasterCore
+                0x00000000       0x28 /home/venturus/devel/uLipeRtosPico/samples/lpc54102_test_proj/lpc_chip_5410x/libs/libpower_m4f_hard.a(power_library.o)
+ .text.Chip_CPU_CM0Boot
+                0x00000000       0x2c /home/venturus/devel/uLipeRtosPico/samples/lpc54102_test_proj/lpc_chip_5410x/libs/libpower_m4f_hard.a(power_library.o)
+ .text.Chip_CPU_CM4Boot
+                0x00000000       0x2c /home/venturus/devel/uLipeRtosPico/samples/lpc54102_test_proj/lpc_chip_5410x/libs/libpower_m4f_hard.a(power_library.o)
+ .text.Chip_CPU_SelectMasterCore
+                0x00000000       0x30 /home/venturus/devel/uLipeRtosPico/samples/lpc54102_test_proj/lpc_chip_5410x/libs/libpower_m4f_hard.a(power_library.o)
+ .text          0x00000000        0x0 /usr/local/mcuxpressoide-10.0.0_344/ide/tools/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/fpu/libcr_c.a(memcpy.o)
+ .data          0x00000000        0x0 /usr/local/mcuxpressoide-10.0.0_344/ide/tools/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/fpu/libcr_c.a(memcpy.o)
+ .bss           0x00000000        0x0 /usr/local/mcuxpressoide-10.0.0_344/ide/tools/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/fpu/libcr_c.a(memcpy.o)
+ .text.memcpy   0x00000000        0x4 /usr/local/mcuxpressoide-10.0.0_344/ide/tools/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/fpu/libcr_c.a(memcpy.o)
+ .comment       0x00000000       0x6f /usr/local/mcuxpressoide-10.0.0_344/ide/tools/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/fpu/libcr_c.a(memcpy.o)
+ .ARM.attributes
+                0x00000000       0x39 /usr/local/mcuxpressoide-10.0.0_344/ide/tools/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/fpu/libcr_c.a(memcpy.o)
+ .text          0x00000000        0x0 /usr/local/mcuxpressoide-10.0.0_344/ide/tools/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/fpu/libcr_c.a(__weak__main.o)
+ .data          0x00000000        0x0 /usr/local/mcuxpressoide-10.0.0_344/ide/tools/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/fpu/libcr_c.a(__weak__main.o)
+ .bss           0x00000000        0x0 /usr/local/mcuxpressoide-10.0.0_344/ide/tools/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/fpu/libcr_c.a(__weak__main.o)
+ .text          0x00000000        0x0 /usr/local/mcuxpressoide-10.0.0_344/ide/tools/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/fpu/libcr_c.a(strcpy.o)
+ .data          0x00000000        0x0 /usr/local/mcuxpressoide-10.0.0_344/ide/tools/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/fpu/libcr_c.a(strcpy.o)
+ .bss           0x00000000        0x0 /usr/local/mcuxpressoide-10.0.0_344/ide/tools/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/fpu/libcr_c.a(strcpy.o)
+ .text          0x00000000        0x0 /usr/local/mcuxpressoide-10.0.0_344/ide/tools/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/fpu/libcr_c.a(strlen.o)
+ .data          0x00000000        0x0 /usr/local/mcuxpressoide-10.0.0_344/ide/tools/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/fpu/libcr_c.a(strlen.o)
+ .bss           0x00000000        0x0 /usr/local/mcuxpressoide-10.0.0_344/ide/tools/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/fpu/libcr_c.a(strlen.o)
+ .text.strlen   0x00000000       0x4a /usr/local/mcuxpressoide-10.0.0_344/ide/tools/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/fpu/libcr_c.a(strlen.o)
+ .comment       0x00000000       0x6f /usr/local/mcuxpressoide-10.0.0_344/ide/tools/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/fpu/libcr_c.a(strlen.o)
+ .ARM.attributes
+                0x00000000       0x39 /usr/local/mcuxpressoide-10.0.0_344/ide/tools/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/fpu/libcr_c.a(strlen.o)
+ .text          0x00000000        0x0 /usr/local/mcuxpressoide-10.0.0_344/ide/tools/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7e-m/fpu/libcr_eabihelpers.a(memcpy.o)
+ .data          0x00000000        0x0 /usr/local/mcuxpressoide-10.0.0_344/ide/tools/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7e-m/fpu/libcr_eabihelpers.a(memcpy.o)
+ .bss           0x00000000        0x0 /usr/local/mcuxpressoide-10.0.0_344/ide/tools/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7e-m/fpu/libcr_eabihelpers.a(memcpy.o)
+ .text.__aeabi_memcpy
+                0x00000000       0x34 /usr/local/mcuxpressoide-10.0.0_344/ide/tools/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7e-m/fpu/libcr_eabihelpers.a(memcpy.o)
+ .text.__aeabi_memmove
+                0x00000000       0x1c /usr/local/mcuxpressoide-10.0.0_344/ide/tools/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7e-m/fpu/libcr_eabihelpers.a(memcpy.o)
+ .text.__aeabi_memset_lowlevel
+                0x00000000       0x32 /usr/local/mcuxpressoide-10.0.0_344/ide/tools/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7e-m/fpu/libcr_eabihelpers.a(memcpy.o)
+ .text.__aeabi_memclr
+                0x00000000        0x8 /usr/local/mcuxpressoide-10.0.0_344/ide/tools/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7e-m/fpu/libcr_eabihelpers.a(memcpy.o)
+ .text.__aeabi_memset
+                0x00000000        0xa /usr/local/mcuxpressoide-10.0.0_344/ide/tools/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7e-m/fpu/libcr_eabihelpers.a(memcpy.o)
+ .ARM.attributes
+                0x00000000       0x25 /usr/local/mcuxpressoide-10.0.0_344/ide/tools/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7e-m/fpu/libcr_eabihelpers.a(memcpy.o)
+ .text          0x00000000        0x0 /usr/local/mcuxpressoide-10.0.0_344/ide/tools/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7e-m/fpu/libcr_eabihelpers.a(division_64.o)
+ .data          0x00000000        0x0 /usr/local/mcuxpressoide-10.0.0_344/ide/tools/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7e-m/fpu/libcr_eabihelpers.a(division_64.o)
+ .bss           0x00000000        0x0 /usr/local/mcuxpressoide-10.0.0_344/ide/tools/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7e-m/fpu/libcr_eabihelpers.a(division_64.o)
+ .text.__aeabi_division_ldivmod
+                0x00000000       0x26 /usr/local/mcuxpressoide-10.0.0_344/ide/tools/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7e-m/fpu/libcr_eabihelpers.a(division_64.o)
+ .text          0x00000000        0x0 /usr/local/mcuxpressoide-10.0.0_344/ide/tools/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7e-m/fpu/libcr_eabihelpers.a(division_idiv0.o)
+ .data          0x00000000        0x0 /usr/local/mcuxpressoide-10.0.0_344/ide/tools/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7e-m/fpu/libcr_eabihelpers.a(division_idiv0.o)
+ .bss           0x00000000        0x0 /usr/local/mcuxpressoide-10.0.0_344/ide/tools/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7e-m/fpu/libcr_eabihelpers.a(division_idiv0.o)
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+MFlash256        0x00000000         0x00040000         xr
+Ram0_64          0x02000000         0x00010000         xrw
+Ram1_32          0x02010000         0x00008000         xrw
+Ram2_8           0x03400000         0x00002000         xrw
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+LOAD ./uLipeRtosPico/picokernel/k_kernel.o
+LOAD ./uLipeRtosPico/picokernel/k_mem_dyn.o
+LOAD ./uLipeRtosPico/picokernel/k_memp.o
+LOAD ./uLipeRtosPico/picokernel/k_message.o
+LOAD ./uLipeRtosPico/picokernel/k_mutex.o
+LOAD ./uLipeRtosPico/picokernel/k_raw_timer.o
+LOAD ./uLipeRtosPico/picokernel/k_sema.o
+LOAD ./uLipeRtosPico/picokernel/k_thread.o
+LOAD ./uLipeRtosPico/picokernel/k_wqueue.o
+LOAD ./uLipeRtosPico/arch/avr_tiny/k_port_avr_tiny.o
+LOAD ./uLipeRtosPico/arch/avr_tiny/k_port_avr_tiny_a.o
+LOAD ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7.o
+LOAD ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7_a.o
+LOAD ./uLipeRtosPico/arch/arm_cm0/k_port_cm0.o
+LOAD ./uLipeRtosPico/arch/arm_cm0/k_port_cm0_a.o
+LOAD ./src/boot_multicore_slave.o
+LOAD ./src/cr_startup_lpc5410x.o
+LOAD ./src/crp.o
+LOAD ./src/sysinit.o
+LOAD ./src/work_proj.o
+LOAD /tmp/cceTJhbM.ltrans0.ltrans.o
+LOAD /home/venturus/devel/uLipeRtosPico/samples/lpc54102_test_proj/lpc_board_lpcxpresso_54102/Debug/liblpc_board_lpcxpresso_54102.a
+LOAD /home/venturus/devel/uLipeRtosPico/samples/lpc54102_test_proj/lpc_chip_5410x/Debug/liblpc_chip_5410x.a
+LOAD /home/venturus/devel/uLipeRtosPico/samples/lpc54102_test_proj/lpc_chip_5410x/libs/libpower_m4f_hard.a
+START GROUP
+LOAD /usr/local/mcuxpressoide-10.0.0_344/ide/tools/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/fpu/libcr_c.a
+LOAD /usr/local/mcuxpressoide-10.0.0_344/ide/tools/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7e-m/fpu/libcr_eabihelpers.a
+END GROUP
+                0x00000000                __base_MFlash256 = 0x0
+                0x00000000                __base_Flash = 0x0
+                0x00040000                __top_MFlash256 = 0x40000
+                0x00040000                __top_Flash = 0x40000
+                0x02000000                __base_Ram0_64 = 0x2000000
+                0x02000000                __base_RAM = 0x2000000
+                0x02010000                __top_Ram0_64 = 0x2010000
+                0x02010000                __top_RAM = 0x2010000
+                0x02010000                __base_Ram1_32 = 0x2010000
+                0x02010000                __base_RAM2 = 0x2010000
+                0x02018000                __top_Ram1_32 = 0x2018000
+                0x02018000                __top_RAM2 = 0x2018000
+                0x03400000                __base_Ram2_8 = 0x3400000
+                0x03400000                __base_RAM3 = 0x3400000
+                0x03402000                __top_Ram2_8 = 0x3402000
+                0x03402000                __top_RAM3 = 0x3402000
+
+.text           0x00000000     0x2e28
+ FILL mask 0xff
+                0x00000000                __vectors_start__ = ABSOLUTE (.)
+ *(.isr_vector)
+ .isr_vector    0x00000000       0xf4 ./src/cr_startup_lpc5410x.o
+                0x00000000                g_pfnVectors
+                0x000000f4                . = ALIGN (0x4)
+                0x000000f4                __section_table_start = .
+                0x000000f4                __data_section_table = .
+                0x000000f4        0x4 LONG 0x2e28 LOADADDR (.data)
+                0x000000f8        0x4 LONG 0x2000000 ADDR (.data)
+                0x000000fc        0x4 LONG 0x688 SIZEOF (.data)
+                0x00000100        0x4 LONG 0x2e28 LOADADDR (.data_RAM2)
+                0x00000104        0x4 LONG 0x2010000 ADDR (.data_RAM2)
+                0x00000108        0x4 LONG 0x0 SIZEOF (.data_RAM2)
+                0x0000010c        0x4 LONG 0x2e28 LOADADDR (.data_RAM3)
+                0x00000110        0x4 LONG 0x3400000 ADDR (.data_RAM3)
+                0x00000114        0x4 LONG 0x0 SIZEOF (.data_RAM3)
+                0x00000118                __data_section_table_end = .
+                0x00000118                __bss_section_table = .
+                0x00000118        0x4 LONG 0x2000688 ADDR (.bss)
+                0x0000011c        0x4 LONG 0x5ae8 SIZEOF (.bss)
+                0x00000120        0x4 LONG 0x2010000 ADDR (.bss_RAM2)
+                0x00000124        0x4 LONG 0x0 SIZEOF (.bss_RAM2)
+                0x00000128        0x4 LONG 0x3400000 ADDR (.bss_RAM3)
+                0x0000012c        0x4 LONG 0x0 SIZEOF (.bss_RAM3)
+                0x00000130                __bss_section_table_end = .
+                0x00000130                __section_table_end = .
+ *(.after_vectors*)
+ .after_vectors
+                0x00000130       0xcc ./src/cr_startup_lpc5410x.o
+                0x00000130                data_init
+                0x00000174                bss_init
+                0x000001ac                NMI_Handler
+                0x000001b4                HardFault_Handler
+                0x000001bc                MemManage_Handler
+                0x000001c4                BusFault_Handler
+                0x000001cc                UsageFault_Handler
+                0x000001dc                DebugMon_Handler
+                0x000001f4                SCT0_IRQHandler
+                0x000001f4                RIT_IRQHandler
+                0x000001f4                I2C0_IRQHandler
+                0x000001f4                MRT_IRQHandler
+                0x000001f4                I2C1_IRQHandler
+                0x000001f4                UART1_IRQHandler
+                0x000001f4                ADC_SEQB_IRQHandler
+                0x000001f4                UART0_IRQHandler
+                0x000001f4                Reserved42_IRQHandler
+                0x000001f4                SPI1_IRQHandler
+                0x000001f4                CT32B2_IRQHandler
+                0x000001f4                PIN_INT6_IRQHandler
+                0x000001f4                IntDefaultHandler
+                0x000001f4                PIN_INT4_IRQHandler
+                0x000001f4                I2C2_IRQHandler
+                0x000001f4                Reserved43_IRQHandler
+                0x000001f4                RTC_IRQHandler
+                0x000001f4                CT32B3_IRQHandler
+                0x000001f4                UART2_IRQHandler
+                0x000001f4                CT32B1_IRQHandler
+                0x000001f4                PIN_INT5_IRQHandler
+                0x000001f4                PIN_INT2_IRQHandler
+                0x000001f4                PIN_INT7_IRQHandler
+                0x000001f4                ADC_THCMP_IRQHandler
+                0x000001f4                PIN_INT1_IRQHandler
+                0x000001f4                BOD_IRQHandler
+                0x000001f4                CT32B4_IRQHandler
+                0x000001f4                IOH_IRQHandler
+                0x000001f4                SPI2_IRQHandler
+                0x000001f4                Reserved41_IRQHandler
+                0x000001f4                MAILBOX_IRQHandler
+                0x000001f4                WDT_IRQHandler
+                0x000001f4                ADC_SEQA_IRQHandler
+                0x000001f4                PIN_INT0_IRQHandler
+                0x000001f4                UTICK_IRQHandler
+                0x000001f4                CT32B0_IRQHandler
+                0x000001f4                GINT0_IRQHandler
+                0x000001f4                SPI0_IRQHandler
+                0x000001f4                Reserved_IRQHandler
+                0x000001f4                Reserved44_IRQHandler
+                0x000001f4                DMA_IRQHandler
+                0x000001f4                PIN_INT3_IRQHandler
+                0x000001f4                SPI3_IRQHandler
+                0x000001f4                UART3_IRQHandler
+                0x000001f4                GINT1_IRQHandler
+ .after_vectors.reset
+                0x000001fc       0xcc ./src/cr_startup_lpc5410x.o
+                0x000001fc                ResetISR
+                0x000002fc                . = 0x2fc
+ *fill*         0x000002c8       0x34 ff
+                0x000002fc                PROVIDE (__CRP_WORD_START__, .)
+ *(.crp)
+ .crp           0x000002fc        0x4 ./src/crp.o
+                0x000002fc                CRP_WORD
+                0x00000300                PROVIDE (__CRP_WORD_END__, .)
+                0x00000001                ASSERT (! ((__CRP_WORD_START__ == __CRP_WORD_END__)), Linker CRP Enabled, but no CRP_WORD provided within application)
+ *(.text*)
+ .text.sys_dlist_init
+                0x00000300       0x20 ./uLipeRtosPico/picokernel/k_kernel.o
+ .text.sys_dlist_is_empty
+                0x00000320       0x24 ./uLipeRtosPico/picokernel/k_kernel.o
+ .text.sys_dlist_peek_head
+                0x00000344       0x24 ./uLipeRtosPico/picokernel/k_kernel.o
+ .text.sys_dlist_append
+                0x00000368       0x34 ./uLipeRtosPico/picokernel/k_kernel.o
+ .text.sys_dlist_remove
+                0x0000039c       0x28 ./uLipeRtosPico/picokernel/k_kernel.o
+ .text.ulipe_assert
+                0x000003c4       0x24 ./uLipeRtosPico/picokernel/k_kernel.o
+ .text.k_idle_thread
+                0x000003e8       0x20 ./uLipeRtosPico/picokernel/k_kernel.o
+ .text.k_sched  0x00000408       0xb0 ./uLipeRtosPico/picokernel/k_kernel.o
+ .text.k_pend_obj
+                0x000004b8       0xb0 ./uLipeRtosPico/picokernel/k_kernel.o
+                0x000004b8                k_pend_obj
+ .text.k_unpend_obj
+                0x00000568       0xc4 ./uLipeRtosPico/picokernel/k_kernel.o
+                0x00000568                k_unpend_obj
+ .text.k_make_ready
+                0x0000062c       0xac ./uLipeRtosPico/picokernel/k_kernel.o
+                0x0000062c                k_make_ready
+ .text.k_make_not_ready
+                0x000006d8       0xac ./uLipeRtosPico/picokernel/k_kernel.o
+                0x000006d8                k_make_not_ready
+ .text.k_yield  0x00000784       0xc4 ./uLipeRtosPico/picokernel/k_kernel.o
+                0x00000784                k_yield
+ .text.k_sched_and_swap
+                0x00000848       0xb8 ./uLipeRtosPico/picokernel/k_kernel.o
+                0x00000848                k_sched_and_swap
+ .text.k_work_list_init
+                0x00000900       0x80 ./uLipeRtosPico/picokernel/k_kernel.o
+                0x00000900                k_work_list_init
+ .text.kernel_init
+                0x00000980       0xe4 ./uLipeRtosPico/picokernel/k_kernel.o
+                0x00000980                kernel_init
+ .text.kernel_start
+                0x00000a64       0x50 ./uLipeRtosPico/picokernel/k_kernel.o
+                0x00000a64                kernel_start
+ .text.kernel_irq_in
+                0x00000ab4       0xa4 ./uLipeRtosPico/picokernel/k_kernel.o
+                0x00000ab4                kernel_irq_in
+ .text.kernel_irq_out
+                0x00000b58       0xac ./uLipeRtosPico/picokernel/k_kernel.o
+                0x00000b58                kernel_irq_out
+ .text.k_block_alloc
+                0x00000c04       0xdc ./uLipeRtosPico/picokernel/k_memp.o
+                0x00000c04                k_block_alloc
+ .text.k_block_free
+                0x00000ce0       0xb4 ./uLipeRtosPico/picokernel/k_memp.o
+                0x00000ce0                k_block_free
+ .text.ulipe_assert
+                0x00000d94       0x24 ./uLipeRtosPico/picokernel/k_mutex.o
+ .text.mutex_take
+                0x00000db8      0x11c ./uLipeRtosPico/picokernel/k_mutex.o
+                0x00000db8                mutex_take
+ .text.mutex_give
+                0x00000ed4      0x108 ./uLipeRtosPico/picokernel/k_mutex.o
+                0x00000ed4                mutex_give
+ .text.sys_dlist_init
+                0x00000fdc       0x20 ./uLipeRtosPico/picokernel/k_raw_timer.o
+ .text.sys_dlist_is_empty
+                0x00000ffc       0x24 ./uLipeRtosPico/picokernel/k_raw_timer.o
+ .text.sys_dlist_peek_head
+                0x00001020       0x24 ./uLipeRtosPico/picokernel/k_raw_timer.o
+ .text.sys_dlist_peek_next_no_check
+                0x00001044       0x28 ./uLipeRtosPico/picokernel/k_raw_timer.o
+ .text.sys_dlist_peek_next
+                0x0000106c       0x28 ./uLipeRtosPico/picokernel/k_raw_timer.o
+ .text.sys_dlist_append
+                0x00001094       0x34 ./uLipeRtosPico/picokernel/k_raw_timer.o
+ .text.sys_dlist_remove
+                0x000010c8       0x28 ./uLipeRtosPico/picokernel/k_raw_timer.o
+ .text.ulipe_assert
+                0x000010f0       0x24 ./uLipeRtosPico/picokernel/k_raw_timer.o
+ .text.timer_step_tick
+                0x00001114      0x158 ./uLipeRtosPico/picokernel/k_raw_timer.o
+ .text.timer_dispatcher
+                0x0000126c      0x27c ./uLipeRtosPico/picokernel/k_raw_timer.o
+                0x0000126c                timer_dispatcher
+ .text.timer_start
+                0x000014e8       0xa0 ./uLipeRtosPico/picokernel/k_raw_timer.o
+                0x000014e8                timer_start
+ .text.timer_set_callback
+                0x00001588       0x90 ./uLipeRtosPico/picokernel/k_raw_timer.o
+                0x00001588                timer_set_callback
+ .text.ticker_timer_wait
+                0x00001618       0xac ./uLipeRtosPico/picokernel/k_raw_timer.o
+                0x00001618                ticker_timer_wait
+ .text.ulipe_assert
+                0x000016c4       0x24 ./uLipeRtosPico/picokernel/k_sema.o
+ .text.semaphore_take
+                0x000016e8       0xfc ./uLipeRtosPico/picokernel/k_sema.o
+                0x000016e8                semaphore_take
+ .text.semaphore_give
+                0x000017e4       0xd8 ./uLipeRtosPico/picokernel/k_sema.o
+                0x000017e4                semaphore_give
+ .text.sys_dlist_init
+                0x000018bc       0x20 ./uLipeRtosPico/picokernel/k_thread.o
+ .text.ulipe_assert
+                0x000018dc       0x24 ./uLipeRtosPico/picokernel/k_thread.o
+ .text.thread_handle_signal_act
+                0x00001900       0x80 ./uLipeRtosPico/picokernel/k_thread.o
+ .text.thread_handle_signal_wait
+                0x00001980       0x3c ./uLipeRtosPico/picokernel/k_thread.o
+ .text.thread_create
+                0x000019bc      0x118 ./uLipeRtosPico/picokernel/k_thread.o
+                0x000019bc                thread_create
+ .text.thread_wait_signals
+                0x00001ad4      0x118 ./uLipeRtosPico/picokernel/k_thread.o
+                0x00001ad4                thread_wait_signals
+ .text.thread_set_signals
+                0x00001bec       0x84 ./uLipeRtosPico/picokernel/k_thread.o
+                0x00001bec                thread_set_signals
+ .text.thread_clr_signals
+                0x00001c70       0x84 ./uLipeRtosPico/picokernel/k_thread.o
+                0x00001c70                thread_clr_signals
+ .text.thread_yield
+                0x00001cf4       0x50 ./uLipeRtosPico/picokernel/k_thread.o
+                0x00001cf4                thread_yield
+ .text.thread_set_prio
+                0x00001d44       0xc4 ./uLipeRtosPico/picokernel/k_thread.o
+                0x00001d44                thread_set_prio
+ .text.thread_get_current
+                0x00001e08       0x20 ./uLipeRtosPico/picokernel/k_thread.o
+                0x00001e08                thread_get_current
+ .text.sys_dlist_init
+                0x00001e28       0x20 ./uLipeRtosPico/picokernel/k_wqueue.o
+ .text.sys_dlist_is_empty
+                0x00001e48       0x24 ./uLipeRtosPico/picokernel/k_wqueue.o
+ .text.sys_dlist_peek_head
+                0x00001e6c       0x24 ./uLipeRtosPico/picokernel/k_wqueue.o
+ .text.sys_dlist_append
+                0x00001e90       0x34 ./uLipeRtosPico/picokernel/k_wqueue.o
+ .text.sys_dlist_remove
+                0x00001ec4       0x28 ./uLipeRtosPico/picokernel/k_wqueue.o
+ .text.ulipe_assert
+                0x00001eec       0x24 ./uLipeRtosPico/picokernel/k_wqueue.o
+ .text.wqueue_defer_handler
+                0x00001f10       0xac ./uLipeRtosPico/picokernel/k_wqueue.o
+ .text.wqueue_init
+                0x00001fbc       0x70 ./uLipeRtosPico/picokernel/k_wqueue.o
+                0x00001fbc                wqueue_init
+ .text.wqueue_submit
+                0x0000202c       0x58 ./uLipeRtosPico/picokernel/k_wqueue.o
+                0x0000202c                wqueue_submit
+ .text.port_create_stack_frame
+                0x00002084       0x9c ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7.o
+                0x00002084                port_create_stack_frame
+ .text.port_swap_req
+                0x00002120       0x20 ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7.o
+                0x00002120                port_swap_req
+ .text.port_init_machine
+                0x00002140       0x48 ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7.o
+                0x00002140                port_init_machine
+ .text.timer_tick_handler
+                0x00002188       0x14 ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7.o
+                0x00002188                timer_tick_handler
+ .text.SysTick_Handler
+                0x0000219c       0x14 ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7.o
+                0x0000219c                SysTick_Handler
+ .text          0x000021b0       0xb8 ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7_a.o
+                0x000021b0                port_irq_lock
+                0x000021c0                port_irq_unlock
+                0x000021d0                port_from_isr
+                0x000021dc                port_set_break
+                0x000021e6                port_bit_fs_scan
+                0x000021ec                port_bit_ls_scan
+                0x000021f6                port_start_kernel
+                0x00002206                SVC_Handler
+                0x00002230                PendSV_Handler
+ .text.SystemInit
+                0x00002268       0x20 ./src/sysinit.o
+                0x00002268                SystemInit
+ .text.ulipe_assert
+                0x00002288       0x24 ./src/work_proj.o
+ .text.deferred_handler
+                0x000022ac       0x34 ./src/work_proj.o
+ .text.tm1_handler
+                0x000022e0       0x50 ./src/work_proj.o
+ .text.tm2_handler
+                0x00002330       0x30 ./src/work_proj.o
+ .text.t1_task  0x00002360       0x44 ./src/work_proj.o
+ .text.t2_task  0x000023a4       0x3c ./src/work_proj.o
+ .text.t3_task  0x000023e0       0x94 ./src/work_proj.o
+ .text.t4_task  0x00002474       0x34 ./src/work_proj.o
+ .text.t5_task  0x000024a8       0x34 ./src/work_proj.o
+ .text.t6_task  0x000024dc       0x34 ./src/work_proj.o
+ .text.main     0x00002510       0xa4 ./src/work_proj.o
+                0x00002510                main
+ .text          0x000025b4      0x58c /tmp/cceTJhbM.ltrans0.ltrans.o
+                0x000027e8                Chip_SYSCON_PowerUp
+                0x000028a8                Chip_Clock_SetupSystemPLL
+                0x0000296c                fpuInit
+                0x000029b4                Chip_Clock_DisablePeriphClock
+                0x000029e4                Chip_Clock_EnablePeriphClock
+                0x00002a14                SystemCoreClockUpdate
+                0x00002a36                Board_SystemInit
+                0x00002af4                Board_Init
+                0x00002b24                Board_LED_Set
+ .text.getBROMVersion
+                0x00002b40       0x20 /home/venturus/devel/uLipeRtosPico/samples/lpc54102_test_proj/lpc_chip_5410x/libs/libpower_m4f_hard.a(power_library.o)
+ .text.Chip_POWER_GetROMVersion
+                0x00002b60        0x4 /home/venturus/devel/uLipeRtosPico/samples/lpc54102_test_proj/lpc_chip_5410x/libs/libpower_m4f_hard.a(power_library.o)
+                0x00002b60                Chip_POWER_GetROMVersion
+ .text.__weak_main
+                0x00002b64        0x4 /usr/local/mcuxpressoide-10.0.0_344/ide/tools/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/fpu/libcr_c.a(__weak__main.o)
+                0x00002b64                __main
+                0x00002b64                __weak_main
+ .text.strcpy   0x00002b68       0x42 /usr/local/mcuxpressoide-10.0.0_344/ide/tools/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/fpu/libcr_c.a(strcpy.o)
+                0x00002b68                strcpy
+ .text.__aeabi_division_uldivmod
+                0x00002baa      0x174 /usr/local/mcuxpressoide-10.0.0_344/ide/tools/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7e-m/fpu/libcr_eabihelpers.a(division_64.o)
+                0x00002baa                __aeabi_uldivmod
+                0x00002bae                __bhs_ldivmod1
+ .text.__aeabi_division_idiv0
+                0x00002d1e        0x2 /usr/local/mcuxpressoide-10.0.0_344/ide/tools/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7e-m/fpu/libcr_eabihelpers.a(division_idiv0.o)
+                0x00002d1e                __aeabi_idiv0
+ *(.rodata .rodata.* .constdata .constdata.*)
+ .rodata        0x00002d20       0x73 ./src/work_proj.o
+ *fill*         0x00002d93        0x1 ff
+ .rodata        0x00002d94       0x93 /tmp/cceTJhbM.ltrans0.ltrans.o
+                0x00002e28                . = ALIGN (0x4)
+ *fill*         0x00002e27        0x1 ff
+
+.glue_7         0x00002e28        0x0
+ .glue_7        0x00002e28        0x0 linker stubs
+
+.glue_7t        0x00002e28        0x0
+ .glue_7t       0x00002e28        0x0 linker stubs
+
+.vfp11_veneer   0x00002e28        0x0
+ .vfp11_veneer  0x00002e28        0x0 linker stubs
+
+.v4_bx          0x00002e28        0x0
+ .v4_bx         0x00002e28        0x0 linker stubs
+
+.iplt           0x00002e28        0x0
+ .iplt          0x00002e28        0x0 ./uLipeRtosPico/picokernel/k_kernel.o
+
+.rel.dyn        0x00002e28        0x0
+ .rel.iplt      0x00002e28        0x0 ./uLipeRtosPico/picokernel/k_kernel.o
+
+.ARM.extab
+ *(.ARM.extab* .gnu.linkonce.armextab.*)
+                0x00002e28                __exidx_start = .
+
+.ARM.exidx
+ *(.ARM.exidx* .gnu.linkonce.armexidx.*)
+                0x00002e28                __exidx_end = .
+                0x00002e28                _etext = .
+
+.data_RAM2      0x02010000        0x0 load address 0x00002e28
+ FILL mask 0xff
+                [!provide]                PROVIDE (__start_data_RAM2, .)
+ *(.ramfunc.$RAM2)
+ *(.ramfunc.$Ram1_32)
+ *(.data.$RAM2*)
+ *(.data.$Ram1_32*)
+                0x02010000                . = ALIGN (0x4)
+                [!provide]                PROVIDE (__end_data_RAM2, .)
+
+.data_RAM3      0x03400000        0x0 load address 0x00002e28
+ FILL mask 0xff
+                [!provide]                PROVIDE (__start_data_RAM3, .)
+ *(.ramfunc.$RAM3)
+ *(.ramfunc.$Ram2_8)
+ *(.data.$RAM3*)
+ *(.data.$Ram2_8*)
+                0x03400000                . = ALIGN (0x4)
+                [!provide]                PROVIDE (__end_data_RAM3, .)
+
+.uninit_RESERVED
+                0x02000000        0x0
+ *(.bss.$RESERVED*)
+                0x02000000                . = ALIGN (0x4)
+                0x02000000                _end_uninit_RESERVED = .
+
+.data           0x02000000      0x688 load address 0x00002e28
+ FILL mask 0xff
+                0x02000000                _data = .
+ *(vtable)
+ *(.ramfunc*)
+ *(.data*)
+ .data.idle_thread
+                0x02000000       0x2c ./uLipeRtosPico/picokernel/k_kernel.o
+                0x02000000                idle_thread
+ .data.timer_tcb
+                0x0200002c       0x2c ./uLipeRtosPico/picokernel/k_raw_timer.o
+                0x0200002c                timer_tcb
+ .data.t1       0x02000058       0x2c ./src/work_proj.o
+                0x02000058                t1
+ .data.t2       0x02000084       0x2c ./src/work_proj.o
+                0x02000084                t2
+ .data.t3       0x020000b0       0x2c ./src/work_proj.o
+                0x020000b0                t3
+ .data.t4       0x020000dc       0x2c ./src/work_proj.o
+                0x020000dc                t4
+ .data.t5       0x02000108       0x2c ./src/work_proj.o
+                0x02000108                t5
+ .data.t6       0x02000134       0x2c ./src/work_proj.o
+                0x02000134                t6
+ .data.s1       0x02000160      0x110 ./src/work_proj.o
+ .data.s2       0x02000270      0x110 ./src/work_proj.o
+ .data.mem1     0x02000380       0x90 ./src/work_proj.o
+                0x02000380                mem1
+ .data.tm1      0x02000410      0x120 ./src/work_proj.o
+                0x02000410                tm1
+ .data.tm2      0x02000530      0x120 ./src/work_proj.o
+                0x02000530                tm2
+ .data.thread_mywq
+                0x02000650       0x2c ./src/work_proj.o
+                0x02000650                thread_mywq
+ .data.mywq     0x0200067c        0xc ./src/work_proj.o
+                0x0200067c                mywq
+                0x02000688                . = ALIGN (0x4)
+                0x02000688                _edata = .
+
+.igot.plt       0x02000688        0x0 load address 0x000034b0
+ .igot.plt      0x02000688        0x0 ./uLipeRtosPico/picokernel/k_kernel.o
+
+.bss_RAM2       0x02010000        0x0
+                [!provide]                PROVIDE (__start_bss_RAM2, .)
+ *(.bss.$RAM2*)
+ *(.bss.$Ram1_32*)
+                0x02010000                . = ALIGN ((. != 0x0)?0x4:0x1)
+                [!provide]                PROVIDE (__end_bss_RAM2, .)
+
+.bss_RAM3       0x03400000        0x0
+                [!provide]                PROVIDE (__start_bss_RAM3, .)
+ *(.bss.$RAM3*)
+ *(.bss.$Ram2_8*)
+                0x03400000                . = ALIGN ((. != 0x0)?0x4:0x1)
+                [!provide]                PROVIDE (__end_bss_RAM3, .)
+
+.bss            0x02000688     0x5ae8
+                0x02000688                _bss = .
+ *(.bss*)
+ .bss.stack_idle_thread
+                0x02000688      0x200 ./uLipeRtosPico/picokernel/k_kernel.o
+ .bss.k_rdy_list
+                0x02000888      0x104 ./uLipeRtosPico/picokernel/k_kernel.o
+ .bss.k_timed_list
+                0x0200098c        0x8 ./uLipeRtosPico/picokernel/k_kernel.o
+ .bss.k_configured
+                0x02000994        0x1 ./uLipeRtosPico/picokernel/k_kernel.o
+ *fill*         0x02000995        0x3 
+ .bss.irq_counter
+                0x02000998        0x4 ./uLipeRtosPico/picokernel/k_kernel.o
+ .bss.irq_lock_nest
+                0x0200099c        0x4 ./uLipeRtosPico/picokernel/k_kernel.o
+                0x0200099c                irq_lock_nest
+ .bss.k_running
+                0x020009a0        0x1 ./uLipeRtosPico/picokernel/k_kernel.o
+                0x020009a0                k_running
+ *fill*         0x020009a1        0x3 
+ .bss.k_current_task
+                0x020009a4        0x4 ./uLipeRtosPico/picokernel/k_kernel.o
+                0x020009a4                k_current_task
+ .bss.k_high_prio_task
+                0x020009a8        0x4 ./uLipeRtosPico/picokernel/k_kernel.o
+                0x020009a8                k_high_prio_task
+ .bss.wu_info   0x020009ac        0xc ./uLipeRtosPico/picokernel/k_kernel.o
+ .bss.k_timed_list
+                0x020009b8        0x8 ./uLipeRtosPico/picokernel/k_raw_timer.o
+ .bss.actual_timer
+                0x020009c0        0x4 ./uLipeRtosPico/picokernel/k_raw_timer.o
+                0x020009c0                actual_timer
+ .bss.tick_count
+                0x020009c4        0x4 ./uLipeRtosPico/picokernel/k_raw_timer.o
+                0x020009c4                tick_count
+ .bss.next_task_wake
+                0x020009c8        0x4 ./uLipeRtosPico/picokernel/k_raw_timer.o
+                0x020009c8                next_task_wake
+ .bss.k_ticker_list
+                0x020009cc        0x8 ./uLipeRtosPico/picokernel/k_raw_timer.o
+ .bss.stack_timer_tcb
+                0x020009d4      0x300 ./uLipeRtosPico/picokernel/k_raw_timer.o
+ .bss.__SWVtrace_Enabled
+                0x02000cd4        0x4 ./src/cr_startup_lpc5410x.o
+                0x02000cd4                __SWVtrace_Enabled
+ .bss.stack_t1  0x02000cd8      0x200 ./src/work_proj.o
+ .bss.stack_t2  0x02000ed8      0x200 ./src/work_proj.o
+ .bss.stack_t3  0x020010d8      0x200 ./src/work_proj.o
+ .bss.stack_t4  0x020012d8      0x200 ./src/work_proj.o
+ .bss.stack_t5  0x020014d8      0x200 ./src/work_proj.o
+ .bss.stack_t6  0x020016d8      0x200 ./src/work_proj.o
+ .bss.pool_mem1
+                0x020018d8     0x4000 ./src/work_proj.o
+ .bss.mtx1      0x020058d8      0x10c ./src/work_proj.o
+ .bss.stack_thread_mywq
+                0x020059e4      0x300 ./src/work_proj.o
+ .bss.ptr       0x02005ce4      0x400 ./src/work_proj.o
+                0x02005ce4                ptr
+ .bss.cbuffer   0x020060e4       0x80 ./src/work_proj.o
+ .bss.i.8689    0x02006164        0x4 ./src/work_proj.o
+ .bss           0x02006168        0x8 /tmp/cceTJhbM.ltrans0.ltrans.o
+ *(COMMON)
+                0x02006170                . = ALIGN (0x4)
+                0x02006170                _ebss = .
+                [!provide]                PROVIDE (end, .)
+
+.noinit_RAM2    0x02010000        0x0
+ *(.noinit.$RAM2*)
+ *(.noinit.$Ram1_32*)
+                0x02010000                . = ALIGN (0x4)
+
+.noinit_RAM3    0x03400000        0x0
+ *(.noinit.$RAM3*)
+ *(.noinit.$Ram2_8*)
+                0x03400000                . = ALIGN (0x4)
+
+.noinit         0x02006170        0x0
+                0x02006170                _noinit = .
+ *(.noinit*)
+                0x02006170                . = ALIGN (0x4)
+                0x02006170                _end_noinit = .
+                [!provide]                PROVIDE (_pvHeapStart, DEFINED (__user_heap_base)?__user_heap_base:.)
+                0x02010000                PROVIDE (_vStackTop, DEFINED (__user_stack_top)?__user_stack_top:(__top_Ram0_64 - 0x0))
+                0xfdfef552                PROVIDE (__valid_user_code_checksum, (0x0 - ((((((_vStackTop + (ResetISR + 0x1)) + (NMI_Handler + 0x1)) + (HardFault_Handler + 0x1)) + (DEFINED (MemManage_Handler)?MemManage_Handler:0x0 + 0x1)) + (DEFINED (BusFault_Handler)?BusFault_Handler:0x0 + 0x1)) + (DEFINED (UsageFault_Handler)?UsageFault_Handler:0x0 + 0x1))))
+OUTPUT(work_proj.axf elf32-littlearm)
+
+.debug_info     0x00000000     0x3d53
+ .debug_info    0x00000000      0x8a8 ./uLipeRtosPico/picokernel/k_kernel.o
+ .debug_info    0x000008a8      0x220 ./uLipeRtosPico/picokernel/k_memp.o
+ .debug_info    0x00000ac8      0x410 ./uLipeRtosPico/picokernel/k_mutex.o
+ .debug_info    0x00000ed8      0x8ca ./uLipeRtosPico/picokernel/k_raw_timer.o
+ .debug_info    0x000017a2      0x3ce ./uLipeRtosPico/picokernel/k_sema.o
+ .debug_info    0x00001b70      0x748 ./uLipeRtosPico/picokernel/k_thread.o
+ .debug_info    0x000022b8      0x54e ./uLipeRtosPico/picokernel/k_wqueue.o
+ .debug_info    0x00002806      0x5b0 ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7.o
+ .debug_info    0x00002db6       0xbd ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7_a.o
+ .debug_info    0x00002e73      0x2b7 ./src/cr_startup_lpc5410x.o
+ .debug_info    0x0000312a       0x3f ./src/crp.o
+ .debug_info    0x00003169      0x2c4 ./src/sysinit.o
+ .debug_info    0x0000342d      0x926 ./src/work_proj.o
+
+.debug_abbrev   0x00000000     0x1255
+ .debug_abbrev  0x00000000      0x2be ./uLipeRtosPico/picokernel/k_kernel.o
+ .debug_abbrev  0x000002be       0xe0 ./uLipeRtosPico/picokernel/k_memp.o
+ .debug_abbrev  0x0000039e      0x157 ./uLipeRtosPico/picokernel/k_mutex.o
+ .debug_abbrev  0x000004f5      0x282 ./uLipeRtosPico/picokernel/k_raw_timer.o
+ .debug_abbrev  0x00000777      0x161 ./uLipeRtosPico/picokernel/k_sema.o
+ .debug_abbrev  0x000008d8      0x20c ./uLipeRtosPico/picokernel/k_thread.o
+ .debug_abbrev  0x00000ae4      0x1d3 ./uLipeRtosPico/picokernel/k_wqueue.o
+ .debug_abbrev  0x00000cb7      0x197 ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7.o
+ .debug_abbrev  0x00000e4e       0x14 ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7_a.o
+ .debug_abbrev  0x00000e62       0xed ./src/cr_startup_lpc5410x.o
+ .debug_abbrev  0x00000f4f       0x36 ./src/crp.o
+ .debug_abbrev  0x00000f85       0xe3 ./src/sysinit.o
+ .debug_abbrev  0x00001068      0x1ed ./src/work_proj.o
+
+.debug_aranges  0x00000000      0x478
+ .debug_aranges
+                0x00000000       0xb0 ./uLipeRtosPico/picokernel/k_kernel.o
+ .debug_aranges
+                0x000000b0       0x28 ./uLipeRtosPico/picokernel/k_memp.o
+ .debug_aranges
+                0x000000d8       0x30 ./uLipeRtosPico/picokernel/k_mutex.o
+ .debug_aranges
+                0x00000108       0x98 ./uLipeRtosPico/picokernel/k_raw_timer.o
+ .debug_aranges
+                0x000001a0       0x30 ./uLipeRtosPico/picokernel/k_sema.o
+ .debug_aranges
+                0x000001d0       0x88 ./uLipeRtosPico/picokernel/k_thread.o
+ .debug_aranges
+                0x00000258       0x60 ./uLipeRtosPico/picokernel/k_wqueue.o
+ .debug_aranges
+                0x000002b8       0x70 ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7.o
+ .debug_aranges
+                0x00000328       0x20 ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7_a.o
+ .debug_aranges
+                0x00000348       0x80 ./src/cr_startup_lpc5410x.o
+ .debug_aranges
+                0x000003c8       0x18 ./src/crp.o
+ .debug_aranges
+                0x000003e0       0x20 ./src/sysinit.o
+ .debug_aranges
+                0x00000400       0x78 ./src/work_proj.o
+
+.debug_ranges   0x00000000      0x390
+ .debug_ranges  0x00000000       0xa0 ./uLipeRtosPico/picokernel/k_kernel.o
+ .debug_ranges  0x000000a0       0x18 ./uLipeRtosPico/picokernel/k_memp.o
+ .debug_ranges  0x000000b8       0x20 ./uLipeRtosPico/picokernel/k_mutex.o
+ .debug_ranges  0x000000d8       0x88 ./uLipeRtosPico/picokernel/k_raw_timer.o
+ .debug_ranges  0x00000160       0x20 ./uLipeRtosPico/picokernel/k_sema.o
+ .debug_ranges  0x00000180       0x78 ./uLipeRtosPico/picokernel/k_thread.o
+ .debug_ranges  0x000001f8       0x50 ./uLipeRtosPico/picokernel/k_wqueue.o
+ .debug_ranges  0x00000248       0x60 ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7.o
+ .debug_ranges  0x000002a8       0x70 ./src/cr_startup_lpc5410x.o
+ .debug_ranges  0x00000318       0x10 ./src/sysinit.o
+ .debug_ranges  0x00000328       0x68 ./src/work_proj.o
+
+.debug_macro    0x00000000     0x4852
+ .debug_macro   0x00000000       0xef ./uLipeRtosPico/picokernel/k_kernel.o
+ .debug_macro   0x000000ef      0x8b0 ./uLipeRtosPico/picokernel/k_kernel.o
+ .debug_macro   0x0000099f       0x10 ./uLipeRtosPico/picokernel/k_kernel.o
+ .debug_macro   0x000009af      0x12d ./uLipeRtosPico/picokernel/k_kernel.o
+ .debug_macro   0x00000adc      0x5b2 ./uLipeRtosPico/picokernel/k_kernel.o
+ .debug_macro   0x0000108e       0x22 ./uLipeRtosPico/picokernel/k_kernel.o
+ .debug_macro   0x000010b0       0x16 ./uLipeRtosPico/picokernel/k_kernel.o
+ .debug_macro   0x000010c6       0x4b ./uLipeRtosPico/picokernel/k_kernel.o
+ .debug_macro   0x00001111       0x8e ./uLipeRtosPico/picokernel/k_kernel.o
+ .debug_macro   0x0000119f       0x4c ./uLipeRtosPico/picokernel/k_kernel.o
+ .debug_macro   0x000011eb       0x1c ./uLipeRtosPico/picokernel/k_kernel.o
+ .debug_macro   0x00001207       0x10 ./uLipeRtosPico/picokernel/k_kernel.o
+ .debug_macro   0x00001217       0x28 ./uLipeRtosPico/picokernel/k_kernel.o
+ .debug_macro   0x0000123f       0x10 ./uLipeRtosPico/picokernel/k_kernel.o
+ .debug_macro   0x0000124f       0x16 ./uLipeRtosPico/picokernel/k_kernel.o
+ .debug_macro   0x00001265       0x10 ./uLipeRtosPico/picokernel/k_kernel.o
+ .debug_macro   0x00001275       0x10 ./uLipeRtosPico/picokernel/k_kernel.o
+ .debug_macro   0x00001285       0xf5 ./uLipeRtosPico/picokernel/k_memp.o
+ .debug_macro   0x0000137a       0xef ./uLipeRtosPico/picokernel/k_mutex.o
+ .debug_macro   0x00001469       0xf5 ./uLipeRtosPico/picokernel/k_raw_timer.o
+ .debug_macro   0x0000155e       0xef ./uLipeRtosPico/picokernel/k_sema.o
+ .debug_macro   0x0000164d       0xef ./uLipeRtosPico/picokernel/k_thread.o
+ .debug_macro   0x0000173c       0xf5 ./uLipeRtosPico/picokernel/k_wqueue.o
+ .debug_macro   0x00001831       0xf8 ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7.o
+ .debug_macro   0x00001929       0x34 ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7.o
+ .debug_macro   0x0000195d       0x1d ./src/cr_startup_lpc5410x.o
+ .debug_macro   0x0000197a       0x1a ./src/crp.o
+ .debug_macro   0x00001994       0x34 ./src/crp.o
+ .debug_macro   0x000019c8      0x254 ./src/sysinit.o
+ .debug_macro   0x00001c1c       0x8f ./src/sysinit.o
+ .debug_macro   0x00001cab       0x2d ./src/sysinit.o
+ .debug_macro   0x00001cd8       0x3b ./src/sysinit.o
+ .debug_macro   0x00001d13       0x2d ./src/sysinit.o
+ .debug_macro   0x00001d40       0x42 ./src/sysinit.o
+ .debug_macro   0x00001d82      0xd39 ./src/sysinit.o
+ .debug_macro   0x00002abb      0x1d9 ./src/sysinit.o
+ .debug_macro   0x00002c94       0xca ./src/sysinit.o
+ .debug_macro   0x00002d5e       0x18 ./src/sysinit.o
+ .debug_macro   0x00002d76       0x16 ./src/sysinit.o
+ .debug_macro   0x00002d8c      0x129 ./src/sysinit.o
+ .debug_macro   0x00002eb5       0x2d ./src/sysinit.o
+ .debug_macro   0x00002ee2       0x16 ./src/sysinit.o
+ .debug_macro   0x00002ef8       0x32 ./src/sysinit.o
+ .debug_macro   0x00002f2a       0xb8 ./src/sysinit.o
+ .debug_macro   0x00002fe2       0x70 ./src/sysinit.o
+ .debug_macro   0x00003052       0x6a ./src/sysinit.o
+ .debug_macro   0x000030bc       0xc5 ./src/sysinit.o
+ .debug_macro   0x00003181       0x76 ./src/sysinit.o
+ .debug_macro   0x000031f7       0x34 ./src/sysinit.o
+ .debug_macro   0x0000322b      0x205 ./src/sysinit.o
+ .debug_macro   0x00003430       0x40 ./src/sysinit.o
+ .debug_macro   0x00003470       0x6a ./src/sysinit.o
+ .debug_macro   0x000034da       0x22 ./src/sysinit.o
+ .debug_macro   0x000034fc       0x28 ./src/sysinit.o
+ .debug_macro   0x00003524       0x1c ./src/sysinit.o
+ .debug_macro   0x00003540       0x10 ./src/sysinit.o
+ .debug_macro   0x00003550       0x1f ./src/sysinit.o
+ .debug_macro   0x0000356f      0x1f1 ./src/sysinit.o
+ .debug_macro   0x00003760      0x13a ./src/sysinit.o
+ .debug_macro   0x0000389a       0x16 ./src/sysinit.o
+ .debug_macro   0x000038b0      0x1f6 ./src/sysinit.o
+ .debug_macro   0x00003aa6      0x430 ./src/sysinit.o
+ .debug_macro   0x00003ed6       0x34 ./src/sysinit.o
+ .debug_macro   0x00003f0a       0x1c ./src/sysinit.o
+ .debug_macro   0x00003f26      0x477 ./src/sysinit.o
+ .debug_macro   0x0000439d       0x34 ./src/sysinit.o
+ .debug_macro   0x000043d1       0x2e ./src/sysinit.o
+ .debug_macro   0x000043ff       0x9a ./src/sysinit.o
+ .debug_macro   0x00004499       0x20 ./src/sysinit.o
+ .debug_macro   0x000044b9      0x307 ./src/work_proj.o
+ .debug_macro   0x000047c0       0x82 ./src/work_proj.o
+ .debug_macro   0x00004842       0x10 ./src/work_proj.o
+
+.debug_line     0x00000000     0x3136
+ .debug_line    0x00000000      0x532 ./uLipeRtosPico/picokernel/k_kernel.o
+ .debug_line    0x00000532      0x335 ./uLipeRtosPico/picokernel/k_memp.o
+ .debug_line    0x00000867      0x37c ./uLipeRtosPico/picokernel/k_mutex.o
+ .debug_line    0x00000be3      0x5ac ./uLipeRtosPico/picokernel/k_raw_timer.o
+ .debug_line    0x0000118f      0x364 ./uLipeRtosPico/picokernel/k_sema.o
+ .debug_line    0x000014f3      0x4d6 ./uLipeRtosPico/picokernel/k_thread.o
+ .debug_line    0x000019c9      0x3e5 ./uLipeRtosPico/picokernel/k_wqueue.o
+ .debug_line    0x00001dae      0x421 ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7.o
+ .debug_line    0x000021cf       0xc9 ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7_a.o
+ .debug_line    0x00002298       0xef ./src/cr_startup_lpc5410x.o
+ .debug_line    0x00002387       0x79 ./src/crp.o
+ .debug_line    0x00002400      0x4b7 ./src/sysinit.o
+ .debug_line    0x000028b7      0x87f ./src/work_proj.o
+
+.debug_str      0x00000000    0x12578
+ .debug_str     0x00000000     0x54e5 ./uLipeRtosPico/picokernel/k_kernel.o
+                               0x55db (size before relaxing)
+ .debug_str     0x000054e5       0xdb ./uLipeRtosPico/picokernel/k_memp.o
+                               0x5133 (size before relaxing)
+ .debug_str     0x000055c0       0x7c ./uLipeRtosPico/picokernel/k_mutex.o
+                               0x5357 (size before relaxing)
+ .debug_str     0x0000563c      0x197 ./uLipeRtosPico/picokernel/k_raw_timer.o
+                               0x559c (size before relaxing)
+ .debug_str     0x000057d3       0x69 ./uLipeRtosPico/picokernel/k_sema.o
+                               0x5353 (size before relaxing)
+ .debug_str     0x0000583c      0x140 ./uLipeRtosPico/picokernel/k_thread.o
+                               0x5487 (size before relaxing)
+ .debug_str     0x0000597c       0xc9 ./uLipeRtosPico/picokernel/k_wqueue.o
+                               0x544c (size before relaxing)
+ .debug_str     0x00005a45      0x2cb ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7.o
+                               0x53ee (size before relaxing)
+ .debug_str     0x00005d10      0x252 ./src/cr_startup_lpc5410x.o
+                               0x27bc (size before relaxing)
+ .debug_str     0x00005f62       0xe9 ./src/crp.o
+                               0x2682 (size before relaxing)
+ .debug_str     0x0000604b     0xbfe4 ./src/sysinit.o
+                               0xfd76 (size before relaxing)
+ .debug_str     0x0001202f      0x549 ./src/work_proj.o
+                              0x1185f (size before relaxing)
+
+.comment        0x00000000       0xde
+ .comment       0x00000000       0x6e ./uLipeRtosPico/picokernel/k_kernel.o
+                                 0x6f (size before relaxing)
+ .comment       0x0000006e       0x6f ./uLipeRtosPico/picokernel/k_memp.o
+ .comment       0x0000006e       0x6f ./uLipeRtosPico/picokernel/k_mutex.o
+ .comment       0x0000006e       0x6f ./uLipeRtosPico/picokernel/k_raw_timer.o
+ .comment       0x0000006e       0x6f ./uLipeRtosPico/picokernel/k_sema.o
+ .comment       0x0000006e       0x6f ./uLipeRtosPico/picokernel/k_thread.o
+ .comment       0x0000006e       0x6f ./uLipeRtosPico/picokernel/k_wqueue.o
+ .comment       0x0000006e       0x6f ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7.o
+ .comment       0x0000006e       0x6f ./src/cr_startup_lpc5410x.o
+ .comment       0x0000006e       0x6f ./src/crp.o
+ .comment       0x0000006e       0x6f ./src/sysinit.o
+ .comment       0x0000006e       0x6f ./src/work_proj.o
+ .comment       0x0000006e       0x6f /tmp/cceTJhbM.ltrans0.ltrans.o
+ .comment       0x0000006e       0x70 /home/venturus/devel/uLipeRtosPico/samples/lpc54102_test_proj/lpc_chip_5410x/libs/libpower_m4f_hard.a(power_library.o)
+                                 0x71 (size before relaxing)
+ .comment       0x000000de       0x6f /usr/local/mcuxpressoide-10.0.0_344/ide/tools/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/fpu/libcr_c.a(__weak__main.o)
+ .comment       0x000000de       0x6f /usr/local/mcuxpressoide-10.0.0_344/ide/tools/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/fpu/libcr_c.a(strcpy.o)
+
+.ARM.attributes
+                0x00000000       0x37
+ .ARM.attributes
+                0x00000000       0x39 ./uLipeRtosPico/picokernel/k_kernel.o
+ .ARM.attributes
+                0x00000039       0x39 ./uLipeRtosPico/picokernel/k_memp.o
+ .ARM.attributes
+                0x00000072       0x39 ./uLipeRtosPico/picokernel/k_mutex.o
+ .ARM.attributes
+                0x000000ab       0x39 ./uLipeRtosPico/picokernel/k_raw_timer.o
+ .ARM.attributes
+                0x000000e4       0x39 ./uLipeRtosPico/picokernel/k_sema.o
+ .ARM.attributes
+                0x0000011d       0x39 ./uLipeRtosPico/picokernel/k_thread.o
+ .ARM.attributes
+                0x00000156       0x39 ./uLipeRtosPico/picokernel/k_wqueue.o
+ .ARM.attributes
+                0x0000018f       0x39 ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7.o
+ .ARM.attributes
+                0x000001c8       0x25 ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7_a.o
+ .ARM.attributes
+                0x000001ed       0x39 ./src/cr_startup_lpc5410x.o
+ .ARM.attributes
+                0x00000226       0x39 ./src/crp.o
+ .ARM.attributes
+                0x0000025f       0x39 ./src/sysinit.o
+ .ARM.attributes
+                0x00000298       0x39 ./src/work_proj.o
+ .ARM.attributes
+                0x000002d1       0x37 /tmp/cceTJhbM.ltrans0.ltrans.o
+ .ARM.attributes
+                0x00000308       0x39 /home/venturus/devel/uLipeRtosPico/samples/lpc54102_test_proj/lpc_chip_5410x/libs/libpower_m4f_hard.a(power_library.o)
+ .ARM.attributes
+                0x00000341       0x39 /usr/local/mcuxpressoide-10.0.0_344/ide/tools/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/fpu/libcr_c.a(__weak__main.o)
+ .ARM.attributes
+                0x0000037a       0x39 /usr/local/mcuxpressoide-10.0.0_344/ide/tools/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/fpu/libcr_c.a(strcpy.o)
+ .ARM.attributes
+                0x000003b3       0x25 /usr/local/mcuxpressoide-10.0.0_344/ide/tools/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7e-m/fpu/libcr_eabihelpers.a(division_64.o)
+ .ARM.attributes
+                0x000003d8       0x25 /usr/local/mcuxpressoide-10.0.0_344/ide/tools/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7e-m/fpu/libcr_eabihelpers.a(division_idiv0.o)
+
+.debug_frame    0x00000000      0xe8c
+ .debug_frame   0x00000000      0x2b0 ./uLipeRtosPico/picokernel/k_kernel.o
+ .debug_frame   0x000002b0       0x58 ./uLipeRtosPico/picokernel/k_memp.o
+ .debug_frame   0x00000308       0x7c ./uLipeRtosPico/picokernel/k_mutex.o
+ .debug_frame   0x00000384      0x264 ./uLipeRtosPico/picokernel/k_raw_timer.o
+ .debug_frame   0x000005e8       0x7c ./uLipeRtosPico/picokernel/k_sema.o
+ .debug_frame   0x00000664      0x214 ./uLipeRtosPico/picokernel/k_thread.o
+ .debug_frame   0x00000878      0x160 ./uLipeRtosPico/picokernel/k_wqueue.o
+ .debug_frame   0x000009d8      0x178 ./uLipeRtosPico/arch/arm_cm3_4_7/k_port_cm3_4_7.o
+ .debug_frame   0x00000b50      0x170 ./src/cr_startup_lpc5410x.o
+ .debug_frame   0x00000cc0       0x2c ./src/sysinit.o
+ .debug_frame   0x00000cec      0x1a0 ./src/work_proj.o

@@ -40,6 +40,7 @@ The kernel uses a fully preemptive-cooperative schedule policy, and supports up 
 # Basic Usage
 
 - uLipeRtosPico was built to be simple in its essence;
+- You can navigate and use samples provided in sample/ directory;
 - Add the folders to the include paths: uLipeRtosPico;
 - Add the folders as sources: uLipeRtosPico/picokernel and uLipeRtosPico/picokernel and uLipeRtosPico/arch;
 - Create your own ulipe_rtos_kconfig.h with some properties or use the default config:

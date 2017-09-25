@@ -13,62 +13,117 @@
 
 /**
  *  @fn port_irq_lock()
- *  @brief arch specific irq locking
- *  @param
- *  @return
+ *  @brief arch specific irq locking, disables the IRQs
+ *
+ *  @param	none
+ *
+ *  @return key with the current interrupt state
  */
 extern archtype_t port_irq_lock(void);
 
 /**
  *  @fn port_irq_unlock()
- *  @brief arch specific irq unlocking
- *  @param
- *  @return
+ *  @brief arch specific irq unlocking, enables the IRQs
+ *
+ *  @param pattern - key with the saved IRQs states
+ *
+ *  @return none
  */
 extern void port_irq_unlock(archtype_t pattern);
 
 /**
  *  @fn port_from_isr()
- *  @brief check if current execution is ocurring from isr
- *  @param
- *  @return
+ *  @brief check if current execution is ocurring from a isr
+ *
+ *  @param none
+ *
+ *  @return true if current execution context is a ISR
  */
 extern bool port_from_isr(void);
+
 
 /**
  *  @fn port_create_stack_frame()
  *  @brief architecture specific stack frame creation for a thread
- *  @param
- *  @return
+ *
+ *  @param stack - pointer to area used as stack of thread
+ *  @param thr_func - entry point of thread being created
+ *  @param cookie - pointer to a custom argument passed to thread during creation
+ *
+ *  @return pointer to the modified stack filled with archtecture expected values
  */
 archtype_t *port_create_stack_frame(archtype_t *stack, thread_t thr_func, void *cookie);
 
 
 /**
  *  @fn port_swap_req()
- *  @brief perfoms a swap function calling
- *  @param
- *  @return
+ *  @brief Pend a syscall to switch the context
+ *
+ *  @param none
+ *
+ *  @return	none
  */
 extern void port_swap_req(void);
 
 
 /**
  *  @fn port_start_kernel()
- *  @brief platform specific kernel start
- *  @param
- *  @return
+ *  @brief platform specific kernel starting, triggers the scheduler
+ *
+ *  @param	none
+ *
+ *  @return none
+ *
+ *  NOTE: This function should never returns!
  */
 extern void port_start_kernel(void);
 
+
 /**
  *  @fn port_init_machine
- *  @brief inits machine specifis (priority levels, handlers, etc)
- *  @param
- *  @return
+ *  @brief inits machine specifics (priority levels, handlers, etc)
+ *
+ *  @param	none
+ *
+ *  @return none
  */
 extern void port_init_machine(void);
 
+
+/**
+ *  @fn port_bit_fs_scan()
+ *  @brief perform bit forward scan
+ *
+ *  @param reg - 32bit maximum wide word to be scanned
+ *
+ *  @return value between 0 - 31
+ */
+extern uint8_t port_bit_fs_scan(archtype_t reg);
+
+/**
+ *  @fn port_bit_ls_scan
+ *  @brief performs a reverse bit scan
+ *
+ *  @param reg - 32bit maximum wide word to be scanned
+ *
+ *  @return value between 0 - 31
+ */
+extern uint8_t port_bit_ls_scan(archtype_t reg);
+
+/**
+ *  @fn port_set_break
+ *  @brief set breakpoint, used in assertion mechanisms
+ *
+ *  @param none
+ *
+ *  @return none
+ */
+#if K_DEBUG > 0
+extern void port_set_break(void);
+#endif
+
+
+/************* USER IMPLEMENTED HOOKS ***********************************/
 
 /**
  *  @fn port_start_timer()
@@ -144,31 +199,6 @@ extern uint32_t port_halt_ticker(void);
 
 #endif
 
-/**
- *  @fn port_bit_fs_scan()
- *  @brief perform bit forward scan
- *  @param
- *  @return
- */
-extern uint8_t port_bit_fs_scan(archtype_t reg);
-
-/**
- *  @fn port_bit_ls_scan
- *  @brief performs a reverse bit scan
- *  @param
- *  @return
- */
-extern uint8_t port_bit_ls_scan(archtype_t reg);
-
-/**
- *  @fn port_set_break
- *  @brief set breakpoint
- *  @param
- *  @return
- */
-#if K_DEBUG > 0
-extern void port_set_break(void);
-#endif
 
 
 

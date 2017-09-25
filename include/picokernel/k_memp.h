@@ -28,22 +28,39 @@ typedef struct {
 /**
  *  @fn k_block_alloc()
  *  @brief allocates a block of fixed size
- *  @param
- *  @return
+ *
+ *  @param mem - memory pool control block to give block from
+ *
+ *  @return a pointer to the newly allocated block, NULL if not memory left
  */
 
 void *k_block_alloc(pool_info_t *mem);
 
+
 /**
- *  @fn k_block_free
+ *  @fn k_block_free()
+ *
  *  @brief after use, the block can be released using this function
- *  @param
- *  @return
+ *
+ *  @param mem - memory pool control structure to give back block
+ *  @param p   - pointer to block is being deallocated (cannot be NULL)
+ *
+ *  @return none
  */
 void k_block_free(pool_info_t *mem, void *p);
 
 
-/* declares a fully initialized memory pool structure */
+/**
+ *  @fn MEMPOOL_DECLARE()
+ *
+ *  @brief creates a initialized memory pool control block
+ *
+ *  @param name   - name of memory block control structure, this is the object is used as parameter of mempool API
+ *  @param b_size - memory pool block size in bytes
+ *  @param __numblocks - number of elements of b_size len in this pool, maximum is 1024
+ *
+ *  @return a pool_info_t intialized and ready to use
+ */
 #define MEMPOOL_DECLARE(name, b_size, __numblocks)					\
 	static unsigned char pool_##name[b_size * __numblocks ] = {0};	\
 	pool_info_t name = {											\

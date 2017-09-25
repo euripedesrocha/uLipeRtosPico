@@ -13,14 +13,15 @@
 
 
 /* kernel always will have this priority level */
-#define K_PRIORITY_LEVELS	 	 4
-#define K_SYS_THREAD_PRIO   	-3
-#define K_IDLE_THREAD_PRIO		 0
+#define K_PRIORITY_LEVELS	 	 32
+#define K_SYS_THREAD_PRIO   	 31
+#define K_IDLE_THREAD_PRIO		 0xFF
+
 
 /* define kernel working lists */
-typedef struct {
-	uint8_t bitmap;
-	k_list_t list_head[ (2 * K_PRIORITY_LEVELS) - 1];
+typedef struct k_work_list{
+	uint32_t bitmap;
+	k_list_t list_head[K_PRIORITY_LEVELS];
 }k_work_list_t;
 
 
@@ -146,5 +147,7 @@ void kernel_irq_out(void);
  *  @return
  */
 //void kernel_exception(void);
+
+
 
 #endif

@@ -1,3 +1,6 @@
+#include "../../ulipe_rtos_kconfig.h"
+#if(ARCH_TYPE_ARM_CM0 > 0)
+
 @
 @			ULIPE RTOS PICO
 @	file k_port_cm0_a.S
@@ -6,8 +9,8 @@
 @
 
 
-#include "../../ulipe_rtos_kconfig.h"
-#if(ARCH_TYPE_ARM_CM0 > 0)
+
+
 
 		.thumb
 		.syntax unified
@@ -16,6 +19,7 @@
 		.extern k_current_task
 		.extern k_high_prio_task
 		.extern k_running
+		.extern irq_lock_nest
 
 
 		@export symbols
@@ -34,22 +38,27 @@
 
 		.thumb_func
 port_irq_lock:
-		mrs 	r0, ipsr
-		cmp		r0, #0
-		bne 	port_irq_lock_0
-		mrs 	r0, primask
-		cpsid 	i
+		ldr 	r1, =irq_lock_nest
+		ldr		r2, [r1]
+		cmp		r2, #0
+		bne		port_irq_lock_0
+		cpsid   I
 port_irq_lock_0:
+		adds r2, #1
+		str  r2, [r1]
 		bx		lr
 
 @------------------------------------------------------------------------------------------------
 		.thumb_func
 port_irq_unlock:
-		mrs 	r0, ipsr
-		cmp		r0, #0
+		ldr 	r1, =irq_lock_nest
+		ldr		r2, [r1]
+		subs	r2, #1
+		cmp		r2, #0
 		bne		port_irq_unlock_0
-		msr 	primask,r0
+		cpsie   I
 port_irq_unlock_0:
+		str  r2, [r1]
 		bx 		lr
 
 @------------------------------------------------------------------------------------------------

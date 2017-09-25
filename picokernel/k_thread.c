@@ -111,8 +111,7 @@ k_status_t thread_create(thread_t func, void *arg,tcb_t *tcb)
 	 * allocated with THREAD_CONTROL_BLOCK_DECLARE() otherwise
 	 * the thread will not created
 	 */
-	if((tcb->thread_prio > (K_PRIORITY_LEVELS - 1)) ||
-			(tcb->thread_prio < (-(K_PRIORITY_LEVELS - 1)))){
+	if(tcb->thread_prio > (K_PRIORITY_LEVELS - 1)){
 		ret = k_status_invalid_param;
 		goto cleanup;
 	}
@@ -140,6 +139,7 @@ k_status_t thread_create(thread_t func, void *arg,tcb_t *tcb)
 	/* initialize stack contents */
 	tcb->stack_top = port_create_stack_frame(tcb->stack_base + (archtype_t)tcb->stack_size, func, arg);
 	ULIPE_ASSERT(tcb->stack_top != NULL);
+	tcb->stk_usage = tcb->stack_top - tcb->stack_base;
 
 
 	/* insert the created thread on ready list */
@@ -192,12 +192,6 @@ k_status_t thread_suspend(tcb_t *t)
 {
 	k_status_t ret = k_status_ok;
 
-	if(t->thread_wait & K_THR_SUSPENDED) {
-		/* thread is already suspended */
-		ret = k_thread_susp;
-		goto cleanup;
-	}
-
 	if(port_from_isr()){
 		/* suspend cannot be called from ISR */
 		ret = k_status_illegal_from_isr;
@@ -210,6 +204,14 @@ k_status_t thread_suspend(tcb_t *t)
 		/* null thread can be the current */
 		t = k_current_task;
 		ULIPE_ASSERT(t!= NULL);
+	}
+
+
+	if(t->thread_wait & K_THR_SUSPENDED) {
+		/* thread is already suspended */
+		port_irq_unlock(key);
+		ret = k_thread_susp;
+		goto cleanup;
 	}
 
 
@@ -442,12 +444,11 @@ cleanup:
 }
 
 
-k_status_t thread_set_prio(tcb_t *t, int8_t prio)
+k_status_t thread_set_prio(tcb_t *t, uint8_t prio)
 {
 	k_status_t ret = k_status_ok;
 
-	if((prio > (K_PRIORITY_LEVELS - 1)) ||
-			(prio < (-1 * (K_PRIORITY_LEVELS - 1)))){
+	if(prio > (K_PRIORITY_LEVELS - 1)){
 		ret = k_status_invalid_param;
 		goto cleanup;
 	}
@@ -506,3 +507,5 @@ tcb_t *thread_get_current(void)
 	ret = k_current_task;
 	return(ret);
 }
+
+

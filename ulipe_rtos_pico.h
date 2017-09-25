@@ -20,6 +20,12 @@
 #include "picokernel/inc/k_list.h"
 #include "ulipe_rtos_kconfig.h"
 
+#ifndef __ULIPE_RTOS_KCONFIG_H
+	#error "No config file found, loading default setings"
+#endif
+
+
+
 /* ulipe rtos pico status codes */
 typedef enum {
 	/* general status */
@@ -38,10 +44,14 @@ typedef enum {
 	/* semaphore status */
 	k_sema_not_available,
 	k_sema_illegal_use_celling,
+	k_mutex_already_available,
 
 	/* queue status */
 	k_queue_empty,
 	k_queue_full,
+
+	/* wqueue status */
+	k_wqueue_already_exists,
 
 	/* timer status */
 	k_timer_expired,
@@ -49,6 +59,9 @@ typedef enum {
 	k_timer_stopped,
 	k_timer_busy,
 
+
+	/* kernel configuration */
+	k_not_available_with_current_config,
 }k_status_t;
 
 
@@ -73,6 +86,28 @@ typedef uint64_t archtype_t;
 #endif
 
 
+#if(K_ENABLE_DYNAMIC_ALLOCATOR > 0)
+#error "FATAL: Dynamic allocator is under development, please use memory pool instead!"
+#ifndef K_HEAP_SIZE
+#define K_HEAP_SIZE 1024
+#endif
+#endif
+
+#if(K_ENABLE_WORKQUEUES > 0)
+#ifndef K_WQUEUES_STACK_SIZE
+#define K_WQUEUES_STACK_SIZE 128
+#endif
+#endif
+
+#if(K_ENABLE_TICKLESS_IDLE > 0)
+#ifndef K_MAX_LOW_POWER_PERIOD
+#define K_MAX_LOW_POWER_PERIOD	100
+#endif
+
+#define K_HW_TIMER_COUNTS_PER_TICK (K_MACHINE_CLOCK / K_TICKER_RATE)
+extern void user_lowpower_entry(void *arg);
+extern void user_lowpower_exit(void *arg);
+#endif
 
 #include "include/picokernel/k_thread.h"
 #include "include/picokernel/k_port.h"
@@ -80,6 +115,10 @@ typedef uint64_t archtype_t;
 #include "include/picokernel/k_message.h"
 #include "include/picokernel/k_raw_timer.h"
 #include "include/picokernel/k_sema.h"
+#include "include/picokernel/k_mutex.h"
+#include "include/picokernel/k_memp.h"
+#include "include/picokernel/k_mem_dyn.h"
+#include "include/picokernel/k_wqueue.h"
 
 
 
@@ -95,7 +134,7 @@ static inline void ulipe_assert(bool x)
 #if K_DEBUG > 0
 #define ULIPE_ASSERT(x) ulipe_assert(x)
 #else
-#define ULIPE_ASSERT(x) (void)x
+#define ULIPE_ASSERT(x)
 #endif
 
 

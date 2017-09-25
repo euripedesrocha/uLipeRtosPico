@@ -76,7 +76,7 @@ extern void port_init_machine(void);
  *  @param
  *  @return
  */
-extern void port_start_timer(archtype_t reload_val);
+extern void port_start_timer(uint32_t reload_val);
 
 
 /**
@@ -85,7 +85,7 @@ extern void port_start_timer(archtype_t reload_val);
  *  @param
  *  @return
  */
-extern void port_timer_load_append(archtype_t append_val);
+extern void port_timer_load_append(uint32_t append_val);
 
 
 /**
@@ -105,7 +105,44 @@ extern uint32_t port_timer_halt(void);
  */
 extern void port_timer_resume(void);
 
+/**
+ *  @fn timer_match_handler()
+ *  @brief  output compare timer handler used by tickless engine
+ *  @param
+ *  @return
+ */
+extern void timer_match_handler(void);
 
+
+/**
+ *  @fn timer_ovf_handler()
+ *  @brief timer overflow handling 
+ *  @param
+ *  @return
+ */
+extern void timer_ovf_handler(void);
+
+#if(K_ENABLE_TICKLESS_IDLE > 0)
+/**
+ *  @fn port_start_ticker()
+ *  @brief inits machine specific timer. if zero received, stop ticker
+ *  @param
+ *  @return
+ */
+extern void port_start_ticker(uint32_t reload_val);
+
+
+/**
+ *  @fn port_halt_ticker()
+ *  @brief stops timer counting amd return its current value
+ *  @param
+ *  @return
+ */
+extern uint32_t port_halt_ticker(void);
+
+
+
+#endif
 
 /**
  *  @fn port_bit_fs_scan()
@@ -132,6 +169,8 @@ extern uint8_t port_bit_ls_scan(archtype_t reg);
 #if K_DEBUG > 0
 extern void port_set_break(void);
 #endif
+
+
 
 
 #endif

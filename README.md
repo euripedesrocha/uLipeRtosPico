@@ -1,8 +1,7 @@
 # uLipeRtosPico
 Simple preemptive-cooperative, realtime, multitask kernel made just for fun.
-uLipeRtosPico is a subset of uLipeRTOS, but is small and powerful real time kernel, currently implemented for arm cortex M and intel x86 IAMCU architectures.
-The kernel uses a fully preemptive-cooperative schedule policy, and supports up to 4 priority levels + 3 system high priorities for
-high performance threads.
+uLipeRtosPico is a subset of uLipeRTOS, but is small and powerful real time kernel, currently implemented for arm cortex M and AVR 8 bits processors.
+The kernel uses a fully preemptive-cooperative schedule policy, and supports up to 32 priority levels for maximum flexibility.
 
 # Low memory footprint:
   - 1.2KB of code with full modules enabled*; 
@@ -10,62 +9,57 @@ high performance threads.
   - fully static allocation of kernel objects less than 40 bytes per one(user controls ram usage during compile time);
 
   *built on GCC_ARM 5.2 with -Os option
-  *built on GCC i586 4.8 with -Os option
   
 # Main Features
 
-- Real time all functions are O(1), preemptive-cooperative microkernel;
-- Fast context switching time, below to 100ns @ 50MHz processor clock;
-- Tickless operation;
+- Real time, all functions has predictable execution time;
+- Fast and predictable execution time context switching;
+- Tickless optional operation;
 - Static kernel object allocation;
-- Supports up to 4 priority levels, 3 sys prio for high perfomance tasks;
-- Threads with same priorities will run in cooperative way;
+- Supports up to 32 priority levels (0 - 31);
+- Preemtpive kernel policy;
+- Cooperative kernel policy with same priority threads;
 - Thread signals with set, clear, any and match capabilities;
 - Counting semaphores;
-- Binary semaphores with optional priority ceilling offering mutex primitives;
+- Binary semaphores;
+- Mutual exclusion semaphores with priority ceilling protocol;
 - Message queues;
+- Soft timers with tickless feature (hardware timer provided by user);
+- Constant time, low & constant overhead fixed size memory pool (up to 1024 elements per pool);
+- Workqueues, suitable form to defer asynchronous jobs and create event driven state machines;
 - Unlimited kernel objects (limited by processor memory);
 - Port file formed by two simple files in C and Assembly, simple to port;
-- Single header kernel, put on you application and enjoy.
+- Glue header kernel, just put master file in your application and enjoy.
 
 # Recommended processor resources
 
 - 2KB of Code targeted memory(ROM);
-- 128B of Data memory (RAM)
+- 128B of Data memory (RAM) or 372B of Data memory(RAM) in case of mempool use;
 
 
 # Basic Usage
 
 - uLipeRtosPico was built to be simple in its essence;
+- You can navigate and use samples provided in sample/ directory;
 - Add the folders to the include paths: uLipeRtosPico;
 - Add the folders as sources: uLipeRtosPico/picokernel and uLipeRtosPico/picokernel and uLipeRtosPico/arch;
-- Go to ulipe_rtos_kconfig.h and edit the following lines:
+- Create your own ulipe_rtos_kconfig.h with some properties or use the default config:
 
 ```
 
-/* timer related */
-#define K_MACHINE_CLOCK					48000000
-#define K_TICKER_FREQUENCY				1000
 
 /* architecture definition */
 #define ARCH_TYPE_ARM_CM0				1
-#define ARCH_TYPE_ARM_CM3_4_7				0
 
  
 /* architecture data width */
-#define K_ARCH_MEM_WIDTH_BYTE			0
-#define K_ARCH_MEM_WIDTH_HALFWORD		0
 #define K_ARCH_MEM_WIDTH_WORD			1
-#define K_ARCH_MEM_WIDTH_DWORD			0
 
 
 /* general kernel configuration */
 #define K_MINIMAL_STACK_VAL				16
-#define K_TIMER_DISPATCHER_PRIORITY			4
-#define K_TIMER_DISPATCHER_STACK_SIZE			128
-#define K_ENABLE_SEMAPHORE				0
-#define K_ENABLE_MESSAGING				0
-#define K_ENABLE_TIMERS					0
+#define K_TIMER_DISPATCHER_PRIORITY		4
+#define K_TIMER_DISPATCHER_STACK_SIZE	256
 
 
 /* kernel debugging */

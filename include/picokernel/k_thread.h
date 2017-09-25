@@ -21,6 +21,8 @@
 #define K_THR_PEND_SIGNAL_ANY 		(0x20)
 #define K_THR_PEND_SIGNAL_ALL_C 	(0x40)
 #define K_THR_PEND_SIGNAL_ANY_C 	(0x80)
+#define K_THR_PEND_TICKER	 		(0x100)
+#define K_THR_PEND_MTX		 		(0x200)
 
 
 
@@ -40,15 +42,18 @@ typedef void (*thread_t) (void *arg);
 typedef struct ktcb{
 	archtype_t *stack_top;
 	archtype_t *stack_base;
-	uint8_t thread_wait;
-	int8_t thread_prio;
+	archtype_t stk_usage;
+	uint16_t thread_wait;
+	uint8_t thread_prio;
 	bool created;
 	uint32_t stack_size;
+	uint32_t wake_tick;
 	archtype_t signals_wait;
 	archtype_t signals_actual;
 	archtype_t timer_wait;
 	k_list_t thr_link;
 }tcb_t;
+
 
 /**
  *  @fn THREAD_CONTROL_BLOCK_DECLARE()
@@ -65,6 +70,7 @@ typedef struct ktcb{
 				.thread_prio=priority,											\
 				.thread_wait=0,													\
 				.created=false,													\
+				.wake_tick=0,													\
 		}
 
 
@@ -142,7 +148,7 @@ k_status_t thread_yield(void);
  *  @param
  *  @return
  */
-k_status_t thread_set_prio(tcb_t *t, int8_t prio);
+k_status_t thread_set_prio(tcb_t *t, uint8_t prio);
 
 /**
  *  @fn thread_get_current()
@@ -151,6 +157,8 @@ k_status_t thread_set_prio(tcb_t *t, int8_t prio);
  *  @return
  */
 tcb_t *thread_get_current(void);
+
+
 
 
 

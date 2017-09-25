@@ -15,9 +15,7 @@
 typedef struct ksema{
 	archtype_t cnt;
 	archtype_t limit;
-	bool prio_ceilling;
 	bool created;
-	uint8_t prio;
 	k_work_list_t threads_pending;
 }ksema_t;
 
@@ -32,8 +30,6 @@ typedef struct ksema{
 	static ksema_t name = {										\
 			.cnt=initial,										\
 			.limit=limit_val,									\
-			.prio=K_SYS_THREAD_PRIO,							\
-			.prio_ceilling=false,								\
 			.created=false,										\
 	}
 
@@ -48,20 +44,14 @@ k_status_t semaphore_take(ksema_t *s);
 
 
 /**
- *  @fn semaphore_take_and_ceil()
- *  @brief
- *  @param
- *  @return
- */
-k_status_t semaphore_take_and_ceil(ksema_t *s);
-
-/**
  *  @fn semaphore_give()
  *  @brief release a semaphore incrementing its count
  *  @param
  *  @return
  */
 k_status_t semaphore_give(ksema_t *s, uint32_t count);
+
+
 
 
 

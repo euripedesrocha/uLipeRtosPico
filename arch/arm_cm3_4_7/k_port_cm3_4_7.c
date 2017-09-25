@@ -54,61 +54,90 @@ void port_init_machine(void)
 	SCB->SHP[11] = 0xFF;
 	SCB->SHP[7]  = 0xFF;
 
+#if (K_ENABLE_TICKER > 0)
+	#if !defined(K_MACHINE_CLOCK) || !defined(K_TICKER_RATE)
+	#error "The SoC clock and ticker rate needs to be defined to use tick feature!"
+	#endif
+
+	SysTick->CTRL = 0;
+	SysTick->LOAD = (K_MACHINE_CLOCK / K_TICKER_RATE);
+	SysTick->CTRL = 0x07;
+#endif
 }
 
-
-#if(K_ENABLE_TIMERS > 0)
-void port_start_timer(archtype_t reload_val)
+#if(K_ENABLE_TICKLESS_IDLE > 0)
+void port_start_ticker(uint32_t reload_val)
 {
-	SysTick->LOAD = reload_val;
-	SysTick->CTRL |= 0x07; 
+
 }
 
-void port_timer_load_append(archtype_t append_val)
+
+uint32_t port_halt_ticker(void)
 {
-	/* disable timer if not already yet */
-	SysTick->CTRL &= ~0x07; 	
-	SysTick->LOAD =  SysTick->VAL + append_val;	
+
 }
 
-extern uint32_t port_timer_halt(void)
+#endif
+
+
+
+#if (K_ENABLE_TICKER > 0)
+
+void timer_tick_handler(void)
 {
-	SysTick->CTRL &= ~0x07; 	
-	return(SysTick->LOAD - SysTick->VAL);
+	extern tcb_t timer_tcb;
+	thread_set_signals(&timer_tcb, K_TIMER_TICK);	
 }
 
-extern void port_timer_resume(void)
-{
-	SysTick->CTRL |= 0x07; 
-}
 
 void SysTick_Handler(void)
 {
-	extern tcb_t timer_tcb;
-	kernel_irq_in();
-
-	/* systick expired, stops the timer */
-	SysTick->CTRL &= ~0x07;	
-	/* request timeline handling */
-	thread_set_signals(&timer_tcb, K_TIMER_DISPATCH);
+	kernel_irq_in();	
+	timer_tick_handler();
 	kernel_irq_out();
 }
 #endif
 
-uint8_t port_bit_fs_scan(archtype_t reg)
+
+#if(K_ENABLE_TIMERS > 0)
+
+void port_start_timer(archtype_t reload_val)
 {
-	/* clz not implemented for this architecture */
-	uint8_t ret = k_status_ok;
-	ULIPE_ASSERT(false);
-	return(ret);
 }
 
-uint8_t port_bit_ls_scan(archtype_t reg)
+void port_timer_load_append(archtype_t append_val)
 {
-	/* ctz is not as well */
-	uint8_t ret=k_status_ok;
-	ULIPE_ASSERT(false);
-	return(ret);
 }
+
+extern uint32_t port_timer_halt(void)
+{
+	return 0;
+}
+
+extern void port_timer_resume(void)
+{
+}
+
+
+extern void timer_match_handler(void)
+{
+	extern tcb_t timer_tcb;
+	kernel_irq_in();
+	/* request timeline handling */
+	thread_set_signals(&timer_tcb, K_TIMER_DISPATCH);
+	kernel_irq_out();
+}
+
+extern void timer_ovf_handler(void)
+{
+	kernel_irq_in();
+	kernel_irq_out();
+}
+
+
+#endif
+
+
+
 
 #endif

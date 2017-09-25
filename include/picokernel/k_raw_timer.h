@@ -10,22 +10,26 @@
 #define __K_RAW_TIMER_H
 
 
-#if(K_ENABLE_TIMERS > 0)
+#if(K_ENABLE_TICKER > 0)
 
 /* timer commands */
 #define K_TIMER_LOAD_FRESH		0x01
 #define K_TIMER_DISPATCH 		0x02
 #define K_TIMER_REFRESH			0x04
+#define K_TIMER_TICK			0x08
+
+#if(K_ENABLE_TIMERS > 0)
 
 /* timer callback function type */
-typedef void (*ktimer_callback_t) (void * t);
+typedef void (*ktimer_callback_t) (void * user_data, void *timer);
 
 
 /* timer control block structure */
 typedef struct ktimer{
-	archtype_t load_val;
-	archtype_t start_point;
+	uint32_t load_val;
+	uint32_t timer_to_wait;
 	ktimer_callback_t cb;
+	void *user_data;
 	bool expired;
 	bool created;
 	bool running;
@@ -34,6 +38,12 @@ typedef struct ktimer{
 }ktimer_t;
 
 
+/* kernel execution information */
+typedef struct k_wakeup_info {
+	tcb_t *next_thread_wake;
+	ktimer_t *next_timer;
+	uint32_t *tick_cntr;
+}k_wakeup_info_t;
 
 
 /**
@@ -44,7 +54,7 @@ typedef struct ktimer{
  */
 #define TIMER_CONTROL_BLOCK_DECLARE(name,load_value)		\
 		ktimer_t name = {									\
-			.load_val=load_value,							\
+			.timer_to_wait=load_value,						\
 			.running=false,									\
 			.expired=true,									\
 			.threads_pending.bitmap=0,						\
@@ -60,6 +70,16 @@ typedef struct ktimer{
  */
 k_status_t timer_start(ktimer_t *t);
 
+
+/**
+ *  @fn timer_stop()
+ *  @brief stops a timer counting
+ *  @param
+ *  @return
+ */
+k_status_t timer_stop(ktimer_t *t);
+
+
 /**
  *  @fn timer_poll()
  *  @brief check if a timer expired, blocks if not expired yet
@@ -74,7 +94,7 @@ k_status_t timer_poll(ktimer_t *t);
  *  @param
  *  @return
  */
-k_status_t timer_set_callback(ktimer_t *t, ktimer_callback_t cb);
+k_status_t timer_set_callback(ktimer_t *t, ktimer_callback_t cb, void *user_data);
 
 /**
  *  @fn timer_set_load()
@@ -82,7 +102,18 @@ k_status_t timer_set_callback(ktimer_t *t, ktimer_callback_t cb);
  *  @param
  *  @return
  */
-k_status_t timer_set_load(ktimer_t *t, archtype_t load_val);
+k_status_t timer_set_load(ktimer_t *t, uint32_t load_val);
+#endif
+
+/**
+ *  @fn ticker_timer_wait()
+ *  @brief wait for a specified ticks
+ *  @param
+ *  @return
+ */ 
+k_status_t ticker_timer_wait(uint32_t ticks);
+
+
 
 #endif
 #endif

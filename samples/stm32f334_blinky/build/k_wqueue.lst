@@ -1,0 +1,1197 @@
+ARM GAS  /tmp/cc8U5L1r.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"k_wqueue.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.wqueue_defer_handler,"ax",%progbits
+  18              		.align	1
+  19              		.syntax unified
+  20              		.thumb
+  21              		.thumb_func
+  22              		.fpu fpv4-sp-d16
+  24              	wqueue_defer_handler:
+  25              	.LFB20:
+  26              		.file 1 "../../picokernel/k_wqueue.c"
+   1:../../picokernel/k_wqueue.c **** /**
+   2:../../picokernel/k_wqueue.c ****  * 							ULIPE RTOS PICO
+   3:../../picokernel/k_wqueue.c ****  *
+   4:../../picokernel/k_wqueue.c ****  *  @file k_wqueue.c
+   5:../../picokernel/k_wqueue.c ****  *
+   6:../../picokernel/k_wqueue.c ****  *  @brief workqueues job deferrable server
+   7:../../picokernel/k_wqueue.c ****  *
+   8:../../picokernel/k_wqueue.c ****  *
+   9:../../picokernel/k_wqueue.c ****  */
+  10:../../picokernel/k_wqueue.c **** 
+  11:../../picokernel/k_wqueue.c **** 
+  12:../../picokernel/k_wqueue.c **** #include "ulipe_rtos_pico.h"
+  13:../../picokernel/k_wqueue.c **** 
+  14:../../picokernel/k_wqueue.c **** #if(K_ENABLE_WORKQUEUES > 0)
+  15:../../picokernel/k_wqueue.c **** 
+  16:../../picokernel/k_wqueue.c **** /* signal to notify deferrable server to wake up */
+  17:../../picokernel/k_wqueue.c **** #define WQ_DEFER_JOB_FLAG	0x01
+  18:../../picokernel/k_wqueue.c **** 
+  19:../../picokernel/k_wqueue.c **** /**
+  20:../../picokernel/k_wqueue.c ****  *  @fn wqueue_defer_handler()
+  21:../../picokernel/k_wqueue.c ****  *  @brief dispatches the next head job to the handler in this wq
+  22:../../picokernel/k_wqueue.c ****  *  @param
+  23:../../picokernel/k_wqueue.c ****  *  @return
+  24:../../picokernel/k_wqueue.c ****  */
+  25:../../picokernel/k_wqueue.c **** static void wqueue_defer_handler(void *wq_ctl)
+  26:../../picokernel/k_wqueue.c **** {
+  27              		.loc 1 26 0
+  28              		.cfi_startproc
+  29              		@ args = 0, pretend = 0, frame = 8
+  30              		@ frame_needed = 0, uses_anonymous_args = 0
+  31              	.LVL0:
+  32 0000 2DE9F041 		push	{r4, r5, r6, r7, r8, lr}
+ARM GAS  /tmp/cc8U5L1r.s 			page 2
+
+
+  33              	.LCFI0:
+  34              		.cfi_def_cfa_offset 24
+  35              		.cfi_offset 4, -24
+  36              		.cfi_offset 5, -20
+  37              		.cfi_offset 6, -16
+  38              		.cfi_offset 7, -12
+  39              		.cfi_offset 8, -8
+  40              		.cfi_offset 14, -4
+  41 0004 82B0     		sub	sp, sp, #8
+  42              	.LCFI1:
+  43              		.cfi_def_cfa_offset 32
+  44 0006 0646     		mov	r6, r0
+  45              	.LVL1:
+  27:../../picokernel/k_wqueue.c **** 	wqueue_t * wq = (wqueue_t *)wq_ctl;
+  28:../../picokernel/k_wqueue.c **** 	k_status_t err = k_status_ok;
+  46              		.loc 1 28 0
+  47 0008 0025     		movs	r5, #0
+  48 000a 8DF80750 		strb	r5, [sp, #7]
+  49              	.LVL2:
+  50 000e 19E0     		b	.L2
+  51              	.LVL3:
+  52              	.L3:
+  53              	.LBB19:
+  29:../../picokernel/k_wqueue.c **** 	uint32_t signals = 0;
+  30:../../picokernel/k_wqueue.c **** 	wqueue_job_t *job = NULL;
+  31:../../picokernel/k_wqueue.c **** 
+  32:../../picokernel/k_wqueue.c **** 	for(;;) {
+  33:../../picokernel/k_wqueue.c **** 
+  34:../../picokernel/k_wqueue.c **** 		if(!signals) {
+  35:../../picokernel/k_wqueue.c **** 			signals = thread_wait_signals(wq->thr, WQ_DEFER_JOB_FLAG, k_wait_match_pattern, &err);
+  36:../../picokernel/k_wqueue.c **** 			if(err != k_status_ok) continue;
+  37:../../picokernel/k_wqueue.c **** 		}
+  38:../../picokernel/k_wqueue.c **** 
+  39:../../picokernel/k_wqueue.c **** 		/* signaled thread, fifo has a entry, obtain it and submit job
+  40:../../picokernel/k_wqueue.c **** 		 * to user custom process
+  41:../../picokernel/k_wqueue.c **** 		 */
+  42:../../picokernel/k_wqueue.c **** 		archtype_t key = port_irq_lock();
+  54              		.loc 1 42 0
+  55 0010 FFF7FEFF 		bl	port_irq_lock
+  56              	.LVL4:
+  57 0014 8046     		mov	r8, r0
+  58              	.LVL5:
+  43:../../picokernel/k_wqueue.c **** 
+  44:../../picokernel/k_wqueue.c **** 
+  45:../../picokernel/k_wqueue.c **** 		k_list_t *head = NULL;
+  46:../../picokernel/k_wqueue.c **** 		head = sys_dlist_peek_head(&wq->fifo);
+  59              		.loc 1 46 0
+  60 0016 331D     		adds	r3, r6, #4
+  61              	.LBB20:
+  62              	.LBB21:
+  63              	.LBB22:
+  64              	.LBB23:
+  65              		.file 2 "../../../uLipeRtosPico/picokernel/inc/k_list.h"
+   1:../../../uLipeRtosPico/picokernel/inc/k_list.h **** /**
+   2:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * 							ULIPE RTOS PICO
+   3:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+   4:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *  @file k_list.h
+ARM GAS  /tmp/cc8U5L1r.s 			page 3
+
+
+   5:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+   6:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *  @brief inline list implementantion core header file
+   7:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+   8:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+   9:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  */
+  10:../../../uLipeRtosPico/picokernel/inc/k_list.h **** #ifndef __K_LIST_H
+  11:../../../uLipeRtosPico/picokernel/inc/k_list.h **** #define __K_LIST_H
+  12:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+  13:../../../uLipeRtosPico/picokernel/inc/k_list.h **** #include <stddef.h>
+  14:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+  15:../../../uLipeRtosPico/picokernel/inc/k_list.h **** /*
+  16:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * Copyright (c) 2013-2015 Wind River Systems, Inc.
+  17:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+  18:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * SPDX-License-Identifier: Apache-2.0
+  19:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  */
+  20:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+  21:../../../uLipeRtosPico/picokernel/inc/k_list.h **** /**
+  22:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @file
+  23:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @brief Doubly-linked list inline implementation
+  24:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+  25:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * Doubly-linked list implementation.
+  26:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+  27:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * The lists are expected to be initialized such that both the head and tail
+  28:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * pointers point to the list itself.  Initializing the lists in such a fashion
+  29:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * simplifies the adding and removing of nodes to/from the list.
+  30:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  */
+  31:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+  32:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+  33:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+  34:../../../uLipeRtosPico/picokernel/inc/k_list.h **** /* classical container of to resolve list elements insert and remotion */
+  35:../../../uLipeRtosPico/picokernel/inc/k_list.h **** #define CONTAINER_OF(ptr, type, field) ((type *)(((char *)(ptr)) - offsetof(type, field)))
+  36:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+  37:../../../uLipeRtosPico/picokernel/inc/k_list.h **** struct _dnode {
+  38:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	union {
+  39:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 		struct _dnode *head; /* ptr to head of list (sys_dlist_t) */
+  40:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 		struct _dnode *next; /* ptr to next node    (sys_dnode_t) */
+  41:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	};
+  42:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	union {
+  43:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 		struct _dnode *tail; /* ptr to tail of list (sys_dlist_t) */
+  44:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 		struct _dnode *prev; /* ptr to previous node (sys_dnode_t) */
+  45:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	};
+  46:../../../uLipeRtosPico/picokernel/inc/k_list.h **** };
+  47:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+  48:../../../uLipeRtosPico/picokernel/inc/k_list.h **** typedef struct _dnode sys_dlist_t;
+  49:../../../uLipeRtosPico/picokernel/inc/k_list.h **** typedef struct _dnode sys_dnode_t;
+  50:../../../uLipeRtosPico/picokernel/inc/k_list.h **** typedef struct _dnode k_list_t;
+  51:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+  52:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+  53:../../../uLipeRtosPico/picokernel/inc/k_list.h **** /**
+  54:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @brief Provide the primitive to iterate on a list
+  55:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * Note: the loop is unsafe and thus __dn should not be removed
+  56:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+  57:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * User _MUST_ add the loop statement curly braces enclosing its own code:
+  58:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+  59:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *     SYS_DLIST_FOR_EACH_NODE(l, n) {
+  60:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *         <user code>
+  61:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *     }
+ARM GAS  /tmp/cc8U5L1r.s 			page 4
+
+
+  62:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+  63:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param __dl A pointer on a sys_dlist_t to iterate on
+  64:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param __dn A sys_dnode_t pointer to peek each node of the list
+  65:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  */
+  66:../../../uLipeRtosPico/picokernel/inc/k_list.h **** #define SYS_DLIST_FOR_EACH_NODE(__dl, __dn)				\
+  67:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	for (__dn = sys_dlist_peek_head(__dl); __dn;			\
+  68:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	     __dn = sys_dlist_peek_next(__dl, __dn))
+  69:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+  70:../../../uLipeRtosPico/picokernel/inc/k_list.h **** /**
+  71:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @brief Provide the primitive to iterate on a list, from a node in the list
+  72:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * Note: the loop is unsafe and thus __dn should not be removed
+  73:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+  74:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * User _MUST_ add the loop statement curly braces enclosing its own code:
+  75:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+  76:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *     SYS_DLIST_ITERATE_FROM_NODE(l, n) {
+  77:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *         <user code>
+  78:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *     }
+  79:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+  80:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * Like SYS_DLIST_FOR_EACH_NODE(), but __dn already contains a node in the list
+  81:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * where to start searching for the next entry from. If NULL, it starts from
+  82:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * the head.
+  83:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+  84:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param __dl A pointer on a sys_dlist_t to iterate on
+  85:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param __dn A sys_dnode_t pointer to peek each node of the list;
+  86:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *             it contains the starting node, or NULL to start from the head
+  87:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  */
+  88:../../../uLipeRtosPico/picokernel/inc/k_list.h **** #define SYS_DLIST_ITERATE_FROM_NODE(__dl, __dn) \
+  89:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	for (__dn = __dn ? sys_dlist_peek_next_no_check(__dl, __dn) \
+  90:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 			 : sys_dlist_peek_head(__dl); \
+  91:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	     __dn; \
+  92:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	     __dn = sys_dlist_peek_next(__dl, __dn))
+  93:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+  94:../../../uLipeRtosPico/picokernel/inc/k_list.h **** /**
+  95:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @brief Provide the primitive to safely iterate on a list
+  96:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * Note: __dn can be removed, it will not break the loop.
+  97:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+  98:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * User _MUST_ add the loop statement curly braces enclosing its own code:
+  99:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+ 100:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *     SYS_DLIST_FOR_EACH_NODE_SAFE(l, n, s) {
+ 101:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *         <user code>
+ 102:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *     }
+ 103:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+ 104:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param __dl A pointer on a sys_dlist_t to iterate on
+ 105:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param __dn A sys_dnode_t pointer to peek each node of the list
+ 106:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param __dns A sys_dnode_t pointer for the loop to run safely
+ 107:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  */
+ 108:../../../uLipeRtosPico/picokernel/inc/k_list.h **** #define SYS_DLIST_FOR_EACH_NODE_SAFE(__dl, __dn, __dns)			\
+ 109:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	for (__dn = sys_dlist_peek_head(__dl),				\
+ 110:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 		     __dns = sys_dlist_peek_next(__dl, __dn);  		\
+ 111:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	     __dn; __dn = __dns,					\
+ 112:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 		     __dns = sys_dlist_peek_next(__dl, __dn))
+ 113:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+ 114:../../../uLipeRtosPico/picokernel/inc/k_list.h **** /*
+ 115:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @brief Provide the primitive to resolve the container of a list node
+ 116:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * Note: it is safe to use with NULL pointer nodes
+ 117:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+ 118:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param __dn A pointer on a sys_dnode_t to get its container
+ARM GAS  /tmp/cc8U5L1r.s 			page 5
+
+
+ 119:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param __cn Container struct type pointer
+ 120:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param __n The field name of sys_dnode_t within the container struct
+ 121:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  */
+ 122:../../../uLipeRtosPico/picokernel/inc/k_list.h **** #define SYS_DLIST_CONTAINER(__dn, __cn, __n) \
+ 123:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	(__dn ? CONTAINER_OF(__dn, __typeof__(*__cn), __n) : NULL)
+ 124:../../../uLipeRtosPico/picokernel/inc/k_list.h **** /*
+ 125:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @brief Provide the primitive to peek container of the list head
+ 126:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+ 127:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param __dl A pointer on a sys_dlist_t to peek
+ 128:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param __cn Container struct type pointer
+ 129:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param __n The field name of sys_dnode_t within the container struct
+ 130:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  */
+ 131:../../../uLipeRtosPico/picokernel/inc/k_list.h **** #define SYS_DLIST_PEEK_HEAD_CONTAINER(__dl, __cn, __n) \
+ 132:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	SYS_DLIST_CONTAINER(sys_dlist_peek_head(__dl), __cn, __n)
+ 133:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+ 134:../../../uLipeRtosPico/picokernel/inc/k_list.h **** /*
+ 135:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @brief Provide the primitive to peek the next container
+ 136:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+ 137:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param __dl A pointer on a sys_dlist_t to peek
+ 138:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param __cn Container struct type pointer
+ 139:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param __n The field name of sys_dnode_t within the container struct
+ 140:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  */
+ 141:../../../uLipeRtosPico/picokernel/inc/k_list.h **** #define SYS_DLIST_PEEK_NEXT_CONTAINER(__dl, __cn, __n) \
+ 142:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	((__cn) ? SYS_DLIST_CONTAINER(sys_dlist_peek_next(__dl, &(__cn->__n)), \
+ 143:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 				      __cn, __n) : NULL)
+ 144:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+ 145:../../../uLipeRtosPico/picokernel/inc/k_list.h **** /**
+ 146:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @brief Provide the primitive to iterate on a list under a container
+ 147:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * Note: the loop is unsafe and thus __cn should not be detached
+ 148:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+ 149:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * User _MUST_ add the loop statement curly braces enclosing its own code:
+ 150:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+ 151:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *     SYS_DLIST_FOR_EACH_CONTAINER(l, c, n) {
+ 152:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *         <user code>
+ 153:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *     }
+ 154:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+ 155:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param __dl A pointer on a sys_dlist_t to iterate on
+ 156:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param __cn A pointer to peek each entry of the list
+ 157:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param __n The field name of sys_dnode_t within the container struct
+ 158:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  */
+ 159:../../../uLipeRtosPico/picokernel/inc/k_list.h **** #define SYS_DLIST_FOR_EACH_CONTAINER(__dl, __cn, __n)			\
+ 160:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	for (__cn = SYS_DLIST_PEEK_HEAD_CONTAINER(__dl, __cn, __n); __cn; \
+ 161:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	     __cn = SYS_DLIST_PEEK_NEXT_CONTAINER(__dl, __cn, __n))
+ 162:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+ 163:../../../uLipeRtosPico/picokernel/inc/k_list.h **** /**
+ 164:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @brief Provide the primitive to safely iterate on a list under a container
+ 165:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * Note: __cn can be detached, it will not break the loop.
+ 166:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+ 167:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * User _MUST_ add the loop statement curly braces enclosing its own code:
+ 168:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+ 169:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *     SYS_DLIST_FOR_EACH_CONTAINER_SAFE(l, c, cn, n) {
+ 170:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *         <user code>
+ 171:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *     }
+ 172:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+ 173:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param __dl A pointer on a sys_dlist_t to iterate on
+ 174:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param __cn A pointer to peek each entry of the list
+ 175:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param __cns A pointer for the loop to run safely
+ARM GAS  /tmp/cc8U5L1r.s 			page 6
+
+
+ 176:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param __n The field name of sys_dnode_t within the container struct
+ 177:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  */
+ 178:../../../uLipeRtosPico/picokernel/inc/k_list.h **** #define SYS_DLIST_FOR_EACH_CONTAINER_SAFE(__dl, __cn, __cns, __n)	\
+ 179:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	for (__cn = SYS_DLIST_PEEK_HEAD_CONTAINER(__dl, __cn, __n),	\
+ 180:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	     __cns = SYS_DLIST_PEEK_NEXT_CONTAINER(__dl, __cn, __n); __cn; \
+ 181:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	     __cn = __cns,						\
+ 182:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	     __cns = SYS_DLIST_PEEK_NEXT_CONTAINER(__dl, __cn, __n))
+ 183:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+ 184:../../../uLipeRtosPico/picokernel/inc/k_list.h **** /**
+ 185:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @brief initialize list
+ 186:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+ 187:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param list the doubly-linked list
+ 188:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+ 189:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @return N/A
+ 190:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  */
+ 191:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+ 192:../../../uLipeRtosPico/picokernel/inc/k_list.h **** static inline void sys_dlist_init(sys_dlist_t *list)
+ 193:../../../uLipeRtosPico/picokernel/inc/k_list.h **** {
+ 194:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	list->head = (sys_dnode_t *)list;
+ 195:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	list->tail = (sys_dnode_t *)list;
+ 196:../../../uLipeRtosPico/picokernel/inc/k_list.h **** }
+ 197:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+ 198:../../../uLipeRtosPico/picokernel/inc/k_list.h **** #define SYS_DLIST_STATIC_INIT(ptr_to_list) {{(ptr_to_list)}, {(ptr_to_list)}}
+ 199:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+ 200:../../../uLipeRtosPico/picokernel/inc/k_list.h **** /**
+ 201:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @brief check if a node is the list's head
+ 202:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+ 203:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param list the doubly-linked list to operate on
+ 204:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param node the node to check
+ 205:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+ 206:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @return 1 if node is the head, 0 otherwise
+ 207:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  */
+ 208:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+ 209:../../../uLipeRtosPico/picokernel/inc/k_list.h **** static inline int sys_dlist_is_head(sys_dlist_t *list, sys_dnode_t *node)
+ 210:../../../uLipeRtosPico/picokernel/inc/k_list.h **** {
+ 211:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	return list->head == node;
+ 212:../../../uLipeRtosPico/picokernel/inc/k_list.h **** }
+ 213:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+ 214:../../../uLipeRtosPico/picokernel/inc/k_list.h **** /**
+ 215:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @brief check if a node is the list's tail
+ 216:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+ 217:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param list the doubly-linked list to operate on
+ 218:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param node the node to check
+ 219:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+ 220:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @return 1 if node is the tail, 0 otherwise
+ 221:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  */
+ 222:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+ 223:../../../uLipeRtosPico/picokernel/inc/k_list.h **** static inline int sys_dlist_is_tail(sys_dlist_t *list, sys_dnode_t *node)
+ 224:../../../uLipeRtosPico/picokernel/inc/k_list.h **** {
+ 225:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	return list->tail == node;
+ 226:../../../uLipeRtosPico/picokernel/inc/k_list.h **** }
+ 227:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+ 228:../../../uLipeRtosPico/picokernel/inc/k_list.h **** /**
+ 229:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @brief check if the list is empty
+ 230:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+ 231:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param list the doubly-linked list to operate on
+ 232:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+ARM GAS  /tmp/cc8U5L1r.s 			page 7
+
+
+ 233:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @return 1 if empty, 0 otherwise
+ 234:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  */
+ 235:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+ 236:../../../uLipeRtosPico/picokernel/inc/k_list.h **** static inline int sys_dlist_is_empty(sys_dlist_t *list)
+ 237:../../../uLipeRtosPico/picokernel/inc/k_list.h **** {
+ 238:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	return list->head == list;
+  66              		.loc 2 238 0
+  67 0018 7468     		ldr	r4, [r6, #4]
+  68              	.LBE23:
+  69              	.LBE22:
+ 239:../../../uLipeRtosPico/picokernel/inc/k_list.h **** }
+ 240:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+ 241:../../../uLipeRtosPico/picokernel/inc/k_list.h **** /**
+ 242:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @brief check if more than one node present
+ 243:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+ 244:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param list the doubly-linked list to operate on
+ 245:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+ 246:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @return 1 if multiple nodes, 0 otherwise
+ 247:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  */
+ 248:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+ 249:../../../uLipeRtosPico/picokernel/inc/k_list.h **** static inline int sys_dlist_has_multiple_nodes(sys_dlist_t *list)
+ 250:../../../uLipeRtosPico/picokernel/inc/k_list.h **** {
+ 251:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	return list->head != list->tail;
+ 252:../../../uLipeRtosPico/picokernel/inc/k_list.h **** }
+ 253:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+ 254:../../../uLipeRtosPico/picokernel/inc/k_list.h **** /**
+ 255:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @brief get a reference to the head item in the list
+ 256:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+ 257:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param list the doubly-linked list to operate on
+ 258:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+ 259:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @return a pointer to the head element, NULL if list is empty
+ 260:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  */
+ 261:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+ 262:../../../uLipeRtosPico/picokernel/inc/k_list.h **** static inline sys_dnode_t *sys_dlist_peek_head(sys_dlist_t *list)
+ 263:../../../uLipeRtosPico/picokernel/inc/k_list.h **** {
+ 264:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	return sys_dlist_is_empty(list) ? NULL : list->head;
+  70              		.loc 2 264 0
+  71 001a A342     		cmp	r3, r4
+  72 001c 21D0     		beq	.L11
+  73              	.L5:
+  74              	.LVL6:
+  75              	.LBE21:
+  76              	.LBE20:
+  47:../../picokernel/k_wqueue.c **** 		if(!head) {
+  77              		.loc 1 47 0
+  78 001e 14B3     		cbz	r4, .L12
+  79              	.LVL7:
+  80              	.LBB25:
+  81              	.LBB26:
+ 265:../../../uLipeRtosPico/picokernel/inc/k_list.h **** }
+ 266:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+ 267:../../../uLipeRtosPico/picokernel/inc/k_list.h **** /**
+ 268:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @brief get a reference to the head item in the list
+ 269:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+ 270:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * The list must be known to be non-empty.
+ 271:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+ 272:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param list the doubly-linked list to operate on
+ARM GAS  /tmp/cc8U5L1r.s 			page 8
+
+
+ 273:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+ 274:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @return a pointer to the head element
+ 275:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  */
+ 276:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+ 277:../../../uLipeRtosPico/picokernel/inc/k_list.h **** static inline sys_dnode_t *sys_dlist_peek_head_not_empty(sys_dlist_t *list)
+ 278:../../../uLipeRtosPico/picokernel/inc/k_list.h **** {
+ 279:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	return list->head;
+ 280:../../../uLipeRtosPico/picokernel/inc/k_list.h **** }
+ 281:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+ 282:../../../uLipeRtosPico/picokernel/inc/k_list.h **** /**
+ 283:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @brief get a reference to the next item in the list, node is not NULL
+ 284:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+ 285:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * Faster than sys_dlist_peek_next() if node is known not to be NULL.
+ 286:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+ 287:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param list the doubly-linked list to operate on
+ 288:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param node the node from which to get the next element in the list
+ 289:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+ 290:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @return a pointer to the next element from a node, NULL if node is the tail
+ 291:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  */
+ 292:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+ 293:../../../uLipeRtosPico/picokernel/inc/k_list.h **** static inline sys_dnode_t *sys_dlist_peek_next_no_check(sys_dlist_t *list,
+ 294:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 							sys_dnode_t *node)
+ 295:../../../uLipeRtosPico/picokernel/inc/k_list.h **** {
+ 296:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	return (node == list->tail) ? NULL : node->next;
+ 297:../../../uLipeRtosPico/picokernel/inc/k_list.h **** }
+ 298:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+ 299:../../../uLipeRtosPico/picokernel/inc/k_list.h **** /**
+ 300:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @brief get a reference to the next item in the list
+ 301:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+ 302:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param list the doubly-linked list to operate on
+ 303:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param node the node from which to get the next element in the list
+ 304:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+ 305:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @return a pointer to the next element from a node, NULL if node is the tail
+ 306:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * or NULL (when node comes from reading the head of an empty list).
+ 307:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  */
+ 308:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+ 309:../../../uLipeRtosPico/picokernel/inc/k_list.h **** static inline sys_dnode_t *sys_dlist_peek_next(sys_dlist_t *list,
+ 310:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 					       sys_dnode_t *node)
+ 311:../../../uLipeRtosPico/picokernel/inc/k_list.h **** {
+ 312:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	return node ? sys_dlist_peek_next_no_check(list, node) : NULL;
+ 313:../../../uLipeRtosPico/picokernel/inc/k_list.h **** }
+ 314:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+ 315:../../../uLipeRtosPico/picokernel/inc/k_list.h **** /**
+ 316:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @brief get a reference to the tail item in the list
+ 317:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+ 318:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param list the doubly-linked list to operate on
+ 319:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+ 320:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @return a pointer to the tail element, NULL if list is empty
+ 321:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  */
+ 322:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+ 323:../../../uLipeRtosPico/picokernel/inc/k_list.h **** static inline sys_dnode_t *sys_dlist_peek_tail(sys_dlist_t *list)
+ 324:../../../uLipeRtosPico/picokernel/inc/k_list.h **** {
+ 325:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	return sys_dlist_is_empty(list) ? NULL : list->tail;
+ 326:../../../uLipeRtosPico/picokernel/inc/k_list.h **** }
+ 327:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+ 328:../../../uLipeRtosPico/picokernel/inc/k_list.h **** /**
+ 329:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @brief add node to tail of list
+ARM GAS  /tmp/cc8U5L1r.s 			page 9
+
+
+ 330:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+ 331:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param list the doubly-linked list to operate on
+ 332:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param node the element to append
+ 333:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+ 334:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @return N/A
+ 335:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  */
+ 336:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+ 337:../../../uLipeRtosPico/picokernel/inc/k_list.h **** static inline void sys_dlist_append(sys_dlist_t *list, sys_dnode_t *node)
+ 338:../../../uLipeRtosPico/picokernel/inc/k_list.h **** {
+ 339:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	node->next = list;
+ 340:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	node->prev = list->tail;
+ 341:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+ 342:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	list->tail->next = node;
+ 343:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	list->tail = node;
+ 344:../../../uLipeRtosPico/picokernel/inc/k_list.h **** }
+ 345:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+ 346:../../../uLipeRtosPico/picokernel/inc/k_list.h **** /**
+ 347:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @brief add node to head of list
+ 348:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+ 349:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param list the doubly-linked list to operate on
+ 350:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param node the element to append
+ 351:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+ 352:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @return N/A
+ 353:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  */
+ 354:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+ 355:../../../uLipeRtosPico/picokernel/inc/k_list.h **** static inline void sys_dlist_prepend(sys_dlist_t *list, sys_dnode_t *node)
+ 356:../../../uLipeRtosPico/picokernel/inc/k_list.h **** {
+ 357:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	node->next = list->head;
+ 358:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	node->prev = list;
+ 359:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+ 360:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	list->head->prev = node;
+ 361:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	list->head = node;
+ 362:../../../uLipeRtosPico/picokernel/inc/k_list.h **** }
+ 363:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+ 364:../../../uLipeRtosPico/picokernel/inc/k_list.h **** /**
+ 365:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @brief insert node after a node
+ 366:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+ 367:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * Insert a node after a specified node in a list.
+ 368:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+ 369:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param list the doubly-linked list to operate on
+ 370:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param insert_point the insert point in the list: if NULL, insert at head
+ 371:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param node the element to append
+ 372:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+ 373:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @return N/A
+ 374:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  */
+ 375:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+ 376:../../../uLipeRtosPico/picokernel/inc/k_list.h **** static inline void sys_dlist_insert_after(sys_dlist_t *list,
+ 377:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	sys_dnode_t *insert_point, sys_dnode_t *node)
+ 378:../../../uLipeRtosPico/picokernel/inc/k_list.h **** {
+ 379:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	if (!insert_point) {
+ 380:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 		sys_dlist_prepend(list, node);
+ 381:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	} else {
+ 382:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 		node->next = insert_point->next;
+ 383:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 		node->prev = insert_point;
+ 384:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 		insert_point->next->prev = node;
+ 385:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 		insert_point->next = node;
+ 386:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	}
+ARM GAS  /tmp/cc8U5L1r.s 			page 10
+
+
+ 387:../../../uLipeRtosPico/picokernel/inc/k_list.h **** }
+ 388:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+ 389:../../../uLipeRtosPico/picokernel/inc/k_list.h **** /**
+ 390:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @brief insert node before a node
+ 391:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+ 392:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * Insert a node before a specified node in a list.
+ 393:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+ 394:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param list the doubly-linked list to operate on
+ 395:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param insert_point the insert point in the list: if NULL, insert at tail
+ 396:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param node the element to insert
+ 397:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+ 398:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @return N/A
+ 399:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  */
+ 400:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+ 401:../../../uLipeRtosPico/picokernel/inc/k_list.h **** static inline void sys_dlist_insert_before(sys_dlist_t *list,
+ 402:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	sys_dnode_t *insert_point, sys_dnode_t *node)
+ 403:../../../uLipeRtosPico/picokernel/inc/k_list.h **** {
+ 404:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	if (!insert_point) {
+ 405:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 		sys_dlist_append(list, node);
+ 406:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	} else {
+ 407:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 		node->prev = insert_point->prev;
+ 408:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 		node->next = insert_point;
+ 409:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 		insert_point->prev->next = node;
+ 410:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 		insert_point->prev = node;
+ 411:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	}
+ 412:../../../uLipeRtosPico/picokernel/inc/k_list.h **** }
+ 413:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+ 414:../../../uLipeRtosPico/picokernel/inc/k_list.h **** /**
+ 415:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @brief insert node at position
+ 416:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+ 417:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * Insert a node in a location depending on a external condition. The cond()
+ 418:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * function checks if the node is to be inserted _before_ the current node
+ 419:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * against which it is checked.
+ 420:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+ 421:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param list the doubly-linked list to operate on
+ 422:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param node the element to insert
+ 423:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param cond a function that determines if the current node is the correct
+ 424:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *             insert point
+ 425:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param data parameter to cond()
+ 426:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+ 427:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @return N/A
+ 428:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  */
+ 429:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+ 430:../../../uLipeRtosPico/picokernel/inc/k_list.h **** static inline void sys_dlist_insert_at(sys_dlist_t *list, sys_dnode_t *node,
+ 431:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	int (*cond)(sys_dnode_t *, void *), void *data)
+ 432:../../../uLipeRtosPico/picokernel/inc/k_list.h **** {
+ 433:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	if (sys_dlist_is_empty(list)) {
+ 434:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 		sys_dlist_append(list, node);
+ 435:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	} else {
+ 436:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 		sys_dnode_t *pos = sys_dlist_peek_head(list);
+ 437:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+ 438:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 		while (pos && !cond(pos, data)) {
+ 439:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 			pos = sys_dlist_peek_next(list, pos);
+ 440:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 		}
+ 441:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 		sys_dlist_insert_before(list, pos, node);
+ 442:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	}
+ 443:../../../uLipeRtosPico/picokernel/inc/k_list.h **** }
+ARM GAS  /tmp/cc8U5L1r.s 			page 11
+
+
+ 444:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+ 445:../../../uLipeRtosPico/picokernel/inc/k_list.h **** /**
+ 446:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @brief remove a specific node from a list
+ 447:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+ 448:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * The list is implicit from the node. The node must be part of a list.
+ 449:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+ 450:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param node the node to remove
+ 451:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+ 452:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @return N/A
+ 453:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  */
+ 454:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+ 455:../../../uLipeRtosPico/picokernel/inc/k_list.h **** static inline void sys_dlist_remove(sys_dnode_t *node)
+ 456:../../../uLipeRtosPico/picokernel/inc/k_list.h **** {
+ 457:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	node->prev->next = node->next;
+  82              		.loc 2 457 0
+  83 0020 6368     		ldr	r3, [r4, #4]
+  84 0022 2268     		ldr	r2, [r4]
+  85 0024 1A60     		str	r2, [r3]
+ 458:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	node->next->prev = node->prev;
+  86              		.loc 2 458 0
+  87 0026 2368     		ldr	r3, [r4]
+  88 0028 6268     		ldr	r2, [r4, #4]
+  89 002a 5A60     		str	r2, [r3, #4]
+  90              	.LVL8:
+  91              	.LBE26:
+  92              	.LBE25:
+  48:../../picokernel/k_wqueue.c **** 			thread_clr_signals(wq->thr, signals);
+  49:../../picokernel/k_wqueue.c **** 			signals &= ~WQ_DEFER_JOB_FLAG;
+  50:../../picokernel/k_wqueue.c **** 			port_irq_unlock(key);
+  51:../../picokernel/k_wqueue.c **** 
+  52:../../picokernel/k_wqueue.c **** 		} else {
+  53:../../picokernel/k_wqueue.c **** 			sys_dlist_remove(head);
+  54:../../picokernel/k_wqueue.c **** 			job = CONTAINER_OF(head, struct wqueue_job, node);
+  93              		.loc 1 54 0
+  94 002c 271F     		subs	r7, r4, #4
+  95              	.LVL9:
+  55:../../picokernel/k_wqueue.c **** 			port_irq_unlock(key);
+  96              		.loc 1 55 0
+  97 002e 4046     		mov	r0, r8
+  98              	.LVL10:
+  99 0030 FFF7FEFF 		bl	port_irq_unlock
+ 100              	.LVL11:
+ 101              	.LBB27:
+ 102              	.LBB28:
+ 103              		.file 3 "../../../uLipeRtosPico/ulipe_rtos_pico.h"
+   1:../../../uLipeRtosPico/ulipe_rtos_pico.h **** /**
+   2:../../../uLipeRtosPico/ulipe_rtos_pico.h ****  * 							ULIPE RTOS PICO
+   3:../../../uLipeRtosPico/ulipe_rtos_pico.h ****  *
+   4:../../../uLipeRtosPico/ulipe_rtos_pico.h ****  *  @file ulipe_rtos_pico.h
+   5:../../../uLipeRtosPico/ulipe_rtos_pico.h ****  *
+   6:../../../uLipeRtosPico/ulipe_rtos_pico.h ****  *  @brief this file is treated as a master file
+   7:../../../uLipeRtosPico/ulipe_rtos_pico.h ****  *
+   8:../../../uLipeRtosPico/ulipe_rtos_pico.h ****  *
+   9:../../../uLipeRtosPico/ulipe_rtos_pico.h ****  */
+  10:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #ifndef __ULIPE_RTOS_PICO_H
+  11:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #define __ULIPE_RTOS_PICO_H
+  12:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+ARM GAS  /tmp/cc8U5L1r.s 			page 12
+
+
+  13:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  14:../../../uLipeRtosPico/ulipe_rtos_pico.h **** /* include all the kernel header files actig as a glue module */
+  15:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #include <stdint.h>
+  16:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #include <stdbool.h>
+  17:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #include <stddef.h>
+  18:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #include <string.h>
+  19:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  20:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #include "picokernel/inc/k_list.h"
+  21:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #include "ulipe_rtos_kconfig.h"
+  22:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  23:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #ifndef __ULIPE_RTOS_KCONFIG_H
+  24:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	#error "No config file found, loading default setings"
+  25:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #endif
+  26:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  27:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  28:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  29:../../../uLipeRtosPico/ulipe_rtos_pico.h **** /* ulipe rtos pico status codes */
+  30:../../../uLipeRtosPico/ulipe_rtos_pico.h **** typedef enum {
+  31:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	/* general status */
+  32:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_status_ok = 0,
+  33:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_status_error,
+  34:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_status_invalid_param,
+  35:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_status_sched_locked,
+  36:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_status_illegal_from_isr,
+  37:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  38:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	/* threading status */
+  39:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_thread_rdy,
+  40:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_thread_del,
+  41:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_thread_blk,
+  42:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_thread_susp,
+  43:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  44:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	/* semaphore status */
+  45:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_sema_not_available,
+  46:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_sema_illegal_use_celling,
+  47:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_mutex_already_available,
+  48:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  49:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	/* queue status */
+  50:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_queue_empty,
+  51:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_queue_full,
+  52:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  53:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	/* wqueue status */
+  54:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_wqueue_already_exists,
+  55:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  56:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	/* timer status */
+  57:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_timer_expired,
+  58:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_timer_running,
+  59:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_timer_stopped,
+  60:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_timer_busy,
+  61:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  62:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  63:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	/* kernel configuration */
+  64:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_not_available_with_current_config,
+  65:../../../uLipeRtosPico/ulipe_rtos_pico.h **** }k_status_t;
+  66:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  67:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  68:../../../uLipeRtosPico/ulipe_rtos_pico.h **** /**
+  69:../../../uLipeRtosPico/ulipe_rtos_pico.h ****  *  @fn template()
+ARM GAS  /tmp/cc8U5L1r.s 			page 13
+
+
+  70:../../../uLipeRtosPico/ulipe_rtos_pico.h ****  *  @brief
+  71:../../../uLipeRtosPico/ulipe_rtos_pico.h ****  *  @param
+  72:../../../uLipeRtosPico/ulipe_rtos_pico.h ****  *  @return
+  73:../../../uLipeRtosPico/ulipe_rtos_pico.h ****  */
+  74:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  75:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  76:../../../uLipeRtosPico/ulipe_rtos_pico.h **** /* resolves the arch dependend memory size */
+  77:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #if	(K_ARCH_MEM_WIDTH_BYTE > 0)
+  78:../../../uLipeRtosPico/ulipe_rtos_pico.h **** typedef uint8_t archtype_t;
+  79:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #elif(K_ARCH_MEM_WIDTH_HALFWORD > 0)
+  80:../../../uLipeRtosPico/ulipe_rtos_pico.h **** typedef uint16_t archtype_t;
+  81:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #elif (K_ARCH_MEM_WIDTH_WORD > 0)
+  82:../../../uLipeRtosPico/ulipe_rtos_pico.h **** typedef uint32_t archtype_t;
+  83:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #elif (K_ARCH_MEM_WIDTH_DWORD > 0)
+  84:../../../uLipeRtosPico/ulipe_rtos_pico.h **** typedef uint64_t archtype_t;
+  85:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #else
+  86:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #endif
+  87:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  88:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  89:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #if(K_ENABLE_DYNAMIC_ALLOCATOR > 0)
+  90:../../../uLipeRtosPico/ulipe_rtos_pico.h **** //#error "FATAL: Dynamic allocator is under development, please use memory pool instead!"
+  91:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #ifndef K_HEAP_SIZE
+  92:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #define K_HEAP_SIZE 1024
+  93:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #endif
+  94:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #endif
+  95:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  96:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #if(K_ENABLE_WORKQUEUES > 0)
+  97:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #ifndef K_WQUEUES_STACK_SIZE
+  98:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #define K_WQUEUES_STACK_SIZE 128
+  99:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #endif
+ 100:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #endif
+ 101:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+ 102:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #if(K_ENABLE_TICKLESS_IDLE > 0)
+ 103:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #ifndef K_MAX_LOW_POWER_PERIOD
+ 104:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #define K_MAX_LOW_POWER_PERIOD	100
+ 105:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #endif
+ 106:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+ 107:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #define K_HW_TIMER_COUNTS_PER_TICK (K_MACHINE_CLOCK / K_TICKER_RATE)
+ 108:../../../uLipeRtosPico/ulipe_rtos_pico.h **** extern void user_lowpower_entry(void *arg);
+ 109:../../../uLipeRtosPico/ulipe_rtos_pico.h **** extern void user_lowpower_exit(void *arg);
+ 110:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #endif
+ 111:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+ 112:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #include "include/picokernel/k_thread.h"
+ 113:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #include "include/picokernel/k_port.h"
+ 114:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #include "include/picokernel/k_kernel.h"
+ 115:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #include "include/picokernel/k_message.h"
+ 116:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #include "include/picokernel/k_raw_timer.h"
+ 117:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #include "include/picokernel/k_sema.h"
+ 118:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #include "include/picokernel/k_mutex.h"
+ 119:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #include "include/picokernel/k_memp.h"
+ 120:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #include "include/picokernel/k_mem_dyn.h"
+ 121:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #include "include/picokernel/k_wqueue.h"
+ 122:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+ 123:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+ 124:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+ 125:../../../uLipeRtosPico/ulipe_rtos_pico.h **** /** assertion mechanism */
+ 126:../../../uLipeRtosPico/ulipe_rtos_pico.h **** static inline void ulipe_assert(bool x)
+ARM GAS  /tmp/cc8U5L1r.s 			page 14
+
+
+ 127:../../../uLipeRtosPico/ulipe_rtos_pico.h **** {
+ 128:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	if(!x){
+ 104              		.loc 3 128 0
+ 105 0034 0FB3     		cbz	r7, .L13
+ 106              	.LVL12:
+ 107              	.LBE28:
+ 108              	.LBE27:
+  56:../../picokernel/k_wqueue.c **** 
+  57:../../picokernel/k_wqueue.c **** 			/* job never to be invalid if reached here */
+  58:../../picokernel/k_wqueue.c **** 			ulipe_assert(job != NULL);
+  59:../../picokernel/k_wqueue.c **** 
+  60:../../picokernel/k_wqueue.c **** 			/* execute handler */
+  61:../../picokernel/k_wqueue.c **** 			if(job->handler)
+ 109              		.loc 1 61 0
+ 110 0036 54F8043C 		ldr	r3, [r4, #-4]
+ 111 003a 0BB1     		cbz	r3, .L9
+  62:../../picokernel/k_wqueue.c **** 				job->handler(job);
+ 112              		.loc 1 62 0
+ 113 003c 3846     		mov	r0, r7
+ 114 003e 9847     		blx	r3
+ 115              	.LVL13:
+ 116              	.L9:
+  63:../../picokernel/k_wqueue.c **** 
+  64:../../picokernel/k_wqueue.c **** 			/* avoid the deferrable server to hang if queue
+  65:../../picokernel/k_wqueue.c **** 			 * becames populated too frequently
+  66:../../picokernel/k_wqueue.c **** 			 */
+  67:../../picokernel/k_wqueue.c **** 			thread_yield();
+ 117              		.loc 1 67 0
+ 118 0040 FFF7FEFF 		bl	thread_yield
+ 119              	.LVL14:
+ 120              	.L2:
+  34:../../picokernel/k_wqueue.c **** 			signals = thread_wait_signals(wq->thr, WQ_DEFER_JOB_FLAG, k_wait_match_pattern, &err);
+ 121              		.loc 1 34 0
+ 122 0044 002D     		cmp	r5, #0
+ 123 0046 E3D1     		bne	.L3
+  35:../../picokernel/k_wqueue.c **** 			if(err != k_status_ok) continue;
+ 124              		.loc 1 35 0
+ 125 0048 0DF10703 		add	r3, sp, #7
+ 126 004c 0022     		movs	r2, #0
+ 127 004e 0121     		movs	r1, #1
+ 128 0050 3068     		ldr	r0, [r6]
+ 129 0052 FFF7FEFF 		bl	thread_wait_signals
+ 130              	.LVL15:
+ 131 0056 0546     		mov	r5, r0
+ 132              	.LVL16:
+  36:../../picokernel/k_wqueue.c **** 		}
+ 133              		.loc 1 36 0
+ 134 0058 9DF80730 		ldrb	r3, [sp, #7]	@ zero_extendqisi2
+ 135 005c 002B     		cmp	r3, #0
+ 136 005e F1D1     		bne	.L2
+ 137 0060 D6E7     		b	.L3
+ 138              	.LVL17:
+ 139              	.L11:
+ 140              	.LBB30:
+ 141              	.LBB24:
+ 264:../../../uLipeRtosPico/picokernel/inc/k_list.h **** }
+ 142              		.loc 2 264 0
+ARM GAS  /tmp/cc8U5L1r.s 			page 15
+
+
+ 143 0062 0024     		movs	r4, #0
+ 144 0064 DBE7     		b	.L5
+ 145              	.LVL18:
+ 146              	.L12:
+ 147              	.LBE24:
+ 148              	.LBE30:
+  48:../../picokernel/k_wqueue.c **** 			signals &= ~WQ_DEFER_JOB_FLAG;
+ 149              		.loc 1 48 0
+ 150 0066 2946     		mov	r1, r5
+ 151 0068 3068     		ldr	r0, [r6]
+ 152              	.LVL19:
+ 153 006a FFF7FEFF 		bl	thread_clr_signals
+ 154              	.LVL20:
+  49:../../picokernel/k_wqueue.c **** 			port_irq_unlock(key);
+ 155              		.loc 1 49 0
+ 156 006e 25F00105 		bic	r5, r5, #1
+ 157              	.LVL21:
+  50:../../picokernel/k_wqueue.c **** 
+ 158              		.loc 1 50 0
+ 159 0072 4046     		mov	r0, r8
+ 160 0074 FFF7FEFF 		bl	port_irq_unlock
+ 161              	.LVL22:
+ 162 0078 E4E7     		b	.L2
+ 163              	.LVL23:
+ 164              	.L13:
+ 165              	.LBB31:
+ 166              	.LBB29:
+ 129:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 		port_set_break();
+ 167              		.loc 3 129 0
+ 168 007a FFF7FEFF 		bl	port_set_break
+ 169              	.LVL24:
+ 170              	.L8:
+ 171 007e FEE7     		b	.L8
+ 172              	.LBE29:
+ 173              	.LBE31:
+ 174              	.LBE19:
+ 175              		.cfi_endproc
+ 176              	.LFE20:
+ 178              		.section	.text.wqueue_init,"ax",%progbits
+ 179              		.align	1
+ 180              		.global	wqueue_init
+ 181              		.syntax unified
+ 182              		.thumb
+ 183              		.thumb_func
+ 184              		.fpu fpv4-sp-d16
+ 186              	wqueue_init:
+ 187              	.LFB21:
+  68:../../picokernel/k_wqueue.c **** 
+  69:../../picokernel/k_wqueue.c **** 		}
+  70:../../picokernel/k_wqueue.c **** 	}
+  71:../../picokernel/k_wqueue.c **** }
+  72:../../picokernel/k_wqueue.c **** 
+  73:../../picokernel/k_wqueue.c **** 
+  74:../../picokernel/k_wqueue.c **** /** public functions */
+  75:../../picokernel/k_wqueue.c **** k_status_t wqueue_init(wqueue_t *wq)
+  76:../../picokernel/k_wqueue.c **** {
+ 188              		.loc 1 76 0
+ARM GAS  /tmp/cc8U5L1r.s 			page 16
+
+
+ 189              		.cfi_startproc
+ 190              		@ args = 0, pretend = 0, frame = 0
+ 191              		@ frame_needed = 0, uses_anonymous_args = 0
+ 192              	.LVL25:
+  77:../../picokernel/k_wqueue.c **** 	k_status_t ret = k_status_ok;
+  78:../../picokernel/k_wqueue.c **** 
+  79:../../picokernel/k_wqueue.c **** 	if(wq == NULL) {
+ 193              		.loc 1 79 0
+ 194 0000 C8B1     		cbz	r0, .L17
+  76:../../picokernel/k_wqueue.c **** 	k_status_t ret = k_status_ok;
+ 195              		.loc 1 76 0
+ 196 0002 10B5     		push	{r4, lr}
+ 197              	.LCFI2:
+ 198              		.cfi_def_cfa_offset 8
+ 199              		.cfi_offset 4, -8
+ 200              		.cfi_offset 14, -4
+ 201 0004 0446     		mov	r4, r0
+  80:../../picokernel/k_wqueue.c **** 		ret = k_status_invalid_param;
+  81:../../picokernel/k_wqueue.c **** 		goto cleanup;
+  82:../../picokernel/k_wqueue.c **** 	}
+  83:../../picokernel/k_wqueue.c **** 
+  84:../../picokernel/k_wqueue.c **** 
+  85:../../picokernel/k_wqueue.c **** 
+  86:../../picokernel/k_wqueue.c **** 	/* if the current workqueue already exists,
+  87:../../picokernel/k_wqueue.c **** 	 * ignore this step
+  88:../../picokernel/k_wqueue.c **** 	 */
+  89:../../picokernel/k_wqueue.c **** 	if(wq->thr->created) {
+ 202              		.loc 1 89 0
+ 203 0006 0368     		ldr	r3, [r0]
+ 204 0008 DB7B     		ldrb	r3, [r3, #15]	@ zero_extendqisi2
+ 205 000a 13B1     		cbz	r3, .L23
+  90:../../picokernel/k_wqueue.c **** 		ret = k_wqueue_already_exists;
+ 206              		.loc 1 90 0
+ 207 000c 0E23     		movs	r3, #14
+ 208              	.LVL26:
+ 209              	.L15:
+  91:../../picokernel/k_wqueue.c **** 		goto cleanup;
+  92:../../picokernel/k_wqueue.c **** 	}
+  93:../../picokernel/k_wqueue.c **** 
+  94:../../picokernel/k_wqueue.c **** 	archtype_t key = port_irq_lock();
+  95:../../picokernel/k_wqueue.c **** 
+  96:../../picokernel/k_wqueue.c **** 	/* inits the wq fifo */
+  97:../../picokernel/k_wqueue.c **** 	sys_dlist_init(&wq->fifo);
+  98:../../picokernel/k_wqueue.c **** 
+  99:../../picokernel/k_wqueue.c **** 	port_irq_unlock(key);
+ 100:../../picokernel/k_wqueue.c **** 
+ 101:../../picokernel/k_wqueue.c **** 	/* starts the wqueue deferrable thread*/
+ 102:../../picokernel/k_wqueue.c **** 	ret = thread_create(wqueue_defer_handler, wq, wq->thr);
+ 103:../../picokernel/k_wqueue.c **** 	ulipe_assert(ret == k_status_ok);
+ 104:../../picokernel/k_wqueue.c **** 
+ 105:../../picokernel/k_wqueue.c **** 
+ 106:../../picokernel/k_wqueue.c **** cleanup:
+ 107:../../picokernel/k_wqueue.c **** 	return(ret);
+ 108:../../picokernel/k_wqueue.c **** }
+ 210              		.loc 1 108 0
+ 211 000e 1846     		mov	r0, r3
+ 212 0010 10BD     		pop	{r4, pc}
+ARM GAS  /tmp/cc8U5L1r.s 			page 17
+
+
+ 213              	.LVL27:
+ 214              	.L23:
+  94:../../picokernel/k_wqueue.c **** 
+ 215              		.loc 1 94 0
+ 216 0012 FFF7FEFF 		bl	port_irq_lock
+ 217              	.LVL28:
+  97:../../picokernel/k_wqueue.c **** 
+ 218              		.loc 1 97 0
+ 219 0016 231D     		adds	r3, r4, #4
+ 220              	.LVL29:
+ 221              	.LBB32:
+ 222              	.LBB33:
+ 194:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	list->tail = (sys_dnode_t *)list;
+ 223              		.loc 2 194 0
+ 224 0018 6360     		str	r3, [r4, #4]
+ 195:../../../uLipeRtosPico/picokernel/inc/k_list.h **** }
+ 225              		.loc 2 195 0
+ 226 001a A360     		str	r3, [r4, #8]
+ 227              	.LVL30:
+ 228              	.LBE33:
+ 229              	.LBE32:
+  99:../../picokernel/k_wqueue.c **** 
+ 230              		.loc 1 99 0
+ 231 001c FFF7FEFF 		bl	port_irq_unlock
+ 232              	.LVL31:
+ 102:../../picokernel/k_wqueue.c **** 	ulipe_assert(ret == k_status_ok);
+ 233              		.loc 1 102 0
+ 234 0020 2268     		ldr	r2, [r4]
+ 235 0022 2146     		mov	r1, r4
+ 236 0024 0548     		ldr	r0, .L24
+ 237 0026 FFF7FEFF 		bl	thread_create
+ 238              	.LVL32:
+ 239              	.LBB34:
+ 240              	.LBB35:
+ 128:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 		port_set_break();
+ 241              		.loc 3 128 0
+ 242 002a 0346     		mov	r3, r0
+ 243 002c 0028     		cmp	r0, #0
+ 244 002e EED0     		beq	.L15
+ 245              		.loc 3 129 0
+ 246 0030 FFF7FEFF 		bl	port_set_break
+ 247              	.LVL33:
+ 248              	.L16:
+ 249 0034 FEE7     		b	.L16
+ 250              	.LVL34:
+ 251              	.L17:
+ 252              	.LCFI3:
+ 253              		.cfi_def_cfa_offset 0
+ 254              		.cfi_restore 4
+ 255              		.cfi_restore 14
+ 256              	.LBE35:
+ 257              	.LBE34:
+  80:../../picokernel/k_wqueue.c **** 		goto cleanup;
+ 258              		.loc 1 80 0
+ 259 0036 0223     		movs	r3, #2
+ 260              	.LVL35:
+ 261              		.loc 1 108 0
+ARM GAS  /tmp/cc8U5L1r.s 			page 18
+
+
+ 262 0038 1846     		mov	r0, r3
+ 263              	.LVL36:
+ 264 003a 7047     		bx	lr
+ 265              	.L25:
+ 266              		.align	2
+ 267              	.L24:
+ 268 003c 00000000 		.word	wqueue_defer_handler
+ 269              		.cfi_endproc
+ 270              	.LFE21:
+ 272              		.section	.text.wqueue_submit,"ax",%progbits
+ 273              		.align	1
+ 274              		.global	wqueue_submit
+ 275              		.syntax unified
+ 276              		.thumb
+ 277              		.thumb_func
+ 278              		.fpu fpv4-sp-d16
+ 280              	wqueue_submit:
+ 281              	.LFB22:
+ 109:../../picokernel/k_wqueue.c **** 
+ 110:../../picokernel/k_wqueue.c **** 
+ 111:../../picokernel/k_wqueue.c **** 
+ 112:../../picokernel/k_wqueue.c **** k_status_t wqueue_submit(wqueue_t *wq, wqueue_job_t *work)
+ 113:../../picokernel/k_wqueue.c **** {
+ 282              		.loc 1 113 0
+ 283              		.cfi_startproc
+ 284              		@ args = 0, pretend = 0, frame = 0
+ 285              		@ frame_needed = 0, uses_anonymous_args = 0
+ 286              	.LVL37:
+ 114:../../picokernel/k_wqueue.c **** 	k_status_t ret = k_status_ok;
+ 115:../../picokernel/k_wqueue.c **** 
+ 116:../../picokernel/k_wqueue.c **** 	if(wq == NULL) {
+ 287              		.loc 1 116 0
+ 288 0000 A8B1     		cbz	r0, .L28
+ 113:../../picokernel/k_wqueue.c **** 	k_status_t ret = k_status_ok;
+ 289              		.loc 1 113 0
+ 290 0002 38B5     		push	{r3, r4, r5, lr}
+ 291              	.LCFI4:
+ 292              		.cfi_def_cfa_offset 16
+ 293              		.cfi_offset 3, -16
+ 294              		.cfi_offset 4, -12
+ 295              		.cfi_offset 5, -8
+ 296              		.cfi_offset 14, -4
+ 297 0004 0446     		mov	r4, r0
+ 117:../../picokernel/k_wqueue.c **** 		ret = k_status_invalid_param;
+ 118:../../picokernel/k_wqueue.c **** 		goto cleanup;
+ 119:../../picokernel/k_wqueue.c **** 	}
+ 120:../../picokernel/k_wqueue.c **** 
+ 121:../../picokernel/k_wqueue.c **** 	if(work == NULL) {
+ 298              		.loc 1 121 0
+ 299 0006 A1B1     		cbz	r1, .L29
+ 300 0008 0D46     		mov	r5, r1
+ 122:../../picokernel/k_wqueue.c **** 		ret = k_status_invalid_param;
+ 123:../../picokernel/k_wqueue.c **** 		goto cleanup;
+ 124:../../picokernel/k_wqueue.c **** 	}
+ 125:../../picokernel/k_wqueue.c **** 
+ 126:../../picokernel/k_wqueue.c **** 	archtype_t key = port_irq_lock();
+ 301              		.loc 1 126 0
+ARM GAS  /tmp/cc8U5L1r.s 			page 19
+
+
+ 302 000a FFF7FEFF 		bl	port_irq_lock
+ 303              	.LVL38:
+ 127:../../picokernel/k_wqueue.c **** 	sys_dlist_append(&wq->fifo, &work->node);
+ 304              		.loc 1 127 0
+ 305 000e 221D     		adds	r2, r4, #4
+ 306 0010 2B1D     		adds	r3, r5, #4
+ 307              	.LVL39:
+ 308              	.LBB36:
+ 309              	.LBB37:
+ 339:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	node->prev = list->tail;
+ 310              		.loc 2 339 0
+ 311 0012 6A60     		str	r2, [r5, #4]
+ 340:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+ 312              		.loc 2 340 0
+ 313 0014 A268     		ldr	r2, [r4, #8]
+ 314              	.LVL40:
+ 315 0016 AA60     		str	r2, [r5, #8]
+ 342:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	list->tail = node;
+ 316              		.loc 2 342 0
+ 317 0018 A268     		ldr	r2, [r4, #8]
+ 318 001a 1360     		str	r3, [r2]
+ 319              	.LVL41:
+ 343:../../../uLipeRtosPico/picokernel/inc/k_list.h **** }
+ 320              		.loc 2 343 0
+ 321 001c A360     		str	r3, [r4, #8]
+ 322              	.LVL42:
+ 323              	.LBE37:
+ 324              	.LBE36:
+ 128:../../picokernel/k_wqueue.c **** 	port_irq_unlock(key);
+ 325              		.loc 1 128 0
+ 326 001e FFF7FEFF 		bl	port_irq_unlock
+ 327              	.LVL43:
+ 129:../../picokernel/k_wqueue.c **** 
+ 130:../../picokernel/k_wqueue.c **** 	thread_set_signals(wq->thr, WQ_DEFER_JOB_FLAG);
+ 328              		.loc 1 130 0
+ 329 0022 0121     		movs	r1, #1
+ 330 0024 2068     		ldr	r0, [r4]
+ 331 0026 FFF7FEFF 		bl	thread_set_signals
+ 332              	.LVL44:
+ 114:../../picokernel/k_wqueue.c **** 
+ 333              		.loc 1 114 0
+ 334 002a 0020     		movs	r0, #0
+ 335 002c 38BD     		pop	{r3, r4, r5, pc}
+ 336              	.LVL45:
+ 337              	.L28:
+ 338              	.LCFI5:
+ 339              		.cfi_def_cfa_offset 0
+ 340              		.cfi_restore 3
+ 341              		.cfi_restore 4
+ 342              		.cfi_restore 5
+ 343              		.cfi_restore 14
+ 117:../../picokernel/k_wqueue.c **** 		goto cleanup;
+ 344              		.loc 1 117 0
+ 345 002e 0220     		movs	r0, #2
+ 346              	.LVL46:
+ 347 0030 7047     		bx	lr
+ 348              	.LVL47:
+ARM GAS  /tmp/cc8U5L1r.s 			page 20
+
+
+ 349              	.L29:
+ 350              	.LCFI6:
+ 351              		.cfi_def_cfa_offset 16
+ 352              		.cfi_offset 3, -16
+ 353              		.cfi_offset 4, -12
+ 354              		.cfi_offset 5, -8
+ 355              		.cfi_offset 14, -4
+ 122:../../picokernel/k_wqueue.c **** 		goto cleanup;
+ 356              		.loc 1 122 0
+ 357 0032 0220     		movs	r0, #2
+ 358              	.LVL48:
+ 359              	.L27:
+ 131:../../picokernel/k_wqueue.c **** 
+ 132:../../picokernel/k_wqueue.c **** cleanup:
+ 133:../../picokernel/k_wqueue.c **** 	return(ret);
+ 134:../../picokernel/k_wqueue.c **** }
+ 360              		.loc 1 134 0
+ 361 0034 38BD     		pop	{r3, r4, r5, pc}
+ 362              		.cfi_endproc
+ 363              	.LFE22:
+ 365              		.text
+ 366              	.Letext0:
+ 367              		.file 4 "/home/venturus/gcc-arm-none-eabi-6-2017-q2-update/arm-none-eabi/include/machine/_default_
+ 368              		.file 5 "/home/venturus/gcc-arm-none-eabi-6-2017-q2-update/arm-none-eabi/include/sys/_stdint.h"
+ 369              		.file 6 "/home/venturus/gcc-arm-none-eabi-6-2017-q2-update/arm-none-eabi/include/sys/lock.h"
+ 370              		.file 7 "/home/venturus/gcc-arm-none-eabi-6-2017-q2-update/arm-none-eabi/include/sys/_types.h"
+ 371              		.file 8 "/home/venturus/gcc-arm-none-eabi-6-2017-q2-update/lib/gcc/arm-none-eabi/6.3.1/include/std
+ 372              		.file 9 "/home/venturus/gcc-arm-none-eabi-6-2017-q2-update/arm-none-eabi/include/sys/reent.h"
+ 373              		.file 10 "../../../uLipeRtosPico/include/picokernel/k_thread.h"
+ 374              		.file 11 "../../../uLipeRtosPico/include/picokernel/k_wqueue.h"
+ 375              		.file 12 "../../../uLipeRtosPico/include/picokernel/k_port.h"
+ARM GAS  /tmp/cc8U5L1r.s 			page 21
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 k_wqueue.c
+     /tmp/cc8U5L1r.s:18     .text.wqueue_defer_handler:0000000000000000 $t
+     /tmp/cc8U5L1r.s:24     .text.wqueue_defer_handler:0000000000000000 wqueue_defer_handler
+     /tmp/cc8U5L1r.s:179    .text.wqueue_init:0000000000000000 $t
+     /tmp/cc8U5L1r.s:186    .text.wqueue_init:0000000000000000 wqueue_init
+     /tmp/cc8U5L1r.s:268    .text.wqueue_init:000000000000003c $d
+     /tmp/cc8U5L1r.s:273    .text.wqueue_submit:0000000000000000 $t
+     /tmp/cc8U5L1r.s:280    .text.wqueue_submit:0000000000000000 wqueue_submit
+                     .debug_frame:0000000000000010 $d
+
+UNDEFINED SYMBOLS
+port_irq_lock
+port_irq_unlock
+thread_yield
+thread_wait_signals
+thread_clr_signals
+port_set_break
+thread_create
+thread_set_signals

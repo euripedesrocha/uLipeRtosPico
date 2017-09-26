@@ -1,0 +1,680 @@
+ARM GAS  /tmp/ccRP319C.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"k_sema.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.semaphore_take,"ax",%progbits
+  18              		.align	1
+  19              		.global	semaphore_take
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  23              		.fpu fpv4-sp-d16
+  25              	semaphore_take:
+  26              	.LFB20:
+  27              		.file 1 "../../picokernel/k_sema.c"
+   1:../../picokernel/k_sema.c **** /**
+   2:../../picokernel/k_sema.c ****  * 							ULIPE RTOS PICO
+   3:../../picokernel/k_sema.c ****  *
+   4:../../picokernel/k_sema.c ****  *  @file k_sema.h
+   5:../../picokernel/k_sema.c ****  *
+   6:../../picokernel/k_sema.c ****  *  @brief basic semaphore usage file
+   7:../../picokernel/k_sema.c ****  *
+   8:../../picokernel/k_sema.c ****  */
+   9:../../picokernel/k_sema.c **** #include "ulipe_rtos_pico.h"
+  10:../../picokernel/k_sema.c **** 
+  11:../../picokernel/k_sema.c **** 
+  12:../../picokernel/k_sema.c **** /** public functions */
+  13:../../picokernel/k_sema.c **** k_status_t semaphore_take(ksema_t *s)
+  14:../../picokernel/k_sema.c **** {
+  28              		.loc 1 14 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              	.LVL0:
+  33 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+  34              	.LCFI0:
+  35              		.cfi_def_cfa_offset 24
+  36              		.cfi_offset 3, -24
+  37              		.cfi_offset 4, -20
+  38              		.cfi_offset 5, -16
+  39              		.cfi_offset 6, -12
+  40              		.cfi_offset 7, -8
+  41              		.cfi_offset 14, -4
+  42 0002 0446     		mov	r4, r0
+  43              	.LVL1:
+  15:../../picokernel/k_sema.c **** 	k_status_t ret = k_status_ok;
+ARM GAS  /tmp/ccRP319C.s 			page 2
+
+
+  16:../../picokernel/k_sema.c **** 	bool reesched = false;
+  17:../../picokernel/k_sema.c **** 	tcb_t *t = thread_get_current();
+  44              		.loc 1 17 0
+  45 0004 FFF7FEFF 		bl	thread_get_current
+  46              	.LVL2:
+  47              	.LBB10:
+  48              	.LBB11:
+  49              		.file 2 "../../../uLipeRtosPico/ulipe_rtos_pico.h"
+   1:../../../uLipeRtosPico/ulipe_rtos_pico.h **** /**
+   2:../../../uLipeRtosPico/ulipe_rtos_pico.h ****  * 							ULIPE RTOS PICO
+   3:../../../uLipeRtosPico/ulipe_rtos_pico.h ****  *
+   4:../../../uLipeRtosPico/ulipe_rtos_pico.h ****  *  @file ulipe_rtos_pico.h
+   5:../../../uLipeRtosPico/ulipe_rtos_pico.h ****  *
+   6:../../../uLipeRtosPico/ulipe_rtos_pico.h ****  *  @brief this file is treated as a master file
+   7:../../../uLipeRtosPico/ulipe_rtos_pico.h ****  *
+   8:../../../uLipeRtosPico/ulipe_rtos_pico.h ****  *
+   9:../../../uLipeRtosPico/ulipe_rtos_pico.h ****  */
+  10:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #ifndef __ULIPE_RTOS_PICO_H
+  11:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #define __ULIPE_RTOS_PICO_H
+  12:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  13:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  14:../../../uLipeRtosPico/ulipe_rtos_pico.h **** /* include all the kernel header files actig as a glue module */
+  15:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #include <stdint.h>
+  16:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #include <stdbool.h>
+  17:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #include <stddef.h>
+  18:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #include <string.h>
+  19:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  20:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #include "picokernel/inc/k_list.h"
+  21:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #include "ulipe_rtos_kconfig.h"
+  22:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  23:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #ifndef __ULIPE_RTOS_KCONFIG_H
+  24:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	#error "No config file found, loading default setings"
+  25:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #endif
+  26:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  27:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  28:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  29:../../../uLipeRtosPico/ulipe_rtos_pico.h **** /* ulipe rtos pico status codes */
+  30:../../../uLipeRtosPico/ulipe_rtos_pico.h **** typedef enum {
+  31:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	/* general status */
+  32:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_status_ok = 0,
+  33:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_status_error,
+  34:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_status_invalid_param,
+  35:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_status_sched_locked,
+  36:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_status_illegal_from_isr,
+  37:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  38:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	/* threading status */
+  39:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_thread_rdy,
+  40:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_thread_del,
+  41:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_thread_blk,
+  42:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_thread_susp,
+  43:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  44:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	/* semaphore status */
+  45:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_sema_not_available,
+  46:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_sema_illegal_use_celling,
+  47:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_mutex_already_available,
+  48:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  49:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	/* queue status */
+ARM GAS  /tmp/ccRP319C.s 			page 3
+
+
+  50:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_queue_empty,
+  51:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_queue_full,
+  52:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  53:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	/* wqueue status */
+  54:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_wqueue_already_exists,
+  55:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  56:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	/* timer status */
+  57:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_timer_expired,
+  58:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_timer_running,
+  59:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_timer_stopped,
+  60:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_timer_busy,
+  61:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  62:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  63:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	/* kernel configuration */
+  64:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_not_available_with_current_config,
+  65:../../../uLipeRtosPico/ulipe_rtos_pico.h **** }k_status_t;
+  66:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  67:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  68:../../../uLipeRtosPico/ulipe_rtos_pico.h **** /**
+  69:../../../uLipeRtosPico/ulipe_rtos_pico.h ****  *  @fn template()
+  70:../../../uLipeRtosPico/ulipe_rtos_pico.h ****  *  @brief
+  71:../../../uLipeRtosPico/ulipe_rtos_pico.h ****  *  @param
+  72:../../../uLipeRtosPico/ulipe_rtos_pico.h ****  *  @return
+  73:../../../uLipeRtosPico/ulipe_rtos_pico.h ****  */
+  74:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  75:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  76:../../../uLipeRtosPico/ulipe_rtos_pico.h **** /* resolves the arch dependend memory size */
+  77:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #if	(K_ARCH_MEM_WIDTH_BYTE > 0)
+  78:../../../uLipeRtosPico/ulipe_rtos_pico.h **** typedef uint8_t archtype_t;
+  79:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #elif(K_ARCH_MEM_WIDTH_HALFWORD > 0)
+  80:../../../uLipeRtosPico/ulipe_rtos_pico.h **** typedef uint16_t archtype_t;
+  81:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #elif (K_ARCH_MEM_WIDTH_WORD > 0)
+  82:../../../uLipeRtosPico/ulipe_rtos_pico.h **** typedef uint32_t archtype_t;
+  83:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #elif (K_ARCH_MEM_WIDTH_DWORD > 0)
+  84:../../../uLipeRtosPico/ulipe_rtos_pico.h **** typedef uint64_t archtype_t;
+  85:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #else
+  86:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #endif
+  87:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  88:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  89:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #if(K_ENABLE_DYNAMIC_ALLOCATOR > 0)
+  90:../../../uLipeRtosPico/ulipe_rtos_pico.h **** //#error "FATAL: Dynamic allocator is under development, please use memory pool instead!"
+  91:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #ifndef K_HEAP_SIZE
+  92:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #define K_HEAP_SIZE 1024
+  93:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #endif
+  94:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #endif
+  95:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  96:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #if(K_ENABLE_WORKQUEUES > 0)
+  97:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #ifndef K_WQUEUES_STACK_SIZE
+  98:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #define K_WQUEUES_STACK_SIZE 128
+  99:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #endif
+ 100:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #endif
+ 101:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+ 102:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #if(K_ENABLE_TICKLESS_IDLE > 0)
+ 103:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #ifndef K_MAX_LOW_POWER_PERIOD
+ 104:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #define K_MAX_LOW_POWER_PERIOD	100
+ 105:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #endif
+ 106:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+ARM GAS  /tmp/ccRP319C.s 			page 4
+
+
+ 107:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #define K_HW_TIMER_COUNTS_PER_TICK (K_MACHINE_CLOCK / K_TICKER_RATE)
+ 108:../../../uLipeRtosPico/ulipe_rtos_pico.h **** extern void user_lowpower_entry(void *arg);
+ 109:../../../uLipeRtosPico/ulipe_rtos_pico.h **** extern void user_lowpower_exit(void *arg);
+ 110:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #endif
+ 111:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+ 112:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #include "include/picokernel/k_thread.h"
+ 113:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #include "include/picokernel/k_port.h"
+ 114:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #include "include/picokernel/k_kernel.h"
+ 115:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #include "include/picokernel/k_message.h"
+ 116:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #include "include/picokernel/k_raw_timer.h"
+ 117:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #include "include/picokernel/k_sema.h"
+ 118:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #include "include/picokernel/k_mutex.h"
+ 119:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #include "include/picokernel/k_memp.h"
+ 120:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #include "include/picokernel/k_mem_dyn.h"
+ 121:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #include "include/picokernel/k_wqueue.h"
+ 122:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+ 123:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+ 124:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+ 125:../../../uLipeRtosPico/ulipe_rtos_pico.h **** /** assertion mechanism */
+ 126:../../../uLipeRtosPico/ulipe_rtos_pico.h **** static inline void ulipe_assert(bool x)
+ 127:../../../uLipeRtosPico/ulipe_rtos_pico.h **** {
+ 128:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	if(!x){
+  50              		.loc 2 128 0
+  51 0008 40B1     		cbz	r0, .L16
+  52 000a 0546     		mov	r5, r0
+  53              	.LVL3:
+  54              	.LBE11:
+  55              	.LBE10:
+  18:../../picokernel/k_sema.c **** 	ULIPE_ASSERT(t != NULL);
+  19:../../picokernel/k_sema.c **** 
+  20:../../picokernel/k_sema.c **** 
+  21:../../picokernel/k_sema.c **** 	if(s == NULL) {
+  56              		.loc 1 21 0
+  57 000c 002C     		cmp	r4, #0
+  58 000e 3BD0     		beq	.L12
+  22:../../picokernel/k_sema.c **** 		ret = k_status_invalid_param;
+  23:../../picokernel/k_sema.c **** 		goto cleanup;
+  24:../../picokernel/k_sema.c **** 	}
+  25:../../picokernel/k_sema.c **** 
+  26:../../picokernel/k_sema.c **** 	if(port_from_isr()){
+  59              		.loc 1 26 0
+  60 0010 FFF7FEFF 		bl	port_from_isr
+  61              	.LVL4:
+  62 0014 0746     		mov	r7, r0
+  63 0016 20B1     		cbz	r0, .L17
+  27:../../picokernel/k_sema.c **** 		/* take cannot be called from ISR */
+  28:../../picokernel/k_sema.c **** 		ret = k_status_illegal_from_isr;
+  64              		.loc 1 28 0
+  65 0018 0424     		movs	r4, #4
+  66              	.LVL5:
+  67 001a 36E0     		b	.L4
+  68              	.LVL6:
+  69              	.L16:
+  70              	.LBB13:
+  71              	.LBB12:
+ 129:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 		port_set_break();
+  72              		.loc 2 129 0
+ARM GAS  /tmp/ccRP319C.s 			page 5
+
+
+  73 001c FFF7FEFF 		bl	port_set_break
+  74              	.LVL7:
+  75              	.L3:
+  76 0020 FEE7     		b	.L3
+  77              	.LVL8:
+  78              	.L17:
+  79              	.LBE12:
+  80              	.LBE13:
+  29:../../picokernel/k_sema.c **** 		goto cleanup;
+  30:../../picokernel/k_sema.c **** 	}
+  31:../../picokernel/k_sema.c **** 
+  32:../../picokernel/k_sema.c **** 	archtype_t key = port_irq_lock();
+  81              		.loc 1 32 0
+  82 0022 FFF7FEFF 		bl	port_irq_lock
+  83              	.LVL9:
+  84 0026 0646     		mov	r6, r0
+  85              	.LVL10:
+  33:../../picokernel/k_sema.c **** 
+  34:../../picokernel/k_sema.c **** 	if(!s->created) {
+  86              		.loc 1 34 0
+  87 0028 237A     		ldrb	r3, [r4, #8]	@ zero_extendqisi2
+  88 002a 5BB1     		cbz	r3, .L18
+  89              	.LVL11:
+  90              	.L5:
+  35:../../picokernel/k_sema.c **** 		/* handle first time usage */
+  36:../../picokernel/k_sema.c **** 		k_work_list_init(&s->threads_pending);
+  37:../../picokernel/k_sema.c **** 		s->created = true;
+  38:../../picokernel/k_sema.c **** 	}
+  39:../../picokernel/k_sema.c **** 
+  40:../../picokernel/k_sema.c **** 
+  41:../../picokernel/k_sema.c **** 	if(!s->cnt) {
+  91              		.loc 1 41 0
+  92 002c 2368     		ldr	r3, [r4]
+  93 002e 83B1     		cbz	r3, .L19
+  42:../../picokernel/k_sema.c **** 		/*
+  43:../../picokernel/k_sema.c **** 		 * if no key available, we need to insert the waiting thread
+  44:../../picokernel/k_sema.c **** 		 * on semaphore pending list, when a key will become available
+  45:../../picokernel/k_sema.c **** 		 * the task will be woken as well
+  46:../../picokernel/k_sema.c **** 		 */
+  47:../../picokernel/k_sema.c **** 		ret = k_make_not_ready(t);
+  48:../../picokernel/k_sema.c **** 		ULIPE_ASSERT(ret == k_status_ok);
+  49:../../picokernel/k_sema.c **** 
+  50:../../picokernel/k_sema.c **** 		t->thread_wait |= K_THR_PEND_SEMA;
+  51:../../picokernel/k_sema.c **** 
+  52:../../picokernel/k_sema.c **** 		ret = k_pend_obj(t, &s->threads_pending);
+  53:../../picokernel/k_sema.c **** 		ULIPE_ASSERT(ret == k_status_ok);
+  54:../../picokernel/k_sema.c **** 
+  55:../../picokernel/k_sema.c **** 		reesched = true;
+  56:../../picokernel/k_sema.c **** 	} else {
+  57:../../picokernel/k_sema.c **** 		if(s->cnt > 0)
+  58:../../picokernel/k_sema.c **** 			s->cnt--;
+  94              		.loc 1 58 0
+  95 0030 013B     		subs	r3, r3, #1
+  96 0032 2360     		str	r3, [r4]
+  15:../../picokernel/k_sema.c **** 	bool reesched = false;
+  97              		.loc 1 15 0
+  98 0034 0024     		movs	r4, #0
+ARM GAS  /tmp/ccRP319C.s 			page 6
+
+
+  99              	.LVL12:
+ 100              	.L9:
+  59:../../picokernel/k_sema.c **** 	}
+  60:../../picokernel/k_sema.c **** 
+  61:../../picokernel/k_sema.c **** 
+  62:../../picokernel/k_sema.c **** 	if(!reesched){
+ 101              		.loc 1 62 0
+ 102 0036 1FB3     		cbz	r7, .L20
+  63:../../picokernel/k_sema.c **** 		port_irq_unlock(key);
+  64:../../picokernel/k_sema.c **** 		goto cleanup;
+  65:../../picokernel/k_sema.c **** 	}
+  66:../../picokernel/k_sema.c **** 
+  67:../../picokernel/k_sema.c **** 	port_irq_unlock(key);
+ 103              		.loc 1 67 0
+ 104 0038 3046     		mov	r0, r6
+ 105 003a FFF7FEFF 		bl	port_irq_unlock
+ 106              	.LVL13:
+  68:../../picokernel/k_sema.c **** 	/*
+  69:../../picokernel/k_sema.c **** 	 * if current thread entered on pending state, we need to reesched the
+  70:../../picokernel/k_sema.c **** 	 * thread set and find a new thread to execute, otherwise, dispatch idle
+  71:../../picokernel/k_sema.c **** 	 */
+  72:../../picokernel/k_sema.c **** 	k_sched_and_swap();
+ 107              		.loc 1 72 0
+ 108 003e FFF7FEFF 		bl	k_sched_and_swap
+ 109              	.LVL14:
+ 110 0042 22E0     		b	.L4
+ 111              	.LVL15:
+ 112              	.L18:
+  36:../../picokernel/k_sema.c **** 		s->created = true;
+ 113              		.loc 1 36 0
+ 114 0044 04F10C00 		add	r0, r4, #12
+ 115              	.LVL16:
+ 116 0048 FFF7FEFF 		bl	k_work_list_init
+ 117              	.LVL17:
+  37:../../picokernel/k_sema.c **** 	}
+ 118              		.loc 1 37 0
+ 119 004c 0123     		movs	r3, #1
+ 120 004e 2372     		strb	r3, [r4, #8]
+ 121 0050 ECE7     		b	.L5
+ 122              	.L19:
+  47:../../picokernel/k_sema.c **** 		ULIPE_ASSERT(ret == k_status_ok);
+ 123              		.loc 1 47 0
+ 124 0052 2846     		mov	r0, r5
+ 125 0054 FFF7FEFF 		bl	k_make_not_ready
+ 126              	.LVL18:
+ 127              	.LBB14:
+ 128              	.LBB15:
+ 128:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 		port_set_break();
+ 129              		.loc 2 128 0
+ 130 0058 10B1     		cbz	r0, .L7
+ 131              		.loc 2 129 0
+ 132 005a FFF7FEFF 		bl	port_set_break
+ 133              	.LVL19:
+ 134              	.L8:
+ 135 005e FEE7     		b	.L8
+ 136              	.LVL20:
+ 137              	.L7:
+ARM GAS  /tmp/ccRP319C.s 			page 7
+
+
+ 138              	.LBE15:
+ 139              	.LBE14:
+  50:../../picokernel/k_sema.c **** 
+ 140              		.loc 1 50 0
+ 141 0060 AB89     		ldrh	r3, [r5, #12]
+ 142 0062 43F00203 		orr	r3, r3, #2
+ 143 0066 AB81     		strh	r3, [r5, #12]	@ movhi
+  52:../../picokernel/k_sema.c **** 		ULIPE_ASSERT(ret == k_status_ok);
+ 144              		.loc 1 52 0
+ 145 0068 04F10C01 		add	r1, r4, #12
+ 146 006c 2846     		mov	r0, r5
+ 147              	.LVL21:
+ 148 006e FFF7FEFF 		bl	k_pend_obj
+ 149              	.LVL22:
+ 150              	.LBB16:
+ 151              	.LBB17:
+ 128:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 		port_set_break();
+ 152              		.loc 2 128 0
+ 153 0072 0446     		mov	r4, r0
+ 154              	.LVL23:
+ 155 0074 10B1     		cbz	r0, .L14
+ 156              		.loc 2 129 0
+ 157 0076 FFF7FEFF 		bl	port_set_break
+ 158              	.LVL24:
+ 159              	.L10:
+ 160 007a FEE7     		b	.L10
+ 161              	.LVL25:
+ 162              	.L14:
+ 163              	.LBE17:
+ 164              	.LBE16:
+  55:../../picokernel/k_sema.c **** 	} else {
+ 165              		.loc 1 55 0
+ 166 007c 0127     		movs	r7, #1
+ 167 007e DAE7     		b	.L9
+ 168              	.LVL26:
+ 169              	.L20:
+  63:../../picokernel/k_sema.c **** 		goto cleanup;
+ 170              		.loc 1 63 0
+ 171 0080 3046     		mov	r0, r6
+ 172 0082 FFF7FEFF 		bl	port_irq_unlock
+ 173              	.LVL27:
+  64:../../picokernel/k_sema.c **** 	}
+ 174              		.loc 1 64 0
+ 175 0086 00E0     		b	.L4
+ 176              	.LVL28:
+ 177              	.L12:
+  22:../../picokernel/k_sema.c **** 		goto cleanup;
+ 178              		.loc 1 22 0
+ 179 0088 0224     		movs	r4, #2
+ 180              	.LVL29:
+ 181              	.L4:
+  73:../../picokernel/k_sema.c **** 
+  74:../../picokernel/k_sema.c **** cleanup:
+  75:../../picokernel/k_sema.c **** 	return(ret);
+  76:../../picokernel/k_sema.c **** }
+ 182              		.loc 1 76 0
+ 183 008a 2046     		mov	r0, r4
+ARM GAS  /tmp/ccRP319C.s 			page 8
+
+
+ 184 008c F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 185              		.cfi_endproc
+ 186              	.LFE20:
+ 188              		.section	.text.semaphore_give,"ax",%progbits
+ 189              		.align	1
+ 190              		.global	semaphore_give
+ 191              		.syntax unified
+ 192              		.thumb
+ 193              		.thumb_func
+ 194              		.fpu fpv4-sp-d16
+ 196              	semaphore_give:
+ 197              	.LFB21:
+  77:../../picokernel/k_sema.c **** 
+  78:../../picokernel/k_sema.c **** 
+  79:../../picokernel/k_sema.c **** k_status_t semaphore_give(ksema_t *s, uint32_t count)
+  80:../../picokernel/k_sema.c **** {
+ 198              		.loc 1 80 0
+ 199              		.cfi_startproc
+ 200              		@ args = 0, pretend = 0, frame = 0
+ 201              		@ frame_needed = 0, uses_anonymous_args = 0
+ 202              	.LVL30:
+ 203 0000 70B5     		push	{r4, r5, r6, lr}
+ 204              	.LCFI1:
+ 205              		.cfi_def_cfa_offset 16
+ 206              		.cfi_offset 4, -16
+ 207              		.cfi_offset 5, -12
+ 208              		.cfi_offset 6, -8
+ 209              		.cfi_offset 14, -4
+ 210              	.LVL31:
+  81:../../picokernel/k_sema.c **** 	k_status_t ret = k_status_ok;
+  82:../../picokernel/k_sema.c **** 	tcb_t *t = NULL;
+  83:../../picokernel/k_sema.c **** 
+  84:../../picokernel/k_sema.c **** 	if(s == NULL) {
+ 211              		.loc 1 84 0
+ 212 0002 0028     		cmp	r0, #0
+ 213 0004 38D0     		beq	.L29
+ 214 0006 0446     		mov	r4, r0
+  85:../../picokernel/k_sema.c **** 		ret = k_status_invalid_param;
+  86:../../picokernel/k_sema.c **** 		goto cleanup;
+  87:../../picokernel/k_sema.c **** 	}
+  88:../../picokernel/k_sema.c **** 
+  89:../../picokernel/k_sema.c **** 	if(!count) {
+ 215              		.loc 1 89 0
+ 216 0008 11B9     		cbnz	r1, .L32
+  90:../../picokernel/k_sema.c **** 		ret = k_status_invalid_param;
+ 217              		.loc 1 90 0
+ 218 000a 0224     		movs	r4, #2
+ 219              	.LVL32:
+ 220              	.L22:
+  91:../../picokernel/k_sema.c **** 		goto cleanup;
+  92:../../picokernel/k_sema.c **** 	}
+  93:../../picokernel/k_sema.c **** 
+  94:../../picokernel/k_sema.c **** 	archtype_t key = port_irq_lock();
+  95:../../picokernel/k_sema.c **** 	if(!s->created) {
+  96:../../picokernel/k_sema.c **** 		/* handle first time usage */
+  97:../../picokernel/k_sema.c **** 		k_work_list_init(&s->threads_pending);
+  98:../../picokernel/k_sema.c **** 		s->created = true;
+ARM GAS  /tmp/ccRP319C.s 			page 9
+
+
+  99:../../picokernel/k_sema.c **** 	}
+ 100:../../picokernel/k_sema.c **** 
+ 101:../../picokernel/k_sema.c **** 	s->cnt+= count;
+ 102:../../picokernel/k_sema.c **** 	if(s->cnt > s->limit)
+ 103:../../picokernel/k_sema.c **** 		s->cnt = s->limit;
+ 104:../../picokernel/k_sema.c **** 
+ 105:../../picokernel/k_sema.c **** 
+ 106:../../picokernel/k_sema.c **** 	/*
+ 107:../../picokernel/k_sema.c **** 	 * once a semaphore was updated its keys
+ 108:../../picokernel/k_sema.c **** 	 * we need to verify if a new highprio task is available to
+ 109:../../picokernel/k_sema.c **** 	 * run
+ 110:../../picokernel/k_sema.c **** 	 */
+ 111:../../picokernel/k_sema.c **** 	t = k_unpend_obj(&s->threads_pending);
+ 112:../../picokernel/k_sema.c **** 	if(t == NULL) {
+ 113:../../picokernel/k_sema.c **** 		/* no tasks pendings, just get out here */
+ 114:../../picokernel/k_sema.c **** 		port_irq_unlock(key);
+ 115:../../picokernel/k_sema.c **** 		goto cleanup;
+ 116:../../picokernel/k_sema.c **** 	} else {
+ 117:../../picokernel/k_sema.c **** 
+ 118:../../picokernel/k_sema.c **** 		if(s->cnt > 0)
+ 119:../../picokernel/k_sema.c **** 			s->cnt--;
+ 120:../../picokernel/k_sema.c **** 	}
+ 121:../../picokernel/k_sema.c **** 
+ 122:../../picokernel/k_sema.c **** 	t->thread_wait &= ~(K_THR_PEND_SEMA);
+ 123:../../picokernel/k_sema.c **** 
+ 124:../../picokernel/k_sema.c **** 	ret = k_make_ready(t);
+ 125:../../picokernel/k_sema.c **** 	ULIPE_ASSERT(ret == k_status_ok);
+ 126:../../picokernel/k_sema.c **** 	port_irq_unlock(key);
+ 127:../../picokernel/k_sema.c **** 
+ 128:../../picokernel/k_sema.c **** 
+ 129:../../picokernel/k_sema.c **** 	k_sched_and_swap();
+ 130:../../picokernel/k_sema.c **** 
+ 131:../../picokernel/k_sema.c **** cleanup:
+ 132:../../picokernel/k_sema.c **** 	return(ret);
+ 133:../../picokernel/k_sema.c **** }
+ 221              		.loc 1 133 0
+ 222 000c 2046     		mov	r0, r4
+ 223 000e 70BD     		pop	{r4, r5, r6, pc}
+ 224              	.LVL33:
+ 225              	.L32:
+ 226 0010 0D46     		mov	r5, r1
+  94:../../picokernel/k_sema.c **** 	if(!s->created) {
+ 227              		.loc 1 94 0
+ 228 0012 FFF7FEFF 		bl	port_irq_lock
+ 229              	.LVL34:
+ 230 0016 0646     		mov	r6, r0
+ 231              	.LVL35:
+  95:../../picokernel/k_sema.c **** 		/* handle first time usage */
+ 232              		.loc 1 95 0
+ 233 0018 237A     		ldrb	r3, [r4, #8]	@ zero_extendqisi2
+ 234 001a 2BB9     		cbnz	r3, .L23
+  97:../../picokernel/k_sema.c **** 		s->created = true;
+ 235              		.loc 1 97 0
+ 236 001c 04F10C00 		add	r0, r4, #12
+ 237              	.LVL36:
+ 238 0020 FFF7FEFF 		bl	k_work_list_init
+ 239              	.LVL37:
+ARM GAS  /tmp/ccRP319C.s 			page 10
+
+
+  98:../../picokernel/k_sema.c **** 	}
+ 240              		.loc 1 98 0
+ 241 0024 0123     		movs	r3, #1
+ 242 0026 2372     		strb	r3, [r4, #8]
+ 243              	.L23:
+ 101:../../picokernel/k_sema.c **** 	if(s->cnt > s->limit)
+ 244              		.loc 1 101 0
+ 245 0028 2368     		ldr	r3, [r4]
+ 246 002a 2B44     		add	r3, r3, r5
+ 247 002c 2360     		str	r3, [r4]
+ 102:../../picokernel/k_sema.c **** 		s->cnt = s->limit;
+ 248              		.loc 1 102 0
+ 249 002e 6268     		ldr	r2, [r4, #4]
+ 250 0030 9342     		cmp	r3, r2
+ 251 0032 00D9     		bls	.L24
+ 103:../../picokernel/k_sema.c **** 
+ 252              		.loc 1 103 0
+ 253 0034 2260     		str	r2, [r4]
+ 254              	.L24:
+ 111:../../picokernel/k_sema.c **** 	if(t == NULL) {
+ 255              		.loc 1 111 0
+ 256 0036 04F10C00 		add	r0, r4, #12
+ 257 003a FFF7FEFF 		bl	k_unpend_obj
+ 258              	.LVL38:
+ 112:../../picokernel/k_sema.c **** 		/* no tasks pendings, just get out here */
+ 259              		.loc 1 112 0
+ 260 003e 0246     		mov	r2, r0
+ 261 0040 78B1     		cbz	r0, .L33
+ 118:../../picokernel/k_sema.c **** 			s->cnt--;
+ 262              		.loc 1 118 0
+ 263 0042 2368     		ldr	r3, [r4]
+ 264 0044 0BB1     		cbz	r3, .L26
+ 119:../../picokernel/k_sema.c **** 	}
+ 265              		.loc 1 119 0
+ 266 0046 013B     		subs	r3, r3, #1
+ 267 0048 2360     		str	r3, [r4]
+ 268              	.L26:
+ 122:../../picokernel/k_sema.c **** 
+ 269              		.loc 1 122 0
+ 270 004a 9389     		ldrh	r3, [r2, #12]
+ 271 004c 23F00203 		bic	r3, r3, #2
+ 272 0050 9381     		strh	r3, [r2, #12]	@ movhi
+ 124:../../picokernel/k_sema.c **** 	ULIPE_ASSERT(ret == k_status_ok);
+ 273              		.loc 1 124 0
+ 274 0052 1046     		mov	r0, r2
+ 275              	.LVL39:
+ 276 0054 FFF7FEFF 		bl	k_make_ready
+ 277              	.LVL40:
+ 278              	.LBB18:
+ 279              	.LBB19:
+ 128:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 		port_set_break();
+ 280              		.loc 2 128 0
+ 281 0058 0446     		mov	r4, r0
+ 282              	.LVL41:
+ 283 005a 38B1     		cbz	r0, .L27
+ 284              		.loc 2 129 0
+ 285 005c FFF7FEFF 		bl	port_set_break
+ARM GAS  /tmp/ccRP319C.s 			page 11
+
+
+ 286              	.LVL42:
+ 287              	.L28:
+ 288 0060 FEE7     		b	.L28
+ 289              	.LVL43:
+ 290              	.L33:
+ 291              	.LBE19:
+ 292              	.LBE18:
+ 114:../../picokernel/k_sema.c **** 		goto cleanup;
+ 293              		.loc 1 114 0
+ 294 0062 3046     		mov	r0, r6
+ 295              	.LVL44:
+ 296 0064 FFF7FEFF 		bl	port_irq_unlock
+ 297              	.LVL45:
+  81:../../picokernel/k_sema.c **** 	tcb_t *t = NULL;
+ 298              		.loc 1 81 0
+ 299 0068 0024     		movs	r4, #0
+ 300              	.LVL46:
+ 115:../../picokernel/k_sema.c **** 	} else {
+ 301              		.loc 1 115 0
+ 302 006a CFE7     		b	.L22
+ 303              	.LVL47:
+ 304              	.L27:
+ 126:../../picokernel/k_sema.c **** 
+ 305              		.loc 1 126 0
+ 306 006c 3046     		mov	r0, r6
+ 307              	.LVL48:
+ 308 006e FFF7FEFF 		bl	port_irq_unlock
+ 309              	.LVL49:
+ 129:../../picokernel/k_sema.c **** 
+ 310              		.loc 1 129 0
+ 311 0072 FFF7FEFF 		bl	k_sched_and_swap
+ 312              	.LVL50:
+ 313 0076 C9E7     		b	.L22
+ 314              	.LVL51:
+ 315              	.L29:
+  85:../../picokernel/k_sema.c **** 		goto cleanup;
+ 316              		.loc 1 85 0
+ 317 0078 0224     		movs	r4, #2
+ 318 007a C7E7     		b	.L22
+ 319              		.cfi_endproc
+ 320              	.LFE21:
+ 322              		.text
+ 323              	.Letext0:
+ 324              		.file 3 "/home/venturus/gcc-arm-none-eabi-6-2017-q2-update/arm-none-eabi/include/machine/_default_
+ 325              		.file 4 "/home/venturus/gcc-arm-none-eabi-6-2017-q2-update/arm-none-eabi/include/sys/_stdint.h"
+ 326              		.file 5 "/home/venturus/gcc-arm-none-eabi-6-2017-q2-update/arm-none-eabi/include/sys/lock.h"
+ 327              		.file 6 "/home/venturus/gcc-arm-none-eabi-6-2017-q2-update/arm-none-eabi/include/sys/_types.h"
+ 328              		.file 7 "/home/venturus/gcc-arm-none-eabi-6-2017-q2-update/lib/gcc/arm-none-eabi/6.3.1/include/std
+ 329              		.file 8 "/home/venturus/gcc-arm-none-eabi-6-2017-q2-update/arm-none-eabi/include/sys/reent.h"
+ 330              		.file 9 "../../../uLipeRtosPico/picokernel/inc/k_list.h"
+ 331              		.file 10 "../../../uLipeRtosPico/include/picokernel/k_thread.h"
+ 332              		.file 11 "../../../uLipeRtosPico/include/picokernel/k_kernel.h"
+ 333              		.file 12 "../../../uLipeRtosPico/include/picokernel/k_sema.h"
+ 334              		.file 13 "../../../uLipeRtosPico/include/picokernel/k_port.h"
+ARM GAS  /tmp/ccRP319C.s 			page 12
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 k_sema.c
+     /tmp/ccRP319C.s:18     .text.semaphore_take:0000000000000000 $t
+     /tmp/ccRP319C.s:25     .text.semaphore_take:0000000000000000 semaphore_take
+     /tmp/ccRP319C.s:189    .text.semaphore_give:0000000000000000 $t
+     /tmp/ccRP319C.s:196    .text.semaphore_give:0000000000000000 semaphore_give
+                     .debug_frame:0000000000000010 $d
+
+UNDEFINED SYMBOLS
+thread_get_current
+port_from_isr
+port_set_break
+port_irq_lock
+port_irq_unlock
+k_sched_and_swap
+k_work_list_init
+k_make_not_ready
+k_pend_obj
+k_unpend_obj
+k_make_ready

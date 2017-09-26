@@ -1,0 +1,1151 @@
+ARM GAS  /tmp/cczjHd1p.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"k_message.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.message_handle_pend,"ax",%progbits
+  18              		.align	1
+  19              		.syntax unified
+  20              		.thumb
+  21              		.thumb_func
+  22              		.fpu fpv4-sp-d16
+  24              	message_handle_pend:
+  25              	.LFB20:
+  26              		.file 1 "../../picokernel/k_message.c"
+   1:../../picokernel/k_message.c **** /**
+   2:../../picokernel/k_message.c ****  * 							ULIPE RTOS PICO
+   3:../../picokernel/k_message.c ****  *
+   4:../../picokernel/k_message.c ****  *  @file k_message.c
+   5:../../picokernel/k_message.c ****  *
+   6:../../picokernel/k_message.c ****  *  @brief basic messaging usage file
+   7:../../picokernel/k_message.c ****  *
+   8:../../picokernel/k_message.c ****  */
+   9:../../picokernel/k_message.c **** 
+  10:../../picokernel/k_message.c **** #include "ulipe_rtos_pico.h"
+  11:../../picokernel/k_message.c **** 
+  12:../../picokernel/k_message.c **** #if (K_ENABLE_MESSAGING > 0)
+  13:../../picokernel/k_message.c **** 
+  14:../../picokernel/k_message.c **** /** private functions */
+  15:../../picokernel/k_message.c **** 
+  16:../../picokernel/k_message.c **** 
+  17:../../picokernel/k_message.c **** /**
+  18:../../picokernel/k_message.c ****  *  @fn message_handle_pend()
+  19:../../picokernel/k_message.c ****  *  @brief check kmsgt internal thread list for a insertion waiting task
+  20:../../picokernel/k_message.c ****  *  @param
+  21:../../picokernel/k_message.c ****  *  @return
+  22:../../picokernel/k_message.c ****  */
+  23:../../picokernel/k_message.c **** static k_status_t message_handle_pend(kmsg_t *m,bool insert, msg_opt_t opt, archtype_t key)
+  24:../../picokernel/k_message.c **** {
+  27              		.loc 1 24 0
+  28              		.cfi_startproc
+  29              		@ args = 0, pretend = 0, frame = 0
+  30              		@ frame_needed = 0, uses_anonymous_args = 0
+  31              	.LVL0:
+  32 0000 2DE9F041 		push	{r4, r5, r6, r7, r8, lr}
+  33              	.LCFI0:
+  34              		.cfi_def_cfa_offset 24
+ARM GAS  /tmp/cczjHd1p.s 			page 2
+
+
+  35              		.cfi_offset 4, -24
+  36              		.cfi_offset 5, -20
+  37              		.cfi_offset 6, -16
+  38              		.cfi_offset 7, -12
+  39              		.cfi_offset 8, -8
+  40              		.cfi_offset 14, -4
+  41 0004 0546     		mov	r5, r0
+  42 0006 0E46     		mov	r6, r1
+  43 0008 1746     		mov	r7, r2
+  44 000a 9846     		mov	r8, r3
+  45              	.LVL1:
+  25:../../picokernel/k_message.c **** 	k_status_t ret = false;
+  26:../../picokernel/k_message.c **** 	tcb_t *thr = thread_get_current();
+  46              		.loc 1 26 0
+  47 000c FFF7FEFF 		bl	thread_get_current
+  48              	.LVL2:
+  49              	.LBB18:
+  50              	.LBB19:
+  51              		.file 2 "../../../uLipeRtosPico/ulipe_rtos_pico.h"
+   1:../../../uLipeRtosPico/ulipe_rtos_pico.h **** /**
+   2:../../../uLipeRtosPico/ulipe_rtos_pico.h ****  * 							ULIPE RTOS PICO
+   3:../../../uLipeRtosPico/ulipe_rtos_pico.h ****  *
+   4:../../../uLipeRtosPico/ulipe_rtos_pico.h ****  *  @file ulipe_rtos_pico.h
+   5:../../../uLipeRtosPico/ulipe_rtos_pico.h ****  *
+   6:../../../uLipeRtosPico/ulipe_rtos_pico.h ****  *  @brief this file is treated as a master file
+   7:../../../uLipeRtosPico/ulipe_rtos_pico.h ****  *
+   8:../../../uLipeRtosPico/ulipe_rtos_pico.h ****  *
+   9:../../../uLipeRtosPico/ulipe_rtos_pico.h ****  */
+  10:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #ifndef __ULIPE_RTOS_PICO_H
+  11:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #define __ULIPE_RTOS_PICO_H
+  12:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  13:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  14:../../../uLipeRtosPico/ulipe_rtos_pico.h **** /* include all the kernel header files actig as a glue module */
+  15:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #include <stdint.h>
+  16:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #include <stdbool.h>
+  17:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #include <stddef.h>
+  18:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #include <string.h>
+  19:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  20:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #include "picokernel/inc/k_list.h"
+  21:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #include "ulipe_rtos_kconfig.h"
+  22:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  23:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #ifndef __ULIPE_RTOS_KCONFIG_H
+  24:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	#error "No config file found, loading default setings"
+  25:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #endif
+  26:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  27:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  28:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  29:../../../uLipeRtosPico/ulipe_rtos_pico.h **** /* ulipe rtos pico status codes */
+  30:../../../uLipeRtosPico/ulipe_rtos_pico.h **** typedef enum {
+  31:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	/* general status */
+  32:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_status_ok = 0,
+  33:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_status_error,
+  34:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_status_invalid_param,
+  35:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_status_sched_locked,
+  36:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_status_illegal_from_isr,
+  37:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  38:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	/* threading status */
+ARM GAS  /tmp/cczjHd1p.s 			page 3
+
+
+  39:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_thread_rdy,
+  40:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_thread_del,
+  41:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_thread_blk,
+  42:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_thread_susp,
+  43:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  44:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	/* semaphore status */
+  45:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_sema_not_available,
+  46:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_sema_illegal_use_celling,
+  47:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_mutex_already_available,
+  48:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  49:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	/* queue status */
+  50:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_queue_empty,
+  51:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_queue_full,
+  52:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  53:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	/* wqueue status */
+  54:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_wqueue_already_exists,
+  55:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  56:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	/* timer status */
+  57:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_timer_expired,
+  58:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_timer_running,
+  59:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_timer_stopped,
+  60:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_timer_busy,
+  61:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  62:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  63:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	/* kernel configuration */
+  64:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_not_available_with_current_config,
+  65:../../../uLipeRtosPico/ulipe_rtos_pico.h **** }k_status_t;
+  66:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  67:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  68:../../../uLipeRtosPico/ulipe_rtos_pico.h **** /**
+  69:../../../uLipeRtosPico/ulipe_rtos_pico.h ****  *  @fn template()
+  70:../../../uLipeRtosPico/ulipe_rtos_pico.h ****  *  @brief
+  71:../../../uLipeRtosPico/ulipe_rtos_pico.h ****  *  @param
+  72:../../../uLipeRtosPico/ulipe_rtos_pico.h ****  *  @return
+  73:../../../uLipeRtosPico/ulipe_rtos_pico.h ****  */
+  74:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  75:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  76:../../../uLipeRtosPico/ulipe_rtos_pico.h **** /* resolves the arch dependend memory size */
+  77:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #if	(K_ARCH_MEM_WIDTH_BYTE > 0)
+  78:../../../uLipeRtosPico/ulipe_rtos_pico.h **** typedef uint8_t archtype_t;
+  79:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #elif(K_ARCH_MEM_WIDTH_HALFWORD > 0)
+  80:../../../uLipeRtosPico/ulipe_rtos_pico.h **** typedef uint16_t archtype_t;
+  81:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #elif (K_ARCH_MEM_WIDTH_WORD > 0)
+  82:../../../uLipeRtosPico/ulipe_rtos_pico.h **** typedef uint32_t archtype_t;
+  83:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #elif (K_ARCH_MEM_WIDTH_DWORD > 0)
+  84:../../../uLipeRtosPico/ulipe_rtos_pico.h **** typedef uint64_t archtype_t;
+  85:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #else
+  86:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #endif
+  87:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  88:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  89:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #if(K_ENABLE_DYNAMIC_ALLOCATOR > 0)
+  90:../../../uLipeRtosPico/ulipe_rtos_pico.h **** //#error "FATAL: Dynamic allocator is under development, please use memory pool instead!"
+  91:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #ifndef K_HEAP_SIZE
+  92:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #define K_HEAP_SIZE 1024
+  93:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #endif
+  94:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #endif
+  95:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+ARM GAS  /tmp/cczjHd1p.s 			page 4
+
+
+  96:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #if(K_ENABLE_WORKQUEUES > 0)
+  97:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #ifndef K_WQUEUES_STACK_SIZE
+  98:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #define K_WQUEUES_STACK_SIZE 128
+  99:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #endif
+ 100:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #endif
+ 101:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+ 102:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #if(K_ENABLE_TICKLESS_IDLE > 0)
+ 103:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #ifndef K_MAX_LOW_POWER_PERIOD
+ 104:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #define K_MAX_LOW_POWER_PERIOD	100
+ 105:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #endif
+ 106:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+ 107:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #define K_HW_TIMER_COUNTS_PER_TICK (K_MACHINE_CLOCK / K_TICKER_RATE)
+ 108:../../../uLipeRtosPico/ulipe_rtos_pico.h **** extern void user_lowpower_entry(void *arg);
+ 109:../../../uLipeRtosPico/ulipe_rtos_pico.h **** extern void user_lowpower_exit(void *arg);
+ 110:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #endif
+ 111:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+ 112:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #include "include/picokernel/k_thread.h"
+ 113:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #include "include/picokernel/k_port.h"
+ 114:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #include "include/picokernel/k_kernel.h"
+ 115:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #include "include/picokernel/k_message.h"
+ 116:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #include "include/picokernel/k_raw_timer.h"
+ 117:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #include "include/picokernel/k_sema.h"
+ 118:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #include "include/picokernel/k_mutex.h"
+ 119:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #include "include/picokernel/k_memp.h"
+ 120:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #include "include/picokernel/k_mem_dyn.h"
+ 121:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #include "include/picokernel/k_wqueue.h"
+ 122:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+ 123:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+ 124:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+ 125:../../../uLipeRtosPico/ulipe_rtos_pico.h **** /** assertion mechanism */
+ 126:../../../uLipeRtosPico/ulipe_rtos_pico.h **** static inline void ulipe_assert(bool x)
+ 127:../../../uLipeRtosPico/ulipe_rtos_pico.h **** {
+ 128:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	if(!x){
+  52              		.loc 2 128 0
+  53 0010 30B1     		cbz	r0, .L15
+  54 0012 0446     		mov	r4, r0
+  55              	.LVL3:
+  56              	.LBE19:
+  57              	.LBE18:
+  27:../../picokernel/k_message.c **** 	ULIPE_ASSERT(thr != NULL);
+  28:../../picokernel/k_message.c **** 
+  29:../../picokernel/k_message.c **** 
+  30:../../picokernel/k_message.c **** 
+  31:../../picokernel/k_message.c **** 	switch(opt) {
+  58              		.loc 1 31 0
+  59 0014 3FB1     		cbz	r7, .L5
+  60 0016 012F     		cmp	r7, #1
+  61 0018 24D1     		bne	.L13
+  32:../../picokernel/k_message.c **** 		case k_msg_accept:
+  33:../../picokernel/k_message.c **** 			/* simplest case, accept there is no space left
+  34:../../picokernel/k_message.c **** 			 * on message queue and reports error
+  35:../../picokernel/k_message.c **** 			 */
+  36:../../picokernel/k_message.c **** 			if(insert)
+  62              		.loc 1 36 0
+  63 001a 3EB3     		cbz	r6, .L12
+  37:../../picokernel/k_message.c **** 				ret = k_queue_full;
+  64              		.loc 1 37 0
+ARM GAS  /tmp/cczjHd1p.s 			page 5
+
+
+  65 001c 0D24     		movs	r4, #13
+  66 001e 22E0     		b	.L4
+  67              	.LVL4:
+  68              	.L15:
+  69              	.LBB21:
+  70              	.LBB20:
+ 129:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 		port_set_break();
+  71              		.loc 2 129 0
+  72 0020 FFF7FEFF 		bl	port_set_break
+  73              	.LVL5:
+  74              	.L3:
+  75 0024 FEE7     		b	.L3
+  76              	.LVL6:
+  77              	.L5:
+  78              	.LBE20:
+  79              	.LBE21:
+  38:../../picokernel/k_message.c **** 			else
+  39:../../picokernel/k_message.c **** 				ret = k_queue_empty;
+  40:../../picokernel/k_message.c **** 
+  41:../../picokernel/k_message.c **** 
+  42:../../picokernel/k_message.c **** 			break;
+  43:../../picokernel/k_message.c **** 
+  44:../../picokernel/k_message.c **** 		case k_msg_block:
+  45:../../picokernel/k_message.c **** 			/* thread will wait until one slot become free */
+  46:../../picokernel/k_message.c **** 			k_make_not_ready(thr);
+  80              		.loc 1 46 0
+  81 0026 FFF7FEFF 		bl	k_make_not_ready
+  82              	.LVL7:
+  47:../../picokernel/k_message.c **** 			thr->thread_wait |= K_THR_PEND_MSG;
+  83              		.loc 1 47 0
+  84 002a A389     		ldrh	r3, [r4, #12]
+  85 002c 43F00403 		orr	r3, r3, #4
+  86 0030 A381     		strh	r3, [r4, #12]	@ movhi
+  48:../../picokernel/k_message.c **** 
+  49:../../picokernel/k_message.c **** 			if(insert)
+  87              		.loc 1 49 0
+  88 0032 76B1     		cbz	r6, .L7
+  50:../../picokernel/k_message.c **** 				k_pend_obj(thr, &m->wr_threads_pending);
+  89              		.loc 1 50 0
+  90 0034 05F59071 		add	r1, r5, #288
+  91 0038 2046     		mov	r0, r4
+  92 003a FFF7FEFF 		bl	k_pend_obj
+  93              	.LVL8:
+  94              	.L8:
+  51:../../picokernel/k_message.c **** 			else
+  52:../../picokernel/k_message.c **** 				k_pend_obj(thr, &m->rd_threads_pending);
+  53:../../picokernel/k_message.c **** 
+  54:../../picokernel/k_message.c **** 
+  55:../../picokernel/k_message.c **** 			port_irq_unlock(key);
+  95              		.loc 1 55 0
+  96 003e 4046     		mov	r0, r8
+  97 0040 FFF7FEFF 		bl	port_irq_unlock
+  98              	.LVL9:
+  56:../../picokernel/k_message.c **** 			ret = k_sched_and_swap();
+  99              		.loc 1 56 0
+ 100 0044 FFF7FEFF 		bl	k_sched_and_swap
+ 101              	.LVL10:
+ARM GAS  /tmp/cczjHd1p.s 			page 6
+
+
+ 102              	.LBB22:
+ 103              	.LBB23:
+ 128:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 		port_set_break();
+ 104              		.loc 2 128 0
+ 105 0048 0446     		mov	r4, r0
+ 106              	.LVL11:
+ 107 004a 40B1     		cbz	r0, .L9
+ 108              		.loc 2 129 0
+ 109 004c FFF7FEFF 		bl	port_set_break
+ 110              	.LVL12:
+ 111              	.L10:
+ 112 0050 FEE7     		b	.L10
+ 113              	.LVL13:
+ 114              	.L7:
+ 115              	.LBE23:
+ 116              	.LBE22:
+  52:../../picokernel/k_message.c **** 
+ 117              		.loc 1 52 0
+ 118 0052 05F11C01 		add	r1, r5, #28
+ 119 0056 2046     		mov	r0, r4
+ 120 0058 FFF7FEFF 		bl	k_pend_obj
+ 121              	.LVL14:
+ 122 005c EFE7     		b	.L8
+ 123              	.LVL15:
+ 124              	.L9:
+  57:../../picokernel/k_message.c **** 			ULIPE_ASSERT(ret == k_status_ok);
+  58:../../picokernel/k_message.c **** 
+  59:../../picokernel/k_message.c **** 			/* thread woken, lock acess to queue again */
+  60:../../picokernel/k_message.c **** 			ret = k_status_ok;
+  61:../../picokernel/k_message.c **** 			key = port_irq_lock();
+ 125              		.loc 1 61 0
+ 126 005e FFF7FEFF 		bl	port_irq_lock
+ 127              	.LVL16:
+  62:../../picokernel/k_message.c **** 			break;
+ 128              		.loc 1 62 0
+ 129 0062 00E0     		b	.L4
+ 130              	.LVL17:
+ 131              	.L13:
+  63:../../picokernel/k_message.c **** 
+  64:../../picokernel/k_message.c **** 		default:
+  65:../../picokernel/k_message.c **** 			ret = k_status_invalid_param;
+ 132              		.loc 1 65 0
+ 133 0064 0224     		movs	r4, #2
+ 134              	.LVL18:
+ 135              	.L4:
+  66:../../picokernel/k_message.c **** 			break;
+  67:../../picokernel/k_message.c **** 	}
+  68:../../picokernel/k_message.c **** 
+  69:../../picokernel/k_message.c **** 	return(ret);
+  70:../../picokernel/k_message.c **** }
+ 136              		.loc 1 70 0
+ 137 0066 2046     		mov	r0, r4
+ 138 0068 BDE8F081 		pop	{r4, r5, r6, r7, r8, pc}
+ 139              	.LVL19:
+ 140              	.L12:
+  39:../../picokernel/k_message.c **** 
+ 141              		.loc 1 39 0
+ARM GAS  /tmp/cczjHd1p.s 			page 7
+
+
+ 142 006c 0C24     		movs	r4, #12
+ 143 006e FAE7     		b	.L4
+ 144              		.cfi_endproc
+ 145              	.LFE20:
+ 147              		.section	.text.message_insert,"ax",%progbits
+ 148              		.align	1
+ 149              		.global	message_insert
+ 150              		.syntax unified
+ 151              		.thumb
+ 152              		.thumb_func
+ 153              		.fpu fpv4-sp-d16
+ 155              	message_insert:
+ 156              	.LFB21:
+  71:../../picokernel/k_message.c **** 
+  72:../../picokernel/k_message.c **** /** Public functions */
+  73:../../picokernel/k_message.c **** 
+  74:../../picokernel/k_message.c **** 
+  75:../../picokernel/k_message.c **** k_status_t message_insert(kmsg_t *m, void *data, uint32_t size, msg_opt_t opt)
+  76:../../picokernel/k_message.c **** {
+ 157              		.loc 1 76 0
+ 158              		.cfi_startproc
+ 159              		@ args = 0, pretend = 0, frame = 0
+ 160              		@ frame_needed = 0, uses_anonymous_args = 0
+ 161              	.LVL20:
+ 162 0000 2DE9F041 		push	{r4, r5, r6, r7, r8, lr}
+ 163              	.LCFI1:
+ 164              		.cfi_def_cfa_offset 24
+ 165              		.cfi_offset 4, -24
+ 166              		.cfi_offset 5, -20
+ 167              		.cfi_offset 6, -16
+ 168              		.cfi_offset 7, -12
+ 169              		.cfi_offset 8, -8
+ 170              		.cfi_offset 14, -4
+ 171              	.LVL21:
+  77:../../picokernel/k_message.c **** 	k_status_t ret = k_status_ok;
+  78:../../picokernel/k_message.c **** 	archtype_t key;
+  79:../../picokernel/k_message.c **** 
+  80:../../picokernel/k_message.c **** 	if(m == NULL) {
+ 172              		.loc 1 80 0
+ 173 0004 0028     		cmp	r0, #0
+ 174 0006 75D0     		beq	.L28
+ 175 0008 0446     		mov	r4, r0
+  81:../../picokernel/k_message.c **** 		ret = k_status_invalid_param;
+  82:../../picokernel/k_message.c **** 		goto cleanup;
+  83:../../picokernel/k_message.c **** 	}
+  84:../../picokernel/k_message.c **** 
+  85:../../picokernel/k_message.c **** 	if(data == NULL) {
+ 176              		.loc 1 85 0
+ 177 000a 0029     		cmp	r1, #0
+ 178 000c 74D0     		beq	.L29
+  86:../../picokernel/k_message.c **** 		ret = k_status_invalid_param;
+  87:../../picokernel/k_message.c **** 		goto cleanup;
+  88:../../picokernel/k_message.c **** 	}
+  89:../../picokernel/k_message.c **** 
+  90:../../picokernel/k_message.c **** 	if(size > m->slot_size) {
+ 179              		.loc 1 90 0
+ 180 000e 4069     		ldr	r0, [r0, #20]
+ARM GAS  /tmp/cczjHd1p.s 			page 8
+
+
+ 181              	.LVL22:
+ 182 0010 9042     		cmp	r0, r2
+ 183 0012 03D2     		bcs	.L34
+  91:../../picokernel/k_message.c **** 		ret = k_status_invalid_param;
+ 184              		.loc 1 91 0
+ 185 0014 0225     		movs	r5, #2
+ 186              	.LVL23:
+ 187              	.L17:
+  92:../../picokernel/k_message.c **** 		goto cleanup;
+  93:../../picokernel/k_message.c **** 	}
+  94:../../picokernel/k_message.c **** 
+  95:../../picokernel/k_message.c **** 	if(!size) {
+  96:../../picokernel/k_message.c **** 		ret = k_status_invalid_param;
+  97:../../picokernel/k_message.c **** 		goto cleanup;
+  98:../../picokernel/k_message.c **** 	}
+  99:../../picokernel/k_message.c **** 
+ 100:../../picokernel/k_message.c **** 	key = port_irq_lock();
+ 101:../../picokernel/k_message.c **** 
+ 102:../../picokernel/k_message.c **** 	if(!m->created) {
+ 103:../../picokernel/k_message.c **** 		m->created = true;
+ 104:../../picokernel/k_message.c **** 		k_work_list_init(&m->wr_threads_pending);
+ 105:../../picokernel/k_message.c **** 		k_work_list_init(&m->rd_threads_pending);
+ 106:../../picokernel/k_message.c **** 	}
+ 107:../../picokernel/k_message.c **** 
+ 108:../../picokernel/k_message.c **** 	if(m->items >= m->slots_number) {
+ 109:../../picokernel/k_message.c **** 		/* message queue is actually full,
+ 110:../../picokernel/k_message.c **** 		 * so check the wait options passed by user
+ 111:../../picokernel/k_message.c **** 		 */
+ 112:../../picokernel/k_message.c **** 		ret = message_handle_pend(m,true, opt, key);
+ 113:../../picokernel/k_message.c **** 
+ 114:../../picokernel/k_message.c **** 		if(ret != k_status_ok) {
+ 115:../../picokernel/k_message.c **** 			port_irq_unlock(key);
+ 116:../../picokernel/k_message.c **** 			goto cleanup;
+ 117:../../picokernel/k_message.c **** 		}
+ 118:../../picokernel/k_message.c **** 	}
+ 119:../../picokernel/k_message.c **** 
+ 120:../../picokernel/k_message.c **** 	
+ 121:../../picokernel/k_message.c **** 
+ 122:../../picokernel/k_message.c **** 
+ 123:../../picokernel/k_message.c **** 	/* regular use case, insert a new frame on message
+ 124:../../picokernel/k_message.c **** 	 * queue and wake up a possible thread set
+ 125:../../picokernel/k_message.c **** 	 */
+ 126:../../picokernel/k_message.c **** 	archtype_t *ptr = (archtype_t *)&m->data[m->wr_ptr * (m->slot_size)];
+ 127:../../picokernel/k_message.c **** 	ULIPE_ASSERT(ptr != NULL);
+ 128:../../picokernel/k_message.c **** 	*ptr++ = size;
+ 129:../../picokernel/k_message.c **** 
+ 130:../../picokernel/k_message.c **** 	if(size == sizeof(archtype_t)) {
+ 131:../../picokernel/k_message.c **** 		/* special case to avoid copy and creates
+ 132:../../picokernel/k_message.c **** 		 * a by reference queue support
+ 133:../../picokernel/k_message.c **** 		 */
+ 134:../../picokernel/k_message.c **** 		*ptr = *((archtype_t*)data);
+ 135:../../picokernel/k_message.c **** 
+ 136:../../picokernel/k_message.c **** 	} else {
+ 137:../../picokernel/k_message.c **** 
+ 138:../../picokernel/k_message.c **** 		/* just a ordinary copy */
+ 139:../../picokernel/k_message.c **** 		memcpy(&m->data[(m->wr_ptr * (m->slot_size)) + sizeof(archtype_t)], data, size);
+ 140:../../picokernel/k_message.c **** 	}
+ARM GAS  /tmp/cczjHd1p.s 			page 9
+
+
+ 141:../../picokernel/k_message.c **** 
+ 142:../../picokernel/k_message.c **** 	m->wr_ptr = (m->wr_ptr + 1) % m->slots_number;
+ 143:../../picokernel/k_message.c **** 	m->items++;
+ 144:../../picokernel/k_message.c **** 
+ 145:../../picokernel/k_message.c **** 
+ 146:../../picokernel/k_message.c **** 
+ 147:../../picokernel/k_message.c **** 	tcb_t *thr = k_unpend_obj(&m->rd_threads_pending);
+ 148:../../picokernel/k_message.c **** 	if(thr == NULL) {
+ 149:../../picokernel/k_message.c **** 		/* no need to reeschedule task list */
+ 150:../../picokernel/k_message.c **** 		port_irq_unlock(key);
+ 151:../../picokernel/k_message.c **** 		goto cleanup;
+ 152:../../picokernel/k_message.c **** 	}
+ 153:../../picokernel/k_message.c **** 
+ 154:../../picokernel/k_message.c **** 	thr->thread_wait &= ~(K_THR_PEND_MSG);
+ 155:../../picokernel/k_message.c **** 	ret = k_make_ready(thr);
+ 156:../../picokernel/k_message.c **** 	ULIPE_ASSERT(ret == k_status_ok);
+ 157:../../picokernel/k_message.c **** 	port_irq_unlock(key);
+ 158:../../picokernel/k_message.c **** 
+ 159:../../picokernel/k_message.c **** 
+ 160:../../picokernel/k_message.c **** 	/* reeschedule task set */
+ 161:../../picokernel/k_message.c **** 	ret = k_sched_and_swap();
+ 162:../../picokernel/k_message.c **** 	ULIPE_ASSERT(ret == k_status_ok);
+ 163:../../picokernel/k_message.c **** 
+ 164:../../picokernel/k_message.c **** cleanup:
+ 165:../../picokernel/k_message.c **** 	return(ret);
+ 166:../../picokernel/k_message.c **** }
+ 188              		.loc 1 166 0
+ 189 0016 2846     		mov	r0, r5
+ 190 0018 BDE8F081 		pop	{r4, r5, r6, r7, r8, pc}
+ 191              	.LVL24:
+ 192              	.L34:
+  95:../../picokernel/k_message.c **** 		ret = k_status_invalid_param;
+ 193              		.loc 1 95 0
+ 194 001c 0AB9     		cbnz	r2, .L35
+  96:../../picokernel/k_message.c **** 		goto cleanup;
+ 195              		.loc 1 96 0
+ 196 001e 0225     		movs	r5, #2
+ 197 0020 F9E7     		b	.L17
+ 198              	.L35:
+ 199 0022 1D46     		mov	r5, r3
+ 200 0024 1746     		mov	r7, r2
+ 201 0026 0E46     		mov	r6, r1
+ 100:../../picokernel/k_message.c **** 
+ 202              		.loc 1 100 0
+ 203 0028 FFF7FEFF 		bl	port_irq_lock
+ 204              	.LVL25:
+ 205 002c 8046     		mov	r8, r0
+ 206              	.LVL26:
+ 102:../../picokernel/k_message.c **** 		m->created = true;
+ 207              		.loc 1 102 0
+ 208 002e 237E     		ldrb	r3, [r4, #24]	@ zero_extendqisi2
+ 209 0030 53B3     		cbz	r3, .L36
+ 210              	.LVL27:
+ 211              	.L18:
+ 108:../../picokernel/k_message.c **** 		/* message queue is actually full,
+ 212              		.loc 1 108 0
+ 213 0032 6268     		ldr	r2, [r4, #4]
+ARM GAS  /tmp/cczjHd1p.s 			page 10
+
+
+ 214 0034 A368     		ldr	r3, [r4, #8]
+ 215 0036 9A42     		cmp	r2, r3
+ 216 0038 31D2     		bcs	.L37
+  77:../../picokernel/k_message.c **** 	archtype_t key;
+ 217              		.loc 1 77 0
+ 218 003a 0025     		movs	r5, #0
+ 219              	.LVL28:
+ 220              	.L19:
+ 126:../../picokernel/k_message.c **** 	ULIPE_ASSERT(ptr != NULL);
+ 221              		.loc 1 126 0
+ 222 003c 2268     		ldr	r2, [r4]
+ 223 003e E168     		ldr	r1, [r4, #12]
+ 224 0040 6369     		ldr	r3, [r4, #20]
+ 225 0042 03FB01F3 		mul	r3, r3, r1
+ 226              	.LVL29:
+ 227              	.LBB24:
+ 228              	.LBB25:
+ 128:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 		port_set_break();
+ 229              		.loc 2 128 0
+ 230 0046 D118     		adds	r1, r2, r3
+ 231              	.LVL30:
+ 232 0048 36D0     		beq	.L38
+ 233              	.LVL31:
+ 234              	.LBE25:
+ 235              	.LBE24:
+ 128:../../picokernel/k_message.c **** 
+ 236              		.loc 1 128 0
+ 237 004a D750     		str	r7, [r2, r3]
+ 130:../../picokernel/k_message.c **** 		/* special case to avoid copy and creates
+ 238              		.loc 1 130 0
+ 239 004c 042F     		cmp	r7, #4
+ 240 004e 36D1     		bne	.L22
+ 134:../../picokernel/k_message.c **** 
+ 241              		.loc 1 134 0
+ 242 0050 3368     		ldr	r3, [r6]
+ 243 0052 4B60     		str	r3, [r1, #4]
+ 244              	.LVL32:
+ 245              	.L23:
+ 142:../../picokernel/k_message.c **** 	m->items++;
+ 246              		.loc 1 142 0
+ 247 0054 E368     		ldr	r3, [r4, #12]
+ 248 0056 0133     		adds	r3, r3, #1
+ 249 0058 A168     		ldr	r1, [r4, #8]
+ 250 005a B3FBF1F2 		udiv	r2, r3, r1
+ 251 005e 01FB1233 		mls	r3, r1, r2, r3
+ 252 0062 E360     		str	r3, [r4, #12]
+ 143:../../picokernel/k_message.c **** 
+ 253              		.loc 1 143 0
+ 254 0064 6368     		ldr	r3, [r4, #4]
+ 255 0066 0133     		adds	r3, r3, #1
+ 256 0068 6360     		str	r3, [r4, #4]
+ 147:../../picokernel/k_message.c **** 	if(thr == NULL) {
+ 257              		.loc 1 147 0
+ 258 006a 04F11C00 		add	r0, r4, #28
+ 259 006e FFF7FEFF 		bl	k_unpend_obj
+ 260              	.LVL33:
+ 148:../../picokernel/k_message.c **** 		/* no need to reeschedule task list */
+ARM GAS  /tmp/cczjHd1p.s 			page 11
+
+
+ 261              		.loc 1 148 0
+ 262 0072 80B3     		cbz	r0, .L39
+ 154:../../picokernel/k_message.c **** 	ret = k_make_ready(thr);
+ 263              		.loc 1 154 0
+ 264 0074 8289     		ldrh	r2, [r0, #12]
+ 265 0076 22F00402 		bic	r2, r2, #4
+ 266 007a 8281     		strh	r2, [r0, #12]	@ movhi
+ 155:../../picokernel/k_message.c **** 	ULIPE_ASSERT(ret == k_status_ok);
+ 267              		.loc 1 155 0
+ 268 007c FFF7FEFF 		bl	k_make_ready
+ 269              	.LVL34:
+ 270              	.LBB27:
+ 271              	.LBB28:
+ 128:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 		port_set_break();
+ 272              		.loc 2 128 0
+ 273 0080 68B3     		cbz	r0, .L25
+ 274              		.loc 2 129 0
+ 275 0082 FFF7FEFF 		bl	port_set_break
+ 276              	.LVL35:
+ 277              	.L26:
+ 278 0086 FEE7     		b	.L26
+ 279              	.LVL36:
+ 280              	.L36:
+ 281              	.LBE28:
+ 282              	.LBE27:
+ 103:../../picokernel/k_message.c **** 		k_work_list_init(&m->wr_threads_pending);
+ 283              		.loc 1 103 0
+ 284 0088 0123     		movs	r3, #1
+ 285 008a 2376     		strb	r3, [r4, #24]
+ 104:../../picokernel/k_message.c **** 		k_work_list_init(&m->rd_threads_pending);
+ 286              		.loc 1 104 0
+ 287 008c 04F59070 		add	r0, r4, #288
+ 288              	.LVL37:
+ 289 0090 FFF7FEFF 		bl	k_work_list_init
+ 290              	.LVL38:
+ 105:../../picokernel/k_message.c **** 	}
+ 291              		.loc 1 105 0
+ 292 0094 04F11C00 		add	r0, r4, #28
+ 293 0098 FFF7FEFF 		bl	k_work_list_init
+ 294              	.LVL39:
+ 295 009c C9E7     		b	.L18
+ 296              	.L37:
+ 112:../../picokernel/k_message.c **** 
+ 297              		.loc 1 112 0
+ 298 009e 4346     		mov	r3, r8
+ 299 00a0 2A46     		mov	r2, r5
+ 300 00a2 0121     		movs	r1, #1
+ 301 00a4 2046     		mov	r0, r4
+ 302 00a6 FFF7FEFF 		bl	message_handle_pend
+ 303              	.LVL40:
+ 114:../../picokernel/k_message.c **** 			port_irq_unlock(key);
+ 304              		.loc 1 114 0
+ 305 00aa 0546     		mov	r5, r0
+ 306 00ac 0028     		cmp	r0, #0
+ 307 00ae C5D0     		beq	.L19
+ 115:../../picokernel/k_message.c **** 			goto cleanup;
+ 308              		.loc 1 115 0
+ARM GAS  /tmp/cczjHd1p.s 			page 12
+
+
+ 309 00b0 4046     		mov	r0, r8
+ 310              	.LVL41:
+ 311 00b2 FFF7FEFF 		bl	port_irq_unlock
+ 312              	.LVL42:
+ 116:../../picokernel/k_message.c **** 		}
+ 313              		.loc 1 116 0
+ 314 00b6 AEE7     		b	.L17
+ 315              	.LVL43:
+ 316              	.L38:
+ 317              	.LBB29:
+ 318              	.LBB26:
+ 319              		.loc 2 129 0
+ 320 00b8 FFF7FEFF 		bl	port_set_break
+ 321              	.LVL44:
+ 322              	.L21:
+ 323 00bc FEE7     		b	.L21
+ 324              	.LVL45:
+ 325              	.L22:
+ 326              	.LBE26:
+ 327              	.LBE29:
+ 139:../../picokernel/k_message.c **** 	}
+ 328              		.loc 1 139 0
+ 329 00be 2068     		ldr	r0, [r4]
+ 330 00c0 E268     		ldr	r2, [r4, #12]
+ 331 00c2 6369     		ldr	r3, [r4, #20]
+ 332 00c4 03FB02F3 		mul	r3, r3, r2
+ 333 00c8 0433     		adds	r3, r3, #4
+ 334 00ca 3A46     		mov	r2, r7
+ 335 00cc 3146     		mov	r1, r6
+ 336              	.LVL46:
+ 337 00ce 1844     		add	r0, r0, r3
+ 338 00d0 FFF7FEFF 		bl	memcpy
+ 339              	.LVL47:
+ 340 00d4 BEE7     		b	.L23
+ 341              	.LVL48:
+ 342              	.L39:
+ 150:../../picokernel/k_message.c **** 		goto cleanup;
+ 343              		.loc 1 150 0
+ 344 00d6 4046     		mov	r0, r8
+ 345              	.LVL49:
+ 346 00d8 FFF7FEFF 		bl	port_irq_unlock
+ 347              	.LVL50:
+ 151:../../picokernel/k_message.c **** 	}
+ 348              		.loc 1 151 0
+ 349 00dc 9BE7     		b	.L17
+ 350              	.LVL51:
+ 351              	.L25:
+ 157:../../picokernel/k_message.c **** 
+ 352              		.loc 1 157 0
+ 353 00de 4046     		mov	r0, r8
+ 354              	.LVL52:
+ 355 00e0 FFF7FEFF 		bl	port_irq_unlock
+ 356              	.LVL53:
+ 161:../../picokernel/k_message.c **** 	ULIPE_ASSERT(ret == k_status_ok);
+ 357              		.loc 1 161 0
+ 358 00e4 FFF7FEFF 		bl	k_sched_and_swap
+ 359              	.LVL54:
+ARM GAS  /tmp/cczjHd1p.s 			page 13
+
+
+ 360              	.LBB30:
+ 361              	.LBB31:
+ 128:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 		port_set_break();
+ 362              		.loc 2 128 0
+ 363 00e8 0546     		mov	r5, r0
+ 364 00ea 0028     		cmp	r0, #0
+ 365 00ec 93D0     		beq	.L17
+ 366              		.loc 2 129 0
+ 367 00ee FFF7FEFF 		bl	port_set_break
+ 368              	.LVL55:
+ 369              	.L27:
+ 370 00f2 FEE7     		b	.L27
+ 371              	.LVL56:
+ 372              	.L28:
+ 373              	.LBE31:
+ 374              	.LBE30:
+  81:../../picokernel/k_message.c **** 		goto cleanup;
+ 375              		.loc 1 81 0
+ 376 00f4 0225     		movs	r5, #2
+ 377 00f6 8EE7     		b	.L17
+ 378              	.L29:
+  86:../../picokernel/k_message.c **** 		goto cleanup;
+ 379              		.loc 1 86 0
+ 380 00f8 0225     		movs	r5, #2
+ 381 00fa 8CE7     		b	.L17
+ 382              		.cfi_endproc
+ 383              	.LFE21:
+ 385              		.section	.text.message_remove,"ax",%progbits
+ 386              		.align	1
+ 387              		.global	message_remove
+ 388              		.syntax unified
+ 389              		.thumb
+ 390              		.thumb_func
+ 391              		.fpu fpv4-sp-d16
+ 393              	message_remove:
+ 394              	.LFB22:
+ 167:../../picokernel/k_message.c **** 
+ 168:../../picokernel/k_message.c **** 
+ 169:../../picokernel/k_message.c **** 
+ 170:../../picokernel/k_message.c **** k_status_t message_remove(kmsg_t *msg, void *data, uint32_t *size, bool peek, msg_opt_t opt)
+ 171:../../picokernel/k_message.c **** {
+ 395              		.loc 1 171 0
+ 396              		.cfi_startproc
+ 397              		@ args = 4, pretend = 0, frame = 0
+ 398              		@ frame_needed = 0, uses_anonymous_args = 0
+ 399              	.LVL57:
+ 400 0000 2DE9F047 		push	{r4, r5, r6, r7, r8, r9, r10, lr}
+ 401              	.LCFI2:
+ 402              		.cfi_def_cfa_offset 32
+ 403              		.cfi_offset 4, -32
+ 404              		.cfi_offset 5, -28
+ 405              		.cfi_offset 6, -24
+ 406              		.cfi_offset 7, -20
+ 407              		.cfi_offset 8, -16
+ 408              		.cfi_offset 9, -12
+ 409              		.cfi_offset 10, -8
+ 410              		.cfi_offset 14, -4
+ARM GAS  /tmp/cczjHd1p.s 			page 14
+
+
+ 411              	.LVL58:
+ 172:../../picokernel/k_message.c **** 	k_status_t ret = k_status_ok;
+ 173:../../picokernel/k_message.c **** 	archtype_t key;
+ 174:../../picokernel/k_message.c **** 
+ 175:../../picokernel/k_message.c **** 	if(msg== NULL) {
+ 412              		.loc 1 175 0
+ 413 0004 0028     		cmp	r0, #0
+ 414 0006 6DD0     		beq	.L53
+ 415 0008 0446     		mov	r4, r0
+ 176:../../picokernel/k_message.c **** 		ret = k_status_invalid_param;
+ 177:../../picokernel/k_message.c **** 		goto cleanup;
+ 178:../../picokernel/k_message.c **** 	}
+ 179:../../picokernel/k_message.c **** 
+ 180:../../picokernel/k_message.c **** 	if(data == NULL) {
+ 416              		.loc 1 180 0
+ 417 000a 0029     		cmp	r1, #0
+ 418 000c 6ED0     		beq	.L54
+ 181:../../picokernel/k_message.c **** 		ret = k_status_invalid_param;
+ 182:../../picokernel/k_message.c **** 		goto cleanup;
+ 183:../../picokernel/k_message.c **** 	}
+ 184:../../picokernel/k_message.c **** 
+ 185:../../picokernel/k_message.c **** 	if(size == NULL) {
+ 419              		.loc 1 185 0
+ 420 000e 002A     		cmp	r2, #0
+ 421 0010 6ED0     		beq	.L55
+ 422 0012 9946     		mov	r9, r3
+ 423 0014 9046     		mov	r8, r2
+ 424 0016 0F46     		mov	r7, r1
+ 186:../../picokernel/k_message.c **** 		ret = k_status_invalid_param;
+ 187:../../picokernel/k_message.c **** 		goto cleanup;
+ 188:../../picokernel/k_message.c **** 	}
+ 189:../../picokernel/k_message.c **** 
+ 190:../../picokernel/k_message.c **** 	key = port_irq_lock();
+ 425              		.loc 1 190 0
+ 426 0018 FFF7FEFF 		bl	port_irq_lock
+ 427              	.LVL59:
+ 428 001c 0646     		mov	r6, r0
+ 429              	.LVL60:
+ 191:../../picokernel/k_message.c **** 
+ 192:../../picokernel/k_message.c **** 	if(!msg->created) {
+ 430              		.loc 1 192 0
+ 431 001e 237E     		ldrb	r3, [r4, #24]	@ zero_extendqisi2
+ 432 0020 CBB1     		cbz	r3, .L58
+ 433              	.LVL61:
+ 434              	.L42:
+ 193:../../picokernel/k_message.c **** 		msg->created = true;
+ 194:../../picokernel/k_message.c **** 		k_work_list_init(&msg->wr_threads_pending);
+ 195:../../picokernel/k_message.c **** 		k_work_list_init(&msg->rd_threads_pending);
+ 196:../../picokernel/k_message.c **** 	}
+ 197:../../picokernel/k_message.c **** 
+ 198:../../picokernel/k_message.c **** 
+ 199:../../picokernel/k_message.c **** 
+ 200:../../picokernel/k_message.c **** 	if(msg->items == 0) {
+ 435              		.loc 1 200 0
+ 436 0022 6368     		ldr	r3, [r4, #4]
+ 437 0024 13B3     		cbz	r3, .L59
+ 172:../../picokernel/k_message.c **** 	archtype_t key;
+ARM GAS  /tmp/cczjHd1p.s 			page 15
+
+
+ 438              		.loc 1 172 0
+ 439 0026 0025     		movs	r5, #0
+ 440              	.LVL62:
+ 441              	.L43:
+ 201:../../picokernel/k_message.c **** 		/* message queue is actually empty,
+ 202:../../picokernel/k_message.c **** 		 * so check the wait options passed by user
+ 203:../../picokernel/k_message.c **** 		 */
+ 204:../../picokernel/k_message.c **** 		ret = message_handle_pend(msg,false, opt,key);
+ 205:../../picokernel/k_message.c **** 
+ 206:../../picokernel/k_message.c **** 		if(ret != k_status_ok) {
+ 207:../../picokernel/k_message.c **** 			port_irq_unlock(key);
+ 208:../../picokernel/k_message.c **** 			goto cleanup;
+ 209:../../picokernel/k_message.c **** 		}
+ 210:../../picokernel/k_message.c **** 
+ 211:../../picokernel/k_message.c **** 	}
+ 212:../../picokernel/k_message.c **** 
+ 213:../../picokernel/k_message.c **** 	archtype_t *ptr = (archtype_t *)&msg->data[msg->rd_ptr * (msg->slot_size )];
+ 442              		.loc 1 213 0
+ 443 0028 2168     		ldr	r1, [r4]
+ 444 002a 2269     		ldr	r2, [r4, #16]
+ 445 002c 6369     		ldr	r3, [r4, #20]
+ 446 002e 03FB02F3 		mul	r3, r3, r2
+ 447              	.LVL63:
+ 448              	.LBB32:
+ 449              	.LBB33:
+ 128:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 		port_set_break();
+ 450              		.loc 2 128 0
+ 451 0032 CA18     		adds	r2, r1, r3
+ 452              	.LVL64:
+ 453 0034 28D0     		beq	.L60
+ 454              	.LVL65:
+ 455              	.LBE33:
+ 456              	.LBE32:
+ 214:../../picokernel/k_message.c **** 	ULIPE_ASSERT(ptr != NULL);
+ 215:../../picokernel/k_message.c **** 	archtype_t data_size = *ptr++;
+ 457              		.loc 1 215 0
+ 458 0036 51F803A0 		ldr	r10, [r1, r3]
+ 459              	.LVL66:
+ 216:../../picokernel/k_message.c **** 
+ 217:../../picokernel/k_message.c **** 	/*
+ 218:../../picokernel/k_message.c **** 	 * we have at least one slot pending for remotion, lets pick
+ 219:../../picokernel/k_message.c **** 	 * it
+ 220:../../picokernel/k_message.c **** 	 */
+ 221:../../picokernel/k_message.c **** 	if(data_size == sizeof(archtype_t)) {
+ 460              		.loc 1 221 0
+ 461 003a BAF1040F 		cmp	r10, #4
+ 462 003e 26D1     		bne	.L46
+ 222:../../picokernel/k_message.c **** 		/* special case to avoid copy and creates
+ 223:../../picokernel/k_message.c **** 		 * a by reference queue support
+ 224:../../picokernel/k_message.c **** 		 */
+ 225:../../picokernel/k_message.c **** 		*((archtype_t*)data) = *ptr;
+ 463              		.loc 1 225 0
+ 464 0040 5368     		ldr	r3, [r2, #4]
+ 465 0042 3B60     		str	r3, [r7]
+ 466              	.LVL67:
+ 467              	.L47:
+ 226:../../picokernel/k_message.c **** 	} else {
+ARM GAS  /tmp/cczjHd1p.s 			page 16
+
+
+ 227:../../picokernel/k_message.c **** 
+ 228:../../picokernel/k_message.c **** 		/* just a ordinary copy */
+ 229:../../picokernel/k_message.c **** 		memcpy(data, &msg->data[(msg->rd_ptr * msg->slot_size) + sizeof(archtype_t)  ], data_size);
+ 230:../../picokernel/k_message.c **** 	}
+ 231:../../picokernel/k_message.c **** 	*size = data_size;
+ 468              		.loc 1 231 0
+ 469 0044 C8F800A0 		str	r10, [r8]
+ 232:../../picokernel/k_message.c **** 
+ 233:../../picokernel/k_message.c **** 
+ 234:../../picokernel/k_message.c **** 	/*
+ 235:../../picokernel/k_message.c **** 	 * if a peek was requested remove the entry, otherwise, nothing changes
+ 236:../../picokernel/k_message.c **** 	 * just exit
+ 237:../../picokernel/k_message.c **** 	 */
+ 238:../../picokernel/k_message.c **** 	if(peek) {
+ 470              		.loc 1 238 0
+ 471 0048 B9F1000F 		cmp	r9, #0
+ 472 004c 26D0     		beq	.L48
+ 239:../../picokernel/k_message.c **** 		port_irq_unlock(key);
+ 473              		.loc 1 239 0
+ 474 004e 3046     		mov	r0, r6
+ 475 0050 FFF7FEFF 		bl	port_irq_unlock
+ 476              	.LVL68:
+ 240:../../picokernel/k_message.c **** 		goto cleanup;
+ 477              		.loc 1 240 0
+ 478 0054 47E0     		b	.L41
+ 479              	.LVL69:
+ 480              	.L58:
+ 193:../../picokernel/k_message.c **** 		k_work_list_init(&msg->wr_threads_pending);
+ 481              		.loc 1 193 0
+ 482 0056 0123     		movs	r3, #1
+ 483 0058 2376     		strb	r3, [r4, #24]
+ 194:../../picokernel/k_message.c **** 		k_work_list_init(&msg->rd_threads_pending);
+ 484              		.loc 1 194 0
+ 485 005a 04F59070 		add	r0, r4, #288
+ 486              	.LVL70:
+ 487 005e FFF7FEFF 		bl	k_work_list_init
+ 488              	.LVL71:
+ 195:../../picokernel/k_message.c **** 	}
+ 489              		.loc 1 195 0
+ 490 0062 04F11C00 		add	r0, r4, #28
+ 491 0066 FFF7FEFF 		bl	k_work_list_init
+ 492              	.LVL72:
+ 493 006a DAE7     		b	.L42
+ 494              	.L59:
+ 204:../../picokernel/k_message.c **** 
+ 495              		.loc 1 204 0
+ 496 006c 3346     		mov	r3, r6
+ 497 006e 9DF82020 		ldrb	r2, [sp, #32]	@ zero_extendqisi2
+ 498 0072 0021     		movs	r1, #0
+ 499 0074 2046     		mov	r0, r4
+ 500 0076 FFF7FEFF 		bl	message_handle_pend
+ 501              	.LVL73:
+ 206:../../picokernel/k_message.c **** 			port_irq_unlock(key);
+ 502              		.loc 1 206 0
+ 503 007a 0546     		mov	r5, r0
+ 504 007c 0028     		cmp	r0, #0
+ 505 007e D3D0     		beq	.L43
+ARM GAS  /tmp/cczjHd1p.s 			page 17
+
+
+ 207:../../picokernel/k_message.c **** 			goto cleanup;
+ 506              		.loc 1 207 0
+ 507 0080 3046     		mov	r0, r6
+ 508              	.LVL74:
+ 509 0082 FFF7FEFF 		bl	port_irq_unlock
+ 510              	.LVL75:
+ 208:../../picokernel/k_message.c **** 		}
+ 511              		.loc 1 208 0
+ 512 0086 2EE0     		b	.L41
+ 513              	.LVL76:
+ 514              	.L60:
+ 515              	.LBB35:
+ 516              	.LBB34:
+ 517              		.loc 2 129 0
+ 518 0088 FFF7FEFF 		bl	port_set_break
+ 519              	.LVL77:
+ 520              	.L45:
+ 521 008c FEE7     		b	.L45
+ 522              	.LVL78:
+ 523              	.L46:
+ 524              	.LBE34:
+ 525              	.LBE35:
+ 229:../../picokernel/k_message.c **** 	}
+ 526              		.loc 1 229 0
+ 527 008e 0433     		adds	r3, r3, #4
+ 528 0090 5246     		mov	r2, r10
+ 529              	.LVL79:
+ 530 0092 1944     		add	r1, r1, r3
+ 531              	.LVL80:
+ 532 0094 3846     		mov	r0, r7
+ 533 0096 FFF7FEFF 		bl	memcpy
+ 534              	.LVL81:
+ 535 009a D3E7     		b	.L47
+ 536              	.L48:
+ 241:../../picokernel/k_message.c **** 	}
+ 242:../../picokernel/k_message.c **** 
+ 243:../../picokernel/k_message.c **** 	msg->rd_ptr = (msg->rd_ptr + 1) % msg->slots_number;
+ 537              		.loc 1 243 0
+ 538 009c 2369     		ldr	r3, [r4, #16]
+ 539 009e 0133     		adds	r3, r3, #1
+ 540 00a0 A168     		ldr	r1, [r4, #8]
+ 541 00a2 B3FBF1F2 		udiv	r2, r3, r1
+ 542 00a6 01FB1233 		mls	r3, r1, r2, r3
+ 543 00aa 2361     		str	r3, [r4, #16]
+ 244:../../picokernel/k_message.c **** 	msg->items--;
+ 544              		.loc 1 244 0
+ 545 00ac 6368     		ldr	r3, [r4, #4]
+ 546 00ae 013B     		subs	r3, r3, #1
+ 547 00b0 6360     		str	r3, [r4, #4]
+ 245:../../picokernel/k_message.c **** 
+ 246:../../picokernel/k_message.c **** 	tcb_t *thr = k_unpend_obj(&msg->wr_threads_pending);
+ 548              		.loc 1 246 0
+ 549 00b2 04F59070 		add	r0, r4, #288
+ 550 00b6 FFF7FEFF 		bl	k_unpend_obj
+ 551              	.LVL82:
+ 247:../../picokernel/k_message.c **** 	if(thr == NULL) {
+ 552              		.loc 1 247 0
+ARM GAS  /tmp/cczjHd1p.s 			page 18
+
+
+ 553 00ba 28B1     		cbz	r0, .L61
+ 248:../../picokernel/k_message.c **** 		port_irq_unlock(key);
+ 249:../../picokernel/k_message.c **** 		goto cleanup;
+ 250:../../picokernel/k_message.c **** 	}
+ 251:../../picokernel/k_message.c **** 
+ 252:../../picokernel/k_message.c **** 
+ 253:../../picokernel/k_message.c **** 	ret = k_make_ready(thr);
+ 554              		.loc 1 253 0
+ 555 00bc FFF7FEFF 		bl	k_make_ready
+ 556              	.LVL83:
+ 557              	.LBB36:
+ 558              	.LBB37:
+ 128:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 		port_set_break();
+ 559              		.loc 2 128 0
+ 560 00c0 30B1     		cbz	r0, .L50
+ 561              		.loc 2 129 0
+ 562 00c2 FFF7FEFF 		bl	port_set_break
+ 563              	.LVL84:
+ 564              	.L51:
+ 565 00c6 FEE7     		b	.L51
+ 566              	.LVL85:
+ 567              	.L61:
+ 568              	.LBE37:
+ 569              	.LBE36:
+ 248:../../picokernel/k_message.c **** 		port_irq_unlock(key);
+ 570              		.loc 1 248 0
+ 571 00c8 3046     		mov	r0, r6
+ 572              	.LVL86:
+ 573 00ca FFF7FEFF 		bl	port_irq_unlock
+ 574              	.LVL87:
+ 249:../../picokernel/k_message.c **** 	}
+ 575              		.loc 1 249 0
+ 576 00ce 0AE0     		b	.L41
+ 577              	.LVL88:
+ 578              	.L50:
+ 254:../../picokernel/k_message.c **** 	ULIPE_ASSERT(ret == k_status_ok);
+ 255:../../picokernel/k_message.c **** 	port_irq_unlock(key);
+ 579              		.loc 1 255 0
+ 580 00d0 3046     		mov	r0, r6
+ 581              	.LVL89:
+ 582 00d2 FFF7FEFF 		bl	port_irq_unlock
+ 583              	.LVL90:
+ 256:../../picokernel/k_message.c **** 
+ 257:../../picokernel/k_message.c **** 	ret = k_sched_and_swap();
+ 584              		.loc 1 257 0
+ 585 00d6 FFF7FEFF 		bl	k_sched_and_swap
+ 586              	.LVL91:
+ 587              	.LBB38:
+ 588              	.LBB39:
+ 128:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 		port_set_break();
+ 589              		.loc 2 128 0
+ 590 00da 0546     		mov	r5, r0
+ 591 00dc 18B1     		cbz	r0, .L41
+ 592              		.loc 2 129 0
+ 593 00de FFF7FEFF 		bl	port_set_break
+ 594              	.LVL92:
+ 595              	.L52:
+ARM GAS  /tmp/cczjHd1p.s 			page 19
+
+
+ 596 00e2 FEE7     		b	.L52
+ 597              	.LVL93:
+ 598              	.L53:
+ 599              	.LBE39:
+ 600              	.LBE38:
+ 176:../../picokernel/k_message.c **** 		goto cleanup;
+ 601              		.loc 1 176 0
+ 602 00e4 0225     		movs	r5, #2
+ 603              	.LVL94:
+ 604              	.L41:
+ 258:../../picokernel/k_message.c **** 	ULIPE_ASSERT(ret == k_status_ok);
+ 259:../../picokernel/k_message.c **** cleanup:
+ 260:../../picokernel/k_message.c **** 	return(ret);
+ 261:../../picokernel/k_message.c **** }
+ 605              		.loc 1 261 0
+ 606 00e6 2846     		mov	r0, r5
+ 607 00e8 BDE8F087 		pop	{r4, r5, r6, r7, r8, r9, r10, pc}
+ 608              	.LVL95:
+ 609              	.L54:
+ 181:../../picokernel/k_message.c **** 		goto cleanup;
+ 610              		.loc 1 181 0
+ 611 00ec 0225     		movs	r5, #2
+ 612 00ee FAE7     		b	.L41
+ 613              	.L55:
+ 186:../../picokernel/k_message.c **** 		goto cleanup;
+ 614              		.loc 1 186 0
+ 615 00f0 0225     		movs	r5, #2
+ 616 00f2 F8E7     		b	.L41
+ 617              		.cfi_endproc
+ 618              	.LFE22:
+ 620              		.text
+ 621              	.Letext0:
+ 622              		.file 3 "/home/venturus/gcc-arm-none-eabi-6-2017-q2-update/arm-none-eabi/include/machine/_default_
+ 623              		.file 4 "/home/venturus/gcc-arm-none-eabi-6-2017-q2-update/arm-none-eabi/include/sys/_stdint.h"
+ 624              		.file 5 "/home/venturus/gcc-arm-none-eabi-6-2017-q2-update/arm-none-eabi/include/sys/lock.h"
+ 625              		.file 6 "/home/venturus/gcc-arm-none-eabi-6-2017-q2-update/arm-none-eabi/include/sys/_types.h"
+ 626              		.file 7 "/home/venturus/gcc-arm-none-eabi-6-2017-q2-update/lib/gcc/arm-none-eabi/6.3.1/include/std
+ 627              		.file 8 "/home/venturus/gcc-arm-none-eabi-6-2017-q2-update/arm-none-eabi/include/sys/reent.h"
+ 628              		.file 9 "../../../uLipeRtosPico/picokernel/inc/k_list.h"
+ 629              		.file 10 "../../../uLipeRtosPico/include/picokernel/k_thread.h"
+ 630              		.file 11 "../../../uLipeRtosPico/include/picokernel/k_kernel.h"
+ 631              		.file 12 "../../../uLipeRtosPico/include/picokernel/k_message.h"
+ 632              		.file 13 "../../../uLipeRtosPico/include/picokernel/k_port.h"
+ARM GAS  /tmp/cczjHd1p.s 			page 20
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 k_message.c
+     /tmp/cczjHd1p.s:18     .text.message_handle_pend:0000000000000000 $t
+     /tmp/cczjHd1p.s:24     .text.message_handle_pend:0000000000000000 message_handle_pend
+     /tmp/cczjHd1p.s:148    .text.message_insert:0000000000000000 $t
+     /tmp/cczjHd1p.s:155    .text.message_insert:0000000000000000 message_insert
+     /tmp/cczjHd1p.s:386    .text.message_remove:0000000000000000 $t
+     /tmp/cczjHd1p.s:393    .text.message_remove:0000000000000000 message_remove
+                     .debug_frame:0000000000000010 $d
+
+UNDEFINED SYMBOLS
+thread_get_current
+port_set_break
+k_make_not_ready
+k_pend_obj
+port_irq_unlock
+k_sched_and_swap
+port_irq_lock
+k_unpend_obj
+k_make_ready
+k_work_list_init
+memcpy

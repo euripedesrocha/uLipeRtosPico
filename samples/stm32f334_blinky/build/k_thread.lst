@@ -1,0 +1,2376 @@
+ARM GAS  /tmp/ccXrLhQk.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"k_thread.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.thread_handle_signal_act,"ax",%progbits
+  18              		.align	1
+  19              		.syntax unified
+  20              		.thumb
+  21              		.thumb_func
+  22              		.fpu fpv4-sp-d16
+  24              	thread_handle_signal_act:
+  25              	.LFB20:
+  26              		.file 1 "../../picokernel/k_thread.c"
+   1:../../picokernel/k_thread.c **** /**
+   2:../../picokernel/k_thread.c ****  * 							ULIPE RTOS PICO
+   3:../../picokernel/k_thread.c ****  *
+   4:../../picokernel/k_thread.c ****  *  @file k_thread.c
+   5:../../picokernel/k_thread.c ****  *
+   6:../../picokernel/k_thread.c ****  *  @brief threading managament core file
+   7:../../picokernel/k_thread.c ****  *
+   8:../../picokernel/k_thread.c ****  *
+   9:../../picokernel/k_thread.c ****  */
+  10:../../picokernel/k_thread.c **** 
+  11:../../picokernel/k_thread.c **** #include "ulipe_rtos_pico.h"
+  12:../../picokernel/k_thread.c **** 
+  13:../../picokernel/k_thread.c **** /** public variables */
+  14:../../picokernel/k_thread.c **** extern tcb_t *k_current_task;
+  15:../../picokernel/k_thread.c **** 
+  16:../../picokernel/k_thread.c **** 
+  17:../../picokernel/k_thread.c **** /** static functions */
+  18:../../picokernel/k_thread.c **** 
+  19:../../picokernel/k_thread.c **** /**
+  20:../../picokernel/k_thread.c ****  *  @fn thread_handle_signal_act()
+  21:../../picokernel/k_thread.c ****  *  @brief wakes a waiting task which meet the signals conditions
+  22:../../picokernel/k_thread.c ****  *  @param
+  23:../../picokernel/k_thread.c ****  *  @return
+  24:../../picokernel/k_thread.c ****  */
+  25:../../picokernel/k_thread.c **** static bool thread_handle_signal_act(tcb_t *t)
+  26:../../picokernel/k_thread.c **** {
+  27              		.loc 1 26 0
+  28              		.cfi_startproc
+  29              		@ args = 0, pretend = 0, frame = 0
+  30              		@ frame_needed = 0, uses_anonymous_args = 0
+  31              		@ link register save eliminated.
+  32              	.LVL0:
+ARM GAS  /tmp/ccXrLhQk.s 			page 2
+
+
+  33 0000 0346     		mov	r3, r0
+  34              	.LVL1:
+  27:../../picokernel/k_thread.c **** 	bool match = false;
+  28:../../picokernel/k_thread.c **** 
+  29:../../picokernel/k_thread.c **** 
+  30:../../picokernel/k_thread.c **** 	if(t->thread_wait & (K_THR_PEND_SIGNAL_ANY |  K_THR_PEND_SIGNAL_ANY_C)){
+  35              		.loc 1 30 0
+  36 0002 8289     		ldrh	r2, [r0, #12]
+  37 0004 12F0A00F 		tst	r2, #160
+  38 0008 05D0     		beq	.L6
+  31:../../picokernel/k_thread.c **** 		/* just a signal that matches with this is sufficient to wake task */
+  32:../../picokernel/k_thread.c **** 		if((t->signals_actual) & (t->signals_wait))
+  39              		.loc 1 32 0
+  40 000a C069     		ldr	r0, [r0, #28]
+  41              	.LVL2:
+  42 000c 9969     		ldr	r1, [r3, #24]
+  43 000e 0842     		tst	r0, r1
+  44 0010 18D1     		bne	.L7
+  27:../../picokernel/k_thread.c **** 	bool match = false;
+  45              		.loc 1 27 0
+  46 0012 0020     		movs	r0, #0
+  47 0014 00E0     		b	.L2
+  48              	.LVL3:
+  49              	.L6:
+  50 0016 0020     		movs	r0, #0
+  51              	.LVL4:
+  52              	.L2:
+  33:../../picokernel/k_thread.c **** 			match = true;
+  34:../../picokernel/k_thread.c **** 	}
+  35:../../picokernel/k_thread.c **** 
+  36:../../picokernel/k_thread.c **** 	if(t->thread_wait & (K_THR_PEND_SIGNAL_ALL |  K_THR_PEND_SIGNAL_ALL_C)){
+  53              		.loc 1 36 0
+  54 0018 12F0500F 		tst	r2, #80
+  55 001c 16D0     		beq	.L10
+  26:../../picokernel/k_thread.c **** 	bool match = false;
+  56              		.loc 1 26 0
+  57 001e 10B4     		push	{r4}
+  58              	.LCFI0:
+  59              		.cfi_def_cfa_offset 4
+  60              		.cfi_offset 4, -4
+  37:../../picokernel/k_thread.c **** 		/* here the mask must be the same */
+  38:../../picokernel/k_thread.c **** 		if((t->signals_actual) == (t->signals_wait))
+  61              		.loc 1 38 0
+  62 0020 DC69     		ldr	r4, [r3, #28]
+  63 0022 9969     		ldr	r1, [r3, #24]
+  64 0024 8C42     		cmp	r4, r1
+  65 0026 0FD0     		beq	.L18
+  66              	.LVL5:
+  67              	.L3:
+  39:../../picokernel/k_thread.c **** 			match = true;
+  40:../../picokernel/k_thread.c **** 	}
+  41:../../picokernel/k_thread.c **** 
+  42:../../picokernel/k_thread.c **** 
+  43:../../picokernel/k_thread.c **** 	if(match == true){
+  68              		.loc 1 43 0
+  69 0028 48B1     		cbz	r0, .L4
+  44:../../picokernel/k_thread.c **** 		if(t->thread_wait & (K_THR_PEND_SIGNAL_ALL_C | K_THR_PEND_SIGNAL_ANY_C ))
+ARM GAS  /tmp/ccXrLhQk.s 			page 3
+
+
+  70              		.loc 1 44 0
+  71 002a 12F0C00F 		tst	r2, #192
+  72 002e 01D0     		beq	.L5
+  45:../../picokernel/k_thread.c **** 			t->signals_actual = 0;
+  73              		.loc 1 45 0
+  74 0030 0021     		movs	r1, #0
+  75 0032 D961     		str	r1, [r3, #28]
+  76              	.L5:
+  46:../../picokernel/k_thread.c **** 		/* on a match, clear the signal waiting flags */
+  47:../../picokernel/k_thread.c **** 		t->signals_wait = 0;
+  77              		.loc 1 47 0
+  78 0034 0021     		movs	r1, #0
+  79 0036 9961     		str	r1, [r3, #24]
+  48:../../picokernel/k_thread.c **** 		t->thread_wait &= ~(K_THR_PEND_SIGNAL_ANY |  K_THR_PEND_SIGNAL_ALL|
+  80              		.loc 1 48 0
+  81 0038 22F0F002 		bic	r2, r2, #240
+  82 003c 9A81     		strh	r2, [r3, #12]	@ movhi
+  83              	.L4:
+  49:../../picokernel/k_thread.c **** 				K_THR_PEND_SIGNAL_ALL_C | K_THR_PEND_SIGNAL_ANY_C);
+  50:../../picokernel/k_thread.c **** 	}
+  51:../../picokernel/k_thread.c **** 
+  52:../../picokernel/k_thread.c **** 	return(match);
+  53:../../picokernel/k_thread.c **** }
+  84              		.loc 1 53 0
+  85 003e 5DF8044B 		ldr	r4, [sp], #4
+  86              	.LCFI1:
+  87              		.cfi_restore 4
+  88              		.cfi_def_cfa_offset 0
+  89              	.L17:
+  90 0042 7047     		bx	lr
+  91              	.LVL6:
+  92              	.L7:
+  33:../../picokernel/k_thread.c **** 	}
+  93              		.loc 1 33 0
+  94 0044 0120     		movs	r0, #1
+  95 0046 E7E7     		b	.L2
+  96              	.LVL7:
+  97              	.L18:
+  98              	.LCFI2:
+  99              		.cfi_def_cfa_offset 4
+ 100              		.cfi_offset 4, -4
+  39:../../picokernel/k_thread.c **** 	}
+ 101              		.loc 1 39 0
+ 102 0048 0120     		movs	r0, #1
+ 103              	.LVL8:
+ 104 004a EDE7     		b	.L3
+ 105              	.LVL9:
+ 106              	.L10:
+ 107              	.LCFI3:
+ 108              		.cfi_def_cfa_offset 0
+ 109              		.cfi_restore 4
+  43:../../picokernel/k_thread.c **** 		if(t->thread_wait & (K_THR_PEND_SIGNAL_ALL_C | K_THR_PEND_SIGNAL_ANY_C ))
+ 110              		.loc 1 43 0
+ 111 004c 0028     		cmp	r0, #0
+ 112 004e F8D0     		beq	.L17
+  44:../../picokernel/k_thread.c **** 			t->signals_actual = 0;
+ 113              		.loc 1 44 0
+ARM GAS  /tmp/ccXrLhQk.s 			page 4
+
+
+ 114 0050 12F0C00F 		tst	r2, #192
+ 115 0054 01D0     		beq	.L14
+  45:../../picokernel/k_thread.c **** 		/* on a match, clear the signal waiting flags */
+ 116              		.loc 1 45 0
+ 117 0056 0021     		movs	r1, #0
+ 118 0058 D961     		str	r1, [r3, #28]
+ 119              	.L14:
+  47:../../picokernel/k_thread.c **** 		t->thread_wait &= ~(K_THR_PEND_SIGNAL_ANY |  K_THR_PEND_SIGNAL_ALL|
+ 120              		.loc 1 47 0
+ 121 005a 0021     		movs	r1, #0
+ 122 005c 9961     		str	r1, [r3, #24]
+  48:../../picokernel/k_thread.c **** 				K_THR_PEND_SIGNAL_ALL_C | K_THR_PEND_SIGNAL_ANY_C);
+ 123              		.loc 1 48 0
+ 124 005e 22F0F002 		bic	r2, r2, #240
+ 125 0062 9A81     		strh	r2, [r3, #12]	@ movhi
+ 126 0064 7047     		bx	lr
+ 127              		.cfi_endproc
+ 128              	.LFE20:
+ 130              		.section	.text.thread_handle_signal_wait,"ax",%progbits
+ 131              		.align	1
+ 132              		.syntax unified
+ 133              		.thumb
+ 134              		.thumb_func
+ 135              		.fpu fpv4-sp-d16
+ 137              	thread_handle_signal_wait:
+ 138              	.LFB21:
+  54:../../picokernel/k_thread.c **** 
+  55:../../picokernel/k_thread.c **** 
+  56:../../picokernel/k_thread.c **** /**
+  57:../../picokernel/k_thread.c ****  *  @fn thread_handle_signal_wait()
+  58:../../picokernel/k_thread.c ****  *  @brief put task in wait state that matches user options about signals to wait
+  59:../../picokernel/k_thread.c ****  *  @param
+  60:../../picokernel/k_thread.c ****  *  @return
+  61:../../picokernel/k_thread.c ****  */
+  62:../../picokernel/k_thread.c **** static bool thread_handle_signal_wait(tcb_t *t, uint32_t wait_type, archtype_t signals)
+  63:../../picokernel/k_thread.c **** {
+ 139              		.loc 1 63 0
+ 140              		.cfi_startproc
+ 141              		@ args = 0, pretend = 0, frame = 0
+ 142              		@ frame_needed = 0, uses_anonymous_args = 0
+ 143              	.LVL10:
+ 144 0000 10B5     		push	{r4, lr}
+ 145              	.LCFI4:
+ 146              		.cfi_def_cfa_offset 8
+ 147              		.cfi_offset 4, -8
+ 148              		.cfi_offset 14, -4
+ 149              	.LVL11:
+  64:../../picokernel/k_thread.c **** 	bool match = false;
+  65:../../picokernel/k_thread.c **** 
+  66:../../picokernel/k_thread.c **** 	t->thread_wait |= wait_type;
+ 150              		.loc 1 66 0
+ 151 0002 8489     		ldrh	r4, [r0, #12]
+ 152 0004 2143     		orrs	r1, r1, r4
+ 153              	.LVL12:
+ 154 0006 8181     		strh	r1, [r0, #12]	@ movhi
+  67:../../picokernel/k_thread.c **** 	t->signals_wait = signals;
+ 155              		.loc 1 67 0
+ARM GAS  /tmp/ccXrLhQk.s 			page 5
+
+
+ 156 0008 8261     		str	r2, [r0, #24]
+  68:../../picokernel/k_thread.c **** 
+  69:../../picokernel/k_thread.c **** 	/* evaluate if signals is aready asserted */
+  70:../../picokernel/k_thread.c **** 	match = thread_handle_signal_act(t);
+ 157              		.loc 1 70 0
+ 158 000a FFF7FEFF 		bl	thread_handle_signal_act
+ 159              	.LVL13:
+  71:../../picokernel/k_thread.c **** 
+  72:../../picokernel/k_thread.c **** 	return(match);
+  73:../../picokernel/k_thread.c **** 
+  74:../../picokernel/k_thread.c **** }
+ 160              		.loc 1 74 0
+ 161 000e 10BD     		pop	{r4, pc}
+ 162              		.cfi_endproc
+ 163              	.LFE21:
+ 165              		.section	.text.thread_create,"ax",%progbits
+ 166              		.align	1
+ 167              		.global	thread_create
+ 168              		.syntax unified
+ 169              		.thumb
+ 170              		.thumb_func
+ 171              		.fpu fpv4-sp-d16
+ 173              	thread_create:
+ 174              	.LFB22:
+  75:../../picokernel/k_thread.c **** 
+  76:../../picokernel/k_thread.c **** 
+  77:../../picokernel/k_thread.c **** 
+  78:../../picokernel/k_thread.c **** /** public fnctions */
+  79:../../picokernel/k_thread.c **** 
+  80:../../picokernel/k_thread.c **** k_status_t thread_create(thread_t func, void *arg,tcb_t *tcb)
+  81:../../picokernel/k_thread.c **** {
+ 175              		.loc 1 81 0
+ 176              		.cfi_startproc
+ 177              		@ args = 0, pretend = 0, frame = 0
+ 178              		@ frame_needed = 0, uses_anonymous_args = 0
+ 179              	.LVL14:
+ 180 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+ 181              	.LCFI5:
+ 182              		.cfi_def_cfa_offset 24
+ 183              		.cfi_offset 3, -24
+ 184              		.cfi_offset 4, -20
+ 185              		.cfi_offset 5, -16
+ 186              		.cfi_offset 6, -12
+ 187              		.cfi_offset 7, -8
+ 188              		.cfi_offset 14, -4
+ 189 0002 0546     		mov	r5, r0
+ 190 0004 0E46     		mov	r6, r1
+ 191 0006 1446     		mov	r4, r2
+ 192              	.LVL15:
+  82:../../picokernel/k_thread.c **** 	k_status_t ret = k_status_ok;
+  83:../../picokernel/k_thread.c **** 
+  84:../../picokernel/k_thread.c **** 	/* thread create must not be called from isr,
+  85:../../picokernel/k_thread.c **** 	 * thread func must be valid and tcb as well
+  86:../../picokernel/k_thread.c **** 	 */
+  87:../../picokernel/k_thread.c **** 	if(port_from_isr()){
+ 193              		.loc 1 87 0
+ 194 0008 FFF7FEFF 		bl	port_from_isr
+ARM GAS  /tmp/ccXrLhQk.s 			page 6
+
+
+ 195              	.LVL16:
+ 196 000c 10B1     		cbz	r0, .L35
+  88:../../picokernel/k_thread.c **** 		ret = k_status_illegal_from_isr;
+ 197              		.loc 1 88 0
+ 198 000e 0424     		movs	r4, #4
+ 199              	.LVL17:
+ 200              	.L22:
+  89:../../picokernel/k_thread.c **** 		goto cleanup;
+  90:../../picokernel/k_thread.c **** 	}
+  91:../../picokernel/k_thread.c **** 
+  92:../../picokernel/k_thread.c **** 	if(func == NULL) {
+  93:../../picokernel/k_thread.c **** 		ret = k_status_invalid_param;
+  94:../../picokernel/k_thread.c **** 		goto cleanup;
+  95:../../picokernel/k_thread.c **** 	}
+  96:../../picokernel/k_thread.c **** 
+  97:../../picokernel/k_thread.c **** 	if(tcb == NULL) {
+  98:../../picokernel/k_thread.c **** 		ret = k_status_invalid_param;
+  99:../../picokernel/k_thread.c **** 		goto cleanup;
+ 100:../../picokernel/k_thread.c **** 	}
+ 101:../../picokernel/k_thread.c **** 
+ 102:../../picokernel/k_thread.c **** 
+ 103:../../picokernel/k_thread.c **** 	if(k_current_task == tcb) {
+ 104:../../picokernel/k_thread.c **** 		/* cannot re-create the current running task */
+ 105:../../picokernel/k_thread.c **** 		ret = k_status_invalid_param;
+ 106:../../picokernel/k_thread.c **** 		goto cleanup;
+ 107:../../picokernel/k_thread.c **** 	}
+ 108:../../picokernel/k_thread.c **** 
+ 109:../../picokernel/k_thread.c **** 	/*
+ 110:../../picokernel/k_thread.c **** 	 * The contents of tcb must represent a initialized one
+ 111:../../picokernel/k_thread.c **** 	 * allocated with THREAD_CONTROL_BLOCK_DECLARE() otherwise
+ 112:../../picokernel/k_thread.c **** 	 * the thread will not created
+ 113:../../picokernel/k_thread.c **** 	 */
+ 114:../../picokernel/k_thread.c **** 	if(tcb->thread_prio > (K_PRIORITY_LEVELS - 1)){
+ 115:../../picokernel/k_thread.c **** 		ret = k_status_invalid_param;
+ 116:../../picokernel/k_thread.c **** 		goto cleanup;
+ 117:../../picokernel/k_thread.c **** 	}
+ 118:../../picokernel/k_thread.c **** 
+ 119:../../picokernel/k_thread.c **** 
+ 120:../../picokernel/k_thread.c **** 	if(tcb->stack_size < K_MINIMAL_STACK_VAL) {
+ 121:../../picokernel/k_thread.c **** 		ret = k_status_invalid_param;
+ 122:../../picokernel/k_thread.c **** 		goto cleanup;
+ 123:../../picokernel/k_thread.c **** 	}
+ 124:../../picokernel/k_thread.c **** 
+ 125:../../picokernel/k_thread.c **** 	if(tcb->stack_base == NULL) {
+ 126:../../picokernel/k_thread.c **** 		ret = k_status_invalid_param;
+ 127:../../picokernel/k_thread.c **** 		goto cleanup;
+ 128:../../picokernel/k_thread.c **** 	}
+ 129:../../picokernel/k_thread.c **** 
+ 130:../../picokernel/k_thread.c **** 	/* disable scheduling durint task creation */
+ 131:../../picokernel/k_thread.c **** 	archtype_t key = port_irq_lock();
+ 132:../../picokernel/k_thread.c **** 
+ 133:../../picokernel/k_thread.c **** 	tcb->signals_wait = 0;
+ 134:../../picokernel/k_thread.c **** 	tcb->thread_wait = 0;
+ 135:../../picokernel/k_thread.c **** 	tcb->timer_wait = 0;
+ 136:../../picokernel/k_thread.c **** 	tcb->created = true;
+ 137:../../picokernel/k_thread.c **** 	sys_dlist_init(&tcb->thr_link);
+ 138:../../picokernel/k_thread.c **** 
+ARM GAS  /tmp/ccXrLhQk.s 			page 7
+
+
+ 139:../../picokernel/k_thread.c **** 	/* initialize stack contents */
+ 140:../../picokernel/k_thread.c **** 	tcb->stack_top = port_create_stack_frame(tcb->stack_base + (archtype_t)tcb->stack_size, func, arg)
+ 141:../../picokernel/k_thread.c **** 	ULIPE_ASSERT(tcb->stack_top != NULL);
+ 142:../../picokernel/k_thread.c **** 	tcb->stk_usage = tcb->stack_top - tcb->stack_base;
+ 143:../../picokernel/k_thread.c **** 
+ 144:../../picokernel/k_thread.c **** 
+ 145:../../picokernel/k_thread.c **** 	/* insert the created thread on ready list */
+ 146:../../picokernel/k_thread.c **** 	ret=k_make_ready(tcb);
+ 147:../../picokernel/k_thread.c **** 	ULIPE_ASSERT(ret == k_status_ok);
+ 148:../../picokernel/k_thread.c **** 
+ 149:../../picokernel/k_thread.c **** 
+ 150:../../picokernel/k_thread.c **** 	/* allow kernel to run, perform reeschedule */
+ 151:../../picokernel/k_thread.c **** 	port_irq_unlock(key);
+ 152:../../picokernel/k_thread.c **** 	k_sched_and_swap();
+ 153:../../picokernel/k_thread.c **** 	ret = k_status_ok;
+ 154:../../picokernel/k_thread.c **** 
+ 155:../../picokernel/k_thread.c **** cleanup:
+ 156:../../picokernel/k_thread.c **** 	return(ret);
+ 157:../../picokernel/k_thread.c **** }
+ 201              		.loc 1 157 0
+ 202 0010 2046     		mov	r0, r4
+ 203 0012 F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 204              	.LVL18:
+ 205              	.L35:
+  92:../../picokernel/k_thread.c **** 		ret = k_status_invalid_param;
+ 206              		.loc 1 92 0
+ 207 0014 002D     		cmp	r5, #0
+ 208 0016 3DD0     		beq	.L28
+  97:../../picokernel/k_thread.c **** 		ret = k_status_invalid_param;
+ 209              		.loc 1 97 0
+ 210 0018 002C     		cmp	r4, #0
+ 211 001a 3DD0     		beq	.L29
+ 103:../../picokernel/k_thread.c **** 		/* cannot re-create the current running task */
+ 212              		.loc 1 103 0
+ 213 001c 214B     		ldr	r3, .L39
+ 214 001e 1B68     		ldr	r3, [r3]
+ 215 0020 9C42     		cmp	r4, r3
+ 216 0022 3BD0     		beq	.L30
+ 114:../../picokernel/k_thread.c **** 		ret = k_status_invalid_param;
+ 217              		.loc 1 114 0
+ 218 0024 A37B     		ldrb	r3, [r4, #14]	@ zero_extendqisi2
+ 219 0026 1F2B     		cmp	r3, #31
+ 220 0028 01D9     		bls	.L36
+ 115:../../picokernel/k_thread.c **** 		goto cleanup;
+ 221              		.loc 1 115 0
+ 222 002a 0224     		movs	r4, #2
+ 223              	.LVL19:
+ 224 002c F0E7     		b	.L22
+ 225              	.LVL20:
+ 226              	.L36:
+ 120:../../picokernel/k_thread.c **** 		ret = k_status_invalid_param;
+ 227              		.loc 1 120 0
+ 228 002e 2369     		ldr	r3, [r4, #16]
+ 229 0030 3F2B     		cmp	r3, #63
+ 230 0032 01D8     		bhi	.L37
+ 121:../../picokernel/k_thread.c **** 		goto cleanup;
+ 231              		.loc 1 121 0
+ARM GAS  /tmp/ccXrLhQk.s 			page 8
+
+
+ 232 0034 0224     		movs	r4, #2
+ 233              	.LVL21:
+ 234 0036 EBE7     		b	.L22
+ 235              	.LVL22:
+ 236              	.L37:
+ 125:../../picokernel/k_thread.c **** 		ret = k_status_invalid_param;
+ 237              		.loc 1 125 0
+ 238 0038 6368     		ldr	r3, [r4, #4]
+ 239 003a 8BB3     		cbz	r3, .L33
+ 131:../../picokernel/k_thread.c **** 
+ 240              		.loc 1 131 0
+ 241 003c FFF7FEFF 		bl	port_irq_lock
+ 242              	.LVL23:
+ 243 0040 0746     		mov	r7, r0
+ 244              	.LVL24:
+ 133:../../picokernel/k_thread.c **** 	tcb->thread_wait = 0;
+ 245              		.loc 1 133 0
+ 246 0042 0023     		movs	r3, #0
+ 247 0044 A361     		str	r3, [r4, #24]
+ 134:../../picokernel/k_thread.c **** 	tcb->timer_wait = 0;
+ 248              		.loc 1 134 0
+ 249 0046 A381     		strh	r3, [r4, #12]	@ movhi
+ 135:../../picokernel/k_thread.c **** 	tcb->created = true;
+ 250              		.loc 1 135 0
+ 251 0048 2362     		str	r3, [r4, #32]
+ 136:../../picokernel/k_thread.c **** 	sys_dlist_init(&tcb->thr_link);
+ 252              		.loc 1 136 0
+ 253 004a 0123     		movs	r3, #1
+ 254 004c E373     		strb	r3, [r4, #15]
+ 137:../../picokernel/k_thread.c **** 
+ 255              		.loc 1 137 0
+ 256 004e 04F12403 		add	r3, r4, #36
+ 257              	.LVL25:
+ 258              	.LBB32:
+ 259              	.LBB33:
+ 260              		.file 2 "../../../uLipeRtosPico/picokernel/inc/k_list.h"
+   1:../../../uLipeRtosPico/picokernel/inc/k_list.h **** /**
+   2:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * 							ULIPE RTOS PICO
+   3:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+   4:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *  @file k_list.h
+   5:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+   6:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *  @brief inline list implementantion core header file
+   7:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+   8:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+   9:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  */
+  10:../../../uLipeRtosPico/picokernel/inc/k_list.h **** #ifndef __K_LIST_H
+  11:../../../uLipeRtosPico/picokernel/inc/k_list.h **** #define __K_LIST_H
+  12:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+  13:../../../uLipeRtosPico/picokernel/inc/k_list.h **** #include <stddef.h>
+  14:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+  15:../../../uLipeRtosPico/picokernel/inc/k_list.h **** /*
+  16:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * Copyright (c) 2013-2015 Wind River Systems, Inc.
+  17:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+  18:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * SPDX-License-Identifier: Apache-2.0
+  19:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  */
+  20:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+  21:../../../uLipeRtosPico/picokernel/inc/k_list.h **** /**
+ARM GAS  /tmp/ccXrLhQk.s 			page 9
+
+
+  22:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @file
+  23:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @brief Doubly-linked list inline implementation
+  24:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+  25:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * Doubly-linked list implementation.
+  26:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+  27:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * The lists are expected to be initialized such that both the head and tail
+  28:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * pointers point to the list itself.  Initializing the lists in such a fashion
+  29:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * simplifies the adding and removing of nodes to/from the list.
+  30:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  */
+  31:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+  32:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+  33:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+  34:../../../uLipeRtosPico/picokernel/inc/k_list.h **** /* classical container of to resolve list elements insert and remotion */
+  35:../../../uLipeRtosPico/picokernel/inc/k_list.h **** #define CONTAINER_OF(ptr, type, field) ((type *)(((char *)(ptr)) - offsetof(type, field)))
+  36:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+  37:../../../uLipeRtosPico/picokernel/inc/k_list.h **** struct _dnode {
+  38:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	union {
+  39:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 		struct _dnode *head; /* ptr to head of list (sys_dlist_t) */
+  40:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 		struct _dnode *next; /* ptr to next node    (sys_dnode_t) */
+  41:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	};
+  42:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	union {
+  43:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 		struct _dnode *tail; /* ptr to tail of list (sys_dlist_t) */
+  44:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 		struct _dnode *prev; /* ptr to previous node (sys_dnode_t) */
+  45:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	};
+  46:../../../uLipeRtosPico/picokernel/inc/k_list.h **** };
+  47:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+  48:../../../uLipeRtosPico/picokernel/inc/k_list.h **** typedef struct _dnode sys_dlist_t;
+  49:../../../uLipeRtosPico/picokernel/inc/k_list.h **** typedef struct _dnode sys_dnode_t;
+  50:../../../uLipeRtosPico/picokernel/inc/k_list.h **** typedef struct _dnode k_list_t;
+  51:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+  52:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+  53:../../../uLipeRtosPico/picokernel/inc/k_list.h **** /**
+  54:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @brief Provide the primitive to iterate on a list
+  55:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * Note: the loop is unsafe and thus __dn should not be removed
+  56:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+  57:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * User _MUST_ add the loop statement curly braces enclosing its own code:
+  58:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+  59:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *     SYS_DLIST_FOR_EACH_NODE(l, n) {
+  60:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *         <user code>
+  61:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *     }
+  62:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+  63:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param __dl A pointer on a sys_dlist_t to iterate on
+  64:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param __dn A sys_dnode_t pointer to peek each node of the list
+  65:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  */
+  66:../../../uLipeRtosPico/picokernel/inc/k_list.h **** #define SYS_DLIST_FOR_EACH_NODE(__dl, __dn)				\
+  67:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	for (__dn = sys_dlist_peek_head(__dl); __dn;			\
+  68:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	     __dn = sys_dlist_peek_next(__dl, __dn))
+  69:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+  70:../../../uLipeRtosPico/picokernel/inc/k_list.h **** /**
+  71:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @brief Provide the primitive to iterate on a list, from a node in the list
+  72:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * Note: the loop is unsafe and thus __dn should not be removed
+  73:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+  74:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * User _MUST_ add the loop statement curly braces enclosing its own code:
+  75:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+  76:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *     SYS_DLIST_ITERATE_FROM_NODE(l, n) {
+  77:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *         <user code>
+  78:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *     }
+ARM GAS  /tmp/ccXrLhQk.s 			page 10
+
+
+  79:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+  80:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * Like SYS_DLIST_FOR_EACH_NODE(), but __dn already contains a node in the list
+  81:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * where to start searching for the next entry from. If NULL, it starts from
+  82:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * the head.
+  83:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+  84:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param __dl A pointer on a sys_dlist_t to iterate on
+  85:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param __dn A sys_dnode_t pointer to peek each node of the list;
+  86:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *             it contains the starting node, or NULL to start from the head
+  87:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  */
+  88:../../../uLipeRtosPico/picokernel/inc/k_list.h **** #define SYS_DLIST_ITERATE_FROM_NODE(__dl, __dn) \
+  89:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	for (__dn = __dn ? sys_dlist_peek_next_no_check(__dl, __dn) \
+  90:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 			 : sys_dlist_peek_head(__dl); \
+  91:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	     __dn; \
+  92:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	     __dn = sys_dlist_peek_next(__dl, __dn))
+  93:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+  94:../../../uLipeRtosPico/picokernel/inc/k_list.h **** /**
+  95:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @brief Provide the primitive to safely iterate on a list
+  96:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * Note: __dn can be removed, it will not break the loop.
+  97:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+  98:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * User _MUST_ add the loop statement curly braces enclosing its own code:
+  99:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+ 100:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *     SYS_DLIST_FOR_EACH_NODE_SAFE(l, n, s) {
+ 101:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *         <user code>
+ 102:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *     }
+ 103:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+ 104:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param __dl A pointer on a sys_dlist_t to iterate on
+ 105:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param __dn A sys_dnode_t pointer to peek each node of the list
+ 106:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param __dns A sys_dnode_t pointer for the loop to run safely
+ 107:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  */
+ 108:../../../uLipeRtosPico/picokernel/inc/k_list.h **** #define SYS_DLIST_FOR_EACH_NODE_SAFE(__dl, __dn, __dns)			\
+ 109:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	for (__dn = sys_dlist_peek_head(__dl),				\
+ 110:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 		     __dns = sys_dlist_peek_next(__dl, __dn);  		\
+ 111:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	     __dn; __dn = __dns,					\
+ 112:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 		     __dns = sys_dlist_peek_next(__dl, __dn))
+ 113:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+ 114:../../../uLipeRtosPico/picokernel/inc/k_list.h **** /*
+ 115:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @brief Provide the primitive to resolve the container of a list node
+ 116:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * Note: it is safe to use with NULL pointer nodes
+ 117:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+ 118:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param __dn A pointer on a sys_dnode_t to get its container
+ 119:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param __cn Container struct type pointer
+ 120:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param __n The field name of sys_dnode_t within the container struct
+ 121:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  */
+ 122:../../../uLipeRtosPico/picokernel/inc/k_list.h **** #define SYS_DLIST_CONTAINER(__dn, __cn, __n) \
+ 123:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	(__dn ? CONTAINER_OF(__dn, __typeof__(*__cn), __n) : NULL)
+ 124:../../../uLipeRtosPico/picokernel/inc/k_list.h **** /*
+ 125:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @brief Provide the primitive to peek container of the list head
+ 126:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+ 127:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param __dl A pointer on a sys_dlist_t to peek
+ 128:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param __cn Container struct type pointer
+ 129:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param __n The field name of sys_dnode_t within the container struct
+ 130:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  */
+ 131:../../../uLipeRtosPico/picokernel/inc/k_list.h **** #define SYS_DLIST_PEEK_HEAD_CONTAINER(__dl, __cn, __n) \
+ 132:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	SYS_DLIST_CONTAINER(sys_dlist_peek_head(__dl), __cn, __n)
+ 133:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+ 134:../../../uLipeRtosPico/picokernel/inc/k_list.h **** /*
+ 135:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @brief Provide the primitive to peek the next container
+ARM GAS  /tmp/ccXrLhQk.s 			page 11
+
+
+ 136:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+ 137:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param __dl A pointer on a sys_dlist_t to peek
+ 138:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param __cn Container struct type pointer
+ 139:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param __n The field name of sys_dnode_t within the container struct
+ 140:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  */
+ 141:../../../uLipeRtosPico/picokernel/inc/k_list.h **** #define SYS_DLIST_PEEK_NEXT_CONTAINER(__dl, __cn, __n) \
+ 142:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	((__cn) ? SYS_DLIST_CONTAINER(sys_dlist_peek_next(__dl, &(__cn->__n)), \
+ 143:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 				      __cn, __n) : NULL)
+ 144:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+ 145:../../../uLipeRtosPico/picokernel/inc/k_list.h **** /**
+ 146:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @brief Provide the primitive to iterate on a list under a container
+ 147:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * Note: the loop is unsafe and thus __cn should not be detached
+ 148:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+ 149:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * User _MUST_ add the loop statement curly braces enclosing its own code:
+ 150:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+ 151:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *     SYS_DLIST_FOR_EACH_CONTAINER(l, c, n) {
+ 152:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *         <user code>
+ 153:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *     }
+ 154:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+ 155:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param __dl A pointer on a sys_dlist_t to iterate on
+ 156:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param __cn A pointer to peek each entry of the list
+ 157:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param __n The field name of sys_dnode_t within the container struct
+ 158:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  */
+ 159:../../../uLipeRtosPico/picokernel/inc/k_list.h **** #define SYS_DLIST_FOR_EACH_CONTAINER(__dl, __cn, __n)			\
+ 160:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	for (__cn = SYS_DLIST_PEEK_HEAD_CONTAINER(__dl, __cn, __n); __cn; \
+ 161:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	     __cn = SYS_DLIST_PEEK_NEXT_CONTAINER(__dl, __cn, __n))
+ 162:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+ 163:../../../uLipeRtosPico/picokernel/inc/k_list.h **** /**
+ 164:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @brief Provide the primitive to safely iterate on a list under a container
+ 165:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * Note: __cn can be detached, it will not break the loop.
+ 166:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+ 167:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * User _MUST_ add the loop statement curly braces enclosing its own code:
+ 168:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+ 169:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *     SYS_DLIST_FOR_EACH_CONTAINER_SAFE(l, c, cn, n) {
+ 170:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *         <user code>
+ 171:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *     }
+ 172:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+ 173:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param __dl A pointer on a sys_dlist_t to iterate on
+ 174:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param __cn A pointer to peek each entry of the list
+ 175:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param __cns A pointer for the loop to run safely
+ 176:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param __n The field name of sys_dnode_t within the container struct
+ 177:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  */
+ 178:../../../uLipeRtosPico/picokernel/inc/k_list.h **** #define SYS_DLIST_FOR_EACH_CONTAINER_SAFE(__dl, __cn, __cns, __n)	\
+ 179:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	for (__cn = SYS_DLIST_PEEK_HEAD_CONTAINER(__dl, __cn, __n),	\
+ 180:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	     __cns = SYS_DLIST_PEEK_NEXT_CONTAINER(__dl, __cn, __n); __cn; \
+ 181:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	     __cn = __cns,						\
+ 182:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	     __cns = SYS_DLIST_PEEK_NEXT_CONTAINER(__dl, __cn, __n))
+ 183:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+ 184:../../../uLipeRtosPico/picokernel/inc/k_list.h **** /**
+ 185:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @brief initialize list
+ 186:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+ 187:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @param list the doubly-linked list
+ 188:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  *
+ 189:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  * @return N/A
+ 190:../../../uLipeRtosPico/picokernel/inc/k_list.h ****  */
+ 191:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 
+ 192:../../../uLipeRtosPico/picokernel/inc/k_list.h **** static inline void sys_dlist_init(sys_dlist_t *list)
+ARM GAS  /tmp/ccXrLhQk.s 			page 12
+
+
+ 193:../../../uLipeRtosPico/picokernel/inc/k_list.h **** {
+ 194:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	list->head = (sys_dnode_t *)list;
+ 261              		.loc 2 194 0
+ 262 0052 6362     		str	r3, [r4, #36]
+ 195:../../../uLipeRtosPico/picokernel/inc/k_list.h **** 	list->tail = (sys_dnode_t *)list;
+ 263              		.loc 2 195 0
+ 264 0054 A362     		str	r3, [r4, #40]
+ 265              	.LVL26:
+ 266              	.LBE33:
+ 267              	.LBE32:
+ 140:../../picokernel/k_thread.c **** 	ULIPE_ASSERT(tcb->stack_top != NULL);
+ 268              		.loc 1 140 0
+ 269 0056 6368     		ldr	r3, [r4, #4]
+ 270 0058 2069     		ldr	r0, [r4, #16]
+ 271              	.LVL27:
+ 272 005a 3246     		mov	r2, r6
+ 273 005c 2946     		mov	r1, r5
+ 274 005e 03EB8000 		add	r0, r3, r0, lsl #2
+ 275 0062 FFF7FEFF 		bl	port_create_stack_frame
+ 276              	.LVL28:
+ 277 0066 2060     		str	r0, [r4]
+ 278              	.LVL29:
+ 279              	.LBB34:
+ 280              	.LBB35:
+ 281              		.file 3 "../../../uLipeRtosPico/ulipe_rtos_pico.h"
+   1:../../../uLipeRtosPico/ulipe_rtos_pico.h **** /**
+   2:../../../uLipeRtosPico/ulipe_rtos_pico.h ****  * 							ULIPE RTOS PICO
+   3:../../../uLipeRtosPico/ulipe_rtos_pico.h ****  *
+   4:../../../uLipeRtosPico/ulipe_rtos_pico.h ****  *  @file ulipe_rtos_pico.h
+   5:../../../uLipeRtosPico/ulipe_rtos_pico.h ****  *
+   6:../../../uLipeRtosPico/ulipe_rtos_pico.h ****  *  @brief this file is treated as a master file
+   7:../../../uLipeRtosPico/ulipe_rtos_pico.h ****  *
+   8:../../../uLipeRtosPico/ulipe_rtos_pico.h ****  *
+   9:../../../uLipeRtosPico/ulipe_rtos_pico.h ****  */
+  10:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #ifndef __ULIPE_RTOS_PICO_H
+  11:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #define __ULIPE_RTOS_PICO_H
+  12:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  13:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  14:../../../uLipeRtosPico/ulipe_rtos_pico.h **** /* include all the kernel header files actig as a glue module */
+  15:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #include <stdint.h>
+  16:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #include <stdbool.h>
+  17:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #include <stddef.h>
+  18:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #include <string.h>
+  19:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  20:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #include "picokernel/inc/k_list.h"
+  21:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #include "ulipe_rtos_kconfig.h"
+  22:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  23:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #ifndef __ULIPE_RTOS_KCONFIG_H
+  24:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	#error "No config file found, loading default setings"
+  25:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #endif
+  26:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  27:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  28:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  29:../../../uLipeRtosPico/ulipe_rtos_pico.h **** /* ulipe rtos pico status codes */
+  30:../../../uLipeRtosPico/ulipe_rtos_pico.h **** typedef enum {
+  31:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	/* general status */
+  32:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_status_ok = 0,
+ARM GAS  /tmp/ccXrLhQk.s 			page 13
+
+
+  33:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_status_error,
+  34:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_status_invalid_param,
+  35:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_status_sched_locked,
+  36:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_status_illegal_from_isr,
+  37:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  38:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	/* threading status */
+  39:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_thread_rdy,
+  40:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_thread_del,
+  41:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_thread_blk,
+  42:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_thread_susp,
+  43:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  44:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	/* semaphore status */
+  45:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_sema_not_available,
+  46:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_sema_illegal_use_celling,
+  47:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_mutex_already_available,
+  48:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  49:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	/* queue status */
+  50:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_queue_empty,
+  51:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_queue_full,
+  52:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  53:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	/* wqueue status */
+  54:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_wqueue_already_exists,
+  55:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  56:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	/* timer status */
+  57:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_timer_expired,
+  58:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_timer_running,
+  59:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_timer_stopped,
+  60:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_timer_busy,
+  61:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  62:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  63:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	/* kernel configuration */
+  64:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	k_not_available_with_current_config,
+  65:../../../uLipeRtosPico/ulipe_rtos_pico.h **** }k_status_t;
+  66:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  67:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  68:../../../uLipeRtosPico/ulipe_rtos_pico.h **** /**
+  69:../../../uLipeRtosPico/ulipe_rtos_pico.h ****  *  @fn template()
+  70:../../../uLipeRtosPico/ulipe_rtos_pico.h ****  *  @brief
+  71:../../../uLipeRtosPico/ulipe_rtos_pico.h ****  *  @param
+  72:../../../uLipeRtosPico/ulipe_rtos_pico.h ****  *  @return
+  73:../../../uLipeRtosPico/ulipe_rtos_pico.h ****  */
+  74:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  75:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  76:../../../uLipeRtosPico/ulipe_rtos_pico.h **** /* resolves the arch dependend memory size */
+  77:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #if	(K_ARCH_MEM_WIDTH_BYTE > 0)
+  78:../../../uLipeRtosPico/ulipe_rtos_pico.h **** typedef uint8_t archtype_t;
+  79:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #elif(K_ARCH_MEM_WIDTH_HALFWORD > 0)
+  80:../../../uLipeRtosPico/ulipe_rtos_pico.h **** typedef uint16_t archtype_t;
+  81:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #elif (K_ARCH_MEM_WIDTH_WORD > 0)
+  82:../../../uLipeRtosPico/ulipe_rtos_pico.h **** typedef uint32_t archtype_t;
+  83:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #elif (K_ARCH_MEM_WIDTH_DWORD > 0)
+  84:../../../uLipeRtosPico/ulipe_rtos_pico.h **** typedef uint64_t archtype_t;
+  85:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #else
+  86:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #endif
+  87:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  88:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  89:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #if(K_ENABLE_DYNAMIC_ALLOCATOR > 0)
+ARM GAS  /tmp/ccXrLhQk.s 			page 14
+
+
+  90:../../../uLipeRtosPico/ulipe_rtos_pico.h **** //#error "FATAL: Dynamic allocator is under development, please use memory pool instead!"
+  91:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #ifndef K_HEAP_SIZE
+  92:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #define K_HEAP_SIZE 1024
+  93:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #endif
+  94:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #endif
+  95:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+  96:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #if(K_ENABLE_WORKQUEUES > 0)
+  97:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #ifndef K_WQUEUES_STACK_SIZE
+  98:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #define K_WQUEUES_STACK_SIZE 128
+  99:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #endif
+ 100:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #endif
+ 101:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+ 102:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #if(K_ENABLE_TICKLESS_IDLE > 0)
+ 103:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #ifndef K_MAX_LOW_POWER_PERIOD
+ 104:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #define K_MAX_LOW_POWER_PERIOD	100
+ 105:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #endif
+ 106:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+ 107:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #define K_HW_TIMER_COUNTS_PER_TICK (K_MACHINE_CLOCK / K_TICKER_RATE)
+ 108:../../../uLipeRtosPico/ulipe_rtos_pico.h **** extern void user_lowpower_entry(void *arg);
+ 109:../../../uLipeRtosPico/ulipe_rtos_pico.h **** extern void user_lowpower_exit(void *arg);
+ 110:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #endif
+ 111:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+ 112:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #include "include/picokernel/k_thread.h"
+ 113:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #include "include/picokernel/k_port.h"
+ 114:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #include "include/picokernel/k_kernel.h"
+ 115:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #include "include/picokernel/k_message.h"
+ 116:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #include "include/picokernel/k_raw_timer.h"
+ 117:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #include "include/picokernel/k_sema.h"
+ 118:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #include "include/picokernel/k_mutex.h"
+ 119:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #include "include/picokernel/k_memp.h"
+ 120:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #include "include/picokernel/k_mem_dyn.h"
+ 121:../../../uLipeRtosPico/ulipe_rtos_pico.h **** #include "include/picokernel/k_wqueue.h"
+ 122:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+ 123:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+ 124:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 
+ 125:../../../uLipeRtosPico/ulipe_rtos_pico.h **** /** assertion mechanism */
+ 126:../../../uLipeRtosPico/ulipe_rtos_pico.h **** static inline void ulipe_assert(bool x)
+ 127:../../../uLipeRtosPico/ulipe_rtos_pico.h **** {
+ 128:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 	if(!x){
+ 282              		.loc 3 128 0
+ 283 0068 58B1     		cbz	r0, .L38
+ 284              	.LVL30:
+ 285              	.LBE35:
+ 286              	.LBE34:
+ 142:../../picokernel/k_thread.c **** 
+ 287              		.loc 1 142 0
+ 288 006a 6368     		ldr	r3, [r4, #4]
+ 289 006c C31A     		subs	r3, r0, r3
+ 290 006e 9B10     		asrs	r3, r3, #2
+ 291 0070 A360     		str	r3, [r4, #8]
+ 146:../../picokernel/k_thread.c **** 	ULIPE_ASSERT(ret == k_status_ok);
+ 292              		.loc 1 146 0
+ 293 0072 2046     		mov	r0, r4
+ 294 0074 FFF7FEFF 		bl	k_make_ready
+ 295              	.LVL31:
+ 296              	.LBB37:
+ 297              	.LBB38:
+ARM GAS  /tmp/ccXrLhQk.s 			page 15
+
+
+ 298              		.loc 3 128 0
+ 299 0078 0446     		mov	r4, r0
+ 300              	.LVL32:
+ 301 007a 28B1     		cbz	r0, .L25
+ 129:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 		port_set_break();
+ 302              		.loc 3 129 0
+ 303 007c FFF7FEFF 		bl	port_set_break
+ 304              	.LVL33:
+ 305              	.L26:
+ 306 0080 FEE7     		b	.L26
+ 307              	.LVL34:
+ 308              	.L38:
+ 309              	.LBE38:
+ 310              	.LBE37:
+ 311              	.LBB39:
+ 312              	.LBB36:
+ 313 0082 FFF7FEFF 		bl	port_set_break
+ 314              	.LVL35:
+ 315              	.L24:
+ 316 0086 FEE7     		b	.L24
+ 317              	.LVL36:
+ 318              	.L25:
+ 319              	.LBE36:
+ 320              	.LBE39:
+ 151:../../picokernel/k_thread.c **** 	k_sched_and_swap();
+ 321              		.loc 1 151 0
+ 322 0088 3846     		mov	r0, r7
+ 323              	.LVL37:
+ 324 008a FFF7FEFF 		bl	port_irq_unlock
+ 325              	.LVL38:
+ 152:../../picokernel/k_thread.c **** 	ret = k_status_ok;
+ 326              		.loc 1 152 0
+ 327 008e FFF7FEFF 		bl	k_sched_and_swap
+ 328              	.LVL39:
+ 329 0092 BDE7     		b	.L22
+ 330              	.LVL40:
+ 331              	.L28:
+  93:../../picokernel/k_thread.c **** 		goto cleanup;
+ 332              		.loc 1 93 0
+ 333 0094 0224     		movs	r4, #2
+ 334              	.LVL41:
+ 335 0096 BBE7     		b	.L22
+ 336              	.LVL42:
+ 337              	.L29:
+  98:../../picokernel/k_thread.c **** 		goto cleanup;
+ 338              		.loc 1 98 0
+ 339 0098 0224     		movs	r4, #2
+ 340              	.LVL43:
+ 341 009a B9E7     		b	.L22
+ 342              	.LVL44:
+ 343              	.L30:
+ 105:../../picokernel/k_thread.c **** 		goto cleanup;
+ 344              		.loc 1 105 0
+ 345 009c 0224     		movs	r4, #2
+ 346              	.LVL45:
+ 347 009e B7E7     		b	.L22
+ 348              	.LVL46:
+ARM GAS  /tmp/ccXrLhQk.s 			page 16
+
+
+ 349              	.L33:
+ 126:../../picokernel/k_thread.c **** 		goto cleanup;
+ 350              		.loc 1 126 0
+ 351 00a0 0224     		movs	r4, #2
+ 352              	.LVL47:
+ 353 00a2 B5E7     		b	.L22
+ 354              	.L40:
+ 355              		.align	2
+ 356              	.L39:
+ 357 00a4 00000000 		.word	k_current_task
+ 358              		.cfi_endproc
+ 359              	.LFE22:
+ 361              		.section	.text.thread_abort,"ax",%progbits
+ 362              		.align	1
+ 363              		.global	thread_abort
+ 364              		.syntax unified
+ 365              		.thumb
+ 366              		.thumb_func
+ 367              		.fpu fpv4-sp-d16
+ 369              	thread_abort:
+ 370              	.LFB23:
+ 158:../../picokernel/k_thread.c **** 
+ 159:../../picokernel/k_thread.c **** k_status_t thread_abort(tcb_t *t)
+ 160:../../picokernel/k_thread.c **** {
+ 371              		.loc 1 160 0
+ 372              		.cfi_startproc
+ 373              		@ args = 0, pretend = 0, frame = 0
+ 374              		@ frame_needed = 0, uses_anonymous_args = 0
+ 375              	.LVL48:
+ 376 0000 70B5     		push	{r4, r5, r6, lr}
+ 377              	.LCFI6:
+ 378              		.cfi_def_cfa_offset 16
+ 379              		.cfi_offset 4, -16
+ 380              		.cfi_offset 5, -12
+ 381              		.cfi_offset 6, -8
+ 382              		.cfi_offset 14, -4
+ 383 0002 0446     		mov	r4, r0
+ 384              	.LVL49:
+ 161:../../picokernel/k_thread.c **** 	k_status_t ret = k_status_ok;
+ 162:../../picokernel/k_thread.c **** 
+ 163:../../picokernel/k_thread.c **** 	/* disable scheduling during task abortion */
+ 164:../../picokernel/k_thread.c **** 	archtype_t key = port_irq_lock();
+ 385              		.loc 1 164 0
+ 386 0004 FFF7FEFF 		bl	port_irq_lock
+ 387              	.LVL50:
+ 388 0008 0646     		mov	r6, r0
+ 389              	.LVL51:
+ 165:../../picokernel/k_thread.c **** 
+ 166:../../picokernel/k_thread.c **** 	if(t == NULL) {
+ 390              		.loc 1 166 0
+ 391 000a 14B9     		cbnz	r4, .L42
+ 167:../../picokernel/k_thread.c **** 		/* null thread can be the current */
+ 168:../../picokernel/k_thread.c **** 		t = k_current_task;
+ 392              		.loc 1 168 0
+ 393 000c 0A4B     		ldr	r3, .L48
+ 394 000e 1C68     		ldr	r4, [r3]
+ 395              	.LVL52:
+ARM GAS  /tmp/ccXrLhQk.s 			page 17
+
+
+ 396              	.LBB40:
+ 397              	.LBB41:
+ 128:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 		port_set_break();
+ 398              		.loc 3 128 0
+ 399 0010 34B1     		cbz	r4, .L47
+ 400              	.LVL53:
+ 401              	.L42:
+ 402              	.LBE41:
+ 403              	.LBE40:
+ 169:../../picokernel/k_thread.c **** 		ULIPE_ASSERT(t!= NULL);
+ 170:../../picokernel/k_thread.c **** 	}
+ 171:../../picokernel/k_thread.c **** 
+ 172:../../picokernel/k_thread.c **** 
+ 173:../../picokernel/k_thread.c **** 	/* this is a ready task so, remove it from ready list */
+ 174:../../picokernel/k_thread.c **** 	ret=k_make_not_ready(t);
+ 404              		.loc 1 174 0
+ 405 0012 2046     		mov	r0, r4
+ 406              	.LVL54:
+ 407 0014 FFF7FEFF 		bl	k_make_not_ready
+ 408              	.LVL55:
+ 409              	.LBB43:
+ 410              	.LBB44:
+ 128:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 		port_set_break();
+ 411              		.loc 3 128 0
+ 412 0018 28B1     		cbz	r0, .L44
+ 413              		.loc 3 129 0
+ 414 001a FFF7FEFF 		bl	port_set_break
+ 415              	.LVL56:
+ 416              	.L45:
+ 417 001e FEE7     		b	.L45
+ 418              	.LVL57:
+ 419              	.L47:
+ 420              	.LBE44:
+ 421              	.LBE43:
+ 422              	.LBB45:
+ 423              	.LBB42:
+ 424 0020 FFF7FEFF 		bl	port_set_break
+ 425              	.LVL58:
+ 426              	.L43:
+ 427 0024 FEE7     		b	.L43
+ 428              	.LVL59:
+ 429              	.L44:
+ 430              	.LBE42:
+ 431              	.LBE45:
+ 175:../../picokernel/k_thread.c **** 	ULIPE_ASSERT(ret == k_status_ok);
+ 176:../../picokernel/k_thread.c **** 
+ 177:../../picokernel/k_thread.c **** 	/* de init the thread  but keeps some parameters
+ 178:../../picokernel/k_thread.c **** 	 * allowing user to re-create it if necessary
+ 179:../../picokernel/k_thread.c **** 	 */
+ 180:../../picokernel/k_thread.c **** 	t->created = false;
+ 432              		.loc 1 180 0
+ 433 0026 0025     		movs	r5, #0
+ 434 0028 E573     		strb	r5, [r4, #15]
+ 181:../../picokernel/k_thread.c **** 
+ 182:../../picokernel/k_thread.c **** 
+ 183:../../picokernel/k_thread.c **** 	/* perform reesched to find next task to run */
+ 184:../../picokernel/k_thread.c **** 	port_irq_unlock(key);
+ARM GAS  /tmp/ccXrLhQk.s 			page 18
+
+
+ 435              		.loc 1 184 0
+ 436 002a 3046     		mov	r0, r6
+ 437              	.LVL60:
+ 438 002c FFF7FEFF 		bl	port_irq_unlock
+ 439              	.LVL61:
+ 185:../../picokernel/k_thread.c **** 	k_sched_and_swap();
+ 440              		.loc 1 185 0
+ 441 0030 FFF7FEFF 		bl	k_sched_and_swap
+ 442              	.LVL62:
+ 186:../../picokernel/k_thread.c **** 	ret = k_status_ok;
+ 187:../../picokernel/k_thread.c **** 
+ 188:../../picokernel/k_thread.c **** 	return(ret);
+ 189:../../picokernel/k_thread.c **** }
+ 443              		.loc 1 189 0
+ 444 0034 2846     		mov	r0, r5
+ 445 0036 70BD     		pop	{r4, r5, r6, pc}
+ 446              	.LVL63:
+ 447              	.L49:
+ 448              		.align	2
+ 449              	.L48:
+ 450 0038 00000000 		.word	k_current_task
+ 451              		.cfi_endproc
+ 452              	.LFE23:
+ 454              		.section	.text.thread_suspend,"ax",%progbits
+ 455              		.align	1
+ 456              		.global	thread_suspend
+ 457              		.syntax unified
+ 458              		.thumb
+ 459              		.thumb_func
+ 460              		.fpu fpv4-sp-d16
+ 462              	thread_suspend:
+ 463              	.LFB24:
+ 190:../../picokernel/k_thread.c **** 
+ 191:../../picokernel/k_thread.c **** k_status_t thread_suspend(tcb_t *t)
+ 192:../../picokernel/k_thread.c **** {
+ 464              		.loc 1 192 0
+ 465              		.cfi_startproc
+ 466              		@ args = 0, pretend = 0, frame = 0
+ 467              		@ frame_needed = 0, uses_anonymous_args = 0
+ 468              	.LVL64:
+ 469 0000 70B5     		push	{r4, r5, r6, lr}
+ 470              	.LCFI7:
+ 471              		.cfi_def_cfa_offset 16
+ 472              		.cfi_offset 4, -16
+ 473              		.cfi_offset 5, -12
+ 474              		.cfi_offset 6, -8
+ 475              		.cfi_offset 14, -4
+ 476 0002 0446     		mov	r4, r0
+ 477              	.LVL65:
+ 193:../../picokernel/k_thread.c **** 	k_status_t ret = k_status_ok;
+ 194:../../picokernel/k_thread.c **** 
+ 195:../../picokernel/k_thread.c **** 	if(port_from_isr()){
+ 478              		.loc 1 195 0
+ 479 0004 FFF7FEFF 		bl	port_from_isr
+ 480              	.LVL66:
+ 481 0008 10B1     		cbz	r0, .L59
+ 196:../../picokernel/k_thread.c **** 		/* suspend cannot be called from ISR */
+ARM GAS  /tmp/ccXrLhQk.s 			page 19
+
+
+ 197:../../picokernel/k_thread.c **** 		ret = k_status_illegal_from_isr;
+ 482              		.loc 1 197 0
+ 483 000a 0425     		movs	r5, #4
+ 484              	.LVL67:
+ 485              	.L51:
+ 198:../../picokernel/k_thread.c **** 		goto cleanup;
+ 199:../../picokernel/k_thread.c **** 	}
+ 200:../../picokernel/k_thread.c **** 
+ 201:../../picokernel/k_thread.c **** 	archtype_t key = port_irq_lock();
+ 202:../../picokernel/k_thread.c **** 
+ 203:../../picokernel/k_thread.c **** 	if(t == NULL) {
+ 204:../../picokernel/k_thread.c **** 		/* null thread can be the current */
+ 205:../../picokernel/k_thread.c **** 		t = k_current_task;
+ 206:../../picokernel/k_thread.c **** 		ULIPE_ASSERT(t!= NULL);
+ 207:../../picokernel/k_thread.c **** 	}
+ 208:../../picokernel/k_thread.c **** 
+ 209:../../picokernel/k_thread.c **** 
+ 210:../../picokernel/k_thread.c **** 	if(t->thread_wait & K_THR_SUSPENDED) {
+ 211:../../picokernel/k_thread.c **** 		/* thread is already suspended */
+ 212:../../picokernel/k_thread.c **** 		port_irq_unlock(key);
+ 213:../../picokernel/k_thread.c **** 		ret = k_thread_susp;
+ 214:../../picokernel/k_thread.c **** 		goto cleanup;
+ 215:../../picokernel/k_thread.c **** 	}
+ 216:../../picokernel/k_thread.c **** 
+ 217:../../picokernel/k_thread.c **** 
+ 218:../../picokernel/k_thread.c **** 	/* to suspend a thread, only remove it from ready list and
+ 219:../../picokernel/k_thread.c **** 	 * mark with suspended
+ 220:../../picokernel/k_thread.c **** 	 */
+ 221:../../picokernel/k_thread.c **** 	ret=k_make_not_ready(t);
+ 222:../../picokernel/k_thread.c **** 	ULIPE_ASSERT(ret == k_status_ok);
+ 223:../../picokernel/k_thread.c **** 
+ 224:../../picokernel/k_thread.c **** 	t->thread_wait |= K_THR_SUSPENDED;
+ 225:../../picokernel/k_thread.c **** 
+ 226:../../picokernel/k_thread.c **** 
+ 227:../../picokernel/k_thread.c **** 	/* perform reesched to find next task to run */
+ 228:../../picokernel/k_thread.c **** 	port_irq_unlock(key);
+ 229:../../picokernel/k_thread.c **** 	k_sched_and_swap();
+ 230:../../picokernel/k_thread.c **** 	ret = k_status_ok;
+ 231:../../picokernel/k_thread.c **** 
+ 232:../../picokernel/k_thread.c **** 
+ 233:../../picokernel/k_thread.c **** cleanup:
+ 234:../../picokernel/k_thread.c **** 	return(ret);
+ 235:../../picokernel/k_thread.c **** }
+ 486              		.loc 1 235 0
+ 487 000c 2846     		mov	r0, r5
+ 488 000e 70BD     		pop	{r4, r5, r6, pc}
+ 489              	.LVL68:
+ 490              	.L59:
+ 201:../../picokernel/k_thread.c **** 
+ 491              		.loc 1 201 0
+ 492 0010 FFF7FEFF 		bl	port_irq_lock
+ 493              	.LVL69:
+ 494 0014 0646     		mov	r6, r0
+ 495              	.LVL70:
+ 203:../../picokernel/k_thread.c **** 		/* null thread can be the current */
+ 496              		.loc 1 203 0
+ 497 0016 44B1     		cbz	r4, .L60
+ARM GAS  /tmp/ccXrLhQk.s 			page 20
+
+
+ 498              	.L52:
+ 210:../../picokernel/k_thread.c **** 		/* thread is already suspended */
+ 499              		.loc 1 210 0
+ 500 0018 A389     		ldrh	r3, [r4, #12]
+ 501 001a 13F0010F 		tst	r3, #1
+ 502 001e 0BD0     		beq	.L54
+ 212:../../picokernel/k_thread.c **** 		ret = k_thread_susp;
+ 503              		.loc 1 212 0
+ 504 0020 3046     		mov	r0, r6
+ 505              	.LVL71:
+ 506 0022 FFF7FEFF 		bl	port_irq_unlock
+ 507              	.LVL72:
+ 213:../../picokernel/k_thread.c **** 		goto cleanup;
+ 508              		.loc 1 213 0
+ 509 0026 0825     		movs	r5, #8
+ 214:../../picokernel/k_thread.c **** 	}
+ 510              		.loc 1 214 0
+ 511 0028 F0E7     		b	.L51
+ 512              	.LVL73:
+ 513              	.L60:
+ 205:../../picokernel/k_thread.c **** 		ULIPE_ASSERT(t!= NULL);
+ 514              		.loc 1 205 0
+ 515 002a 0C4B     		ldr	r3, .L61
+ 516 002c 1C68     		ldr	r4, [r3]
+ 517              	.LVL74:
+ 518              	.LBB46:
+ 519              	.LBB47:
+ 128:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 		port_set_break();
+ 520              		.loc 3 128 0
+ 521 002e 002C     		cmp	r4, #0
+ 522 0030 F2D1     		bne	.L52
+ 523              		.loc 3 129 0
+ 524 0032 FFF7FEFF 		bl	port_set_break
+ 525              	.LVL75:
+ 526              	.L53:
+ 527 0036 FEE7     		b	.L53
+ 528              	.LVL76:
+ 529              	.L54:
+ 530              	.LBE47:
+ 531              	.LBE46:
+ 221:../../picokernel/k_thread.c **** 	ULIPE_ASSERT(ret == k_status_ok);
+ 532              		.loc 1 221 0
+ 533 0038 2046     		mov	r0, r4
+ 534              	.LVL77:
+ 535 003a FFF7FEFF 		bl	k_make_not_ready
+ 536              	.LVL78:
+ 537              	.LBB48:
+ 538              	.LBB49:
+ 128:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 		port_set_break();
+ 539              		.loc 3 128 0
+ 540 003e 0546     		mov	r5, r0
+ 541 0040 10B1     		cbz	r0, .L55
+ 542              		.loc 3 129 0
+ 543 0042 FFF7FEFF 		bl	port_set_break
+ 544              	.LVL79:
+ 545              	.L56:
+ 546 0046 FEE7     		b	.L56
+ARM GAS  /tmp/ccXrLhQk.s 			page 21
+
+
+ 547              	.LVL80:
+ 548              	.L55:
+ 549              	.LBE49:
+ 550              	.LBE48:
+ 224:../../picokernel/k_thread.c **** 
+ 551              		.loc 1 224 0
+ 552 0048 A389     		ldrh	r3, [r4, #12]
+ 553 004a 43F00103 		orr	r3, r3, #1
+ 554 004e A381     		strh	r3, [r4, #12]	@ movhi
+ 228:../../picokernel/k_thread.c **** 	k_sched_and_swap();
+ 555              		.loc 1 228 0
+ 556 0050 3046     		mov	r0, r6
+ 557              	.LVL81:
+ 558 0052 FFF7FEFF 		bl	port_irq_unlock
+ 559              	.LVL82:
+ 229:../../picokernel/k_thread.c **** 	ret = k_status_ok;
+ 560              		.loc 1 229 0
+ 561 0056 FFF7FEFF 		bl	k_sched_and_swap
+ 562              	.LVL83:
+ 563 005a D7E7     		b	.L51
+ 564              	.L62:
+ 565              		.align	2
+ 566              	.L61:
+ 567 005c 00000000 		.word	k_current_task
+ 568              		.cfi_endproc
+ 569              	.LFE24:
+ 571              		.section	.text.thread_resume,"ax",%progbits
+ 572              		.align	1
+ 573              		.global	thread_resume
+ 574              		.syntax unified
+ 575              		.thumb
+ 576              		.thumb_func
+ 577              		.fpu fpv4-sp-d16
+ 579              	thread_resume:
+ 580              	.LFB25:
+ 236:../../picokernel/k_thread.c **** 
+ 237:../../picokernel/k_thread.c **** k_status_t thread_resume(tcb_t *t)
+ 238:../../picokernel/k_thread.c **** {
+ 581              		.loc 1 238 0
+ 582              		.cfi_startproc
+ 583              		@ args = 0, pretend = 0, frame = 0
+ 584              		@ frame_needed = 0, uses_anonymous_args = 0
+ 585              	.LVL84:
+ 586 0000 38B5     		push	{r3, r4, r5, lr}
+ 587              	.LCFI8:
+ 588              		.cfi_def_cfa_offset 16
+ 589              		.cfi_offset 3, -16
+ 590              		.cfi_offset 4, -12
+ 591              		.cfi_offset 5, -8
+ 592              		.cfi_offset 14, -4
+ 593              	.LVL85:
+ 239:../../picokernel/k_thread.c **** 	k_status_t ret = k_status_ok;
+ 240:../../picokernel/k_thread.c **** 
+ 241:../../picokernel/k_thread.c **** 	if(t == NULL) {
+ 594              		.loc 1 241 0
+ 595 0002 E0B1     		cbz	r0, .L67
+ 596 0004 0446     		mov	r4, r0
+ARM GAS  /tmp/ccXrLhQk.s 			page 22
+
+
+ 242:../../picokernel/k_thread.c **** 		ret = k_status_invalid_param;
+ 243:../../picokernel/k_thread.c **** 		goto cleanup;
+ 244:../../picokernel/k_thread.c **** 	}
+ 245:../../picokernel/k_thread.c **** 
+ 246:../../picokernel/k_thread.c **** 	if((t->thread_wait & K_THR_SUSPENDED) == 0) {
+ 597              		.loc 1 246 0
+ 598 0006 8389     		ldrh	r3, [r0, #12]
+ 599 0008 13F0010F 		tst	r3, #1
+ 600 000c 02D1     		bne	.L70
+ 247:../../picokernel/k_thread.c **** 		/* thread is not suspended */
+ 248:../../picokernel/k_thread.c **** 		ret = k_status_invalid_param;
+ 601              		.loc 1 248 0
+ 602 000e 0224     		movs	r4, #2
+ 603              	.LVL86:
+ 604              	.L64:
+ 249:../../picokernel/k_thread.c **** 		goto cleanup;
+ 250:../../picokernel/k_thread.c **** 	}
+ 251:../../picokernel/k_thread.c **** 
+ 252:../../picokernel/k_thread.c **** 
+ 253:../../picokernel/k_thread.c **** 	archtype_t key = port_irq_lock();
+ 254:../../picokernel/k_thread.c **** 	t->thread_wait &= ~(K_THR_SUSPENDED);
+ 255:../../picokernel/k_thread.c **** 
+ 256:../../picokernel/k_thread.c **** 	ret=k_make_ready(t);
+ 257:../../picokernel/k_thread.c **** 	ULIPE_ASSERT(ret == k_status_ok);
+ 258:../../picokernel/k_thread.c **** 
+ 259:../../picokernel/k_thread.c **** 	/* perform reesched to find next task to run */
+ 260:../../picokernel/k_thread.c **** 	port_irq_unlock(key);
+ 261:../../picokernel/k_thread.c **** 	k_sched_and_swap();
+ 262:../../picokernel/k_thread.c **** 	ret = k_status_ok;
+ 263:../../picokernel/k_thread.c **** 
+ 264:../../picokernel/k_thread.c **** cleanup:
+ 265:../../picokernel/k_thread.c **** 	return(ret);
+ 266:../../picokernel/k_thread.c **** }
+ 605              		.loc 1 266 0
+ 606 0010 2046     		mov	r0, r4
+ 607 0012 38BD     		pop	{r3, r4, r5, pc}
+ 608              	.LVL87:
+ 609              	.L70:
+ 253:../../picokernel/k_thread.c **** 	t->thread_wait &= ~(K_THR_SUSPENDED);
+ 610              		.loc 1 253 0
+ 611 0014 FFF7FEFF 		bl	port_irq_lock
+ 612              	.LVL88:
+ 613 0018 0546     		mov	r5, r0
+ 614              	.LVL89:
+ 254:../../picokernel/k_thread.c **** 
+ 615              		.loc 1 254 0
+ 616 001a A389     		ldrh	r3, [r4, #12]
+ 617 001c 23F00103 		bic	r3, r3, #1
+ 618 0020 A381     		strh	r3, [r4, #12]	@ movhi
+ 256:../../picokernel/k_thread.c **** 	ULIPE_ASSERT(ret == k_status_ok);
+ 619              		.loc 1 256 0
+ 620 0022 2046     		mov	r0, r4
+ 621              	.LVL90:
+ 622 0024 FFF7FEFF 		bl	k_make_ready
+ 623              	.LVL91:
+ 624              	.LBB50:
+ 625              	.LBB51:
+ARM GAS  /tmp/ccXrLhQk.s 			page 23
+
+
+ 128:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 		port_set_break();
+ 626              		.loc 3 128 0
+ 627 0028 0446     		mov	r4, r0
+ 628              	.LVL92:
+ 629 002a 10B1     		cbz	r0, .L65
+ 630              		.loc 3 129 0
+ 631 002c FFF7FEFF 		bl	port_set_break
+ 632              	.LVL93:
+ 633              	.L66:
+ 634 0030 FEE7     		b	.L66
+ 635              	.LVL94:
+ 636              	.L65:
+ 637              	.LBE51:
+ 638              	.LBE50:
+ 260:../../picokernel/k_thread.c **** 	k_sched_and_swap();
+ 639              		.loc 1 260 0
+ 640 0032 2846     		mov	r0, r5
+ 641              	.LVL95:
+ 642 0034 FFF7FEFF 		bl	port_irq_unlock
+ 643              	.LVL96:
+ 261:../../picokernel/k_thread.c **** 	ret = k_status_ok;
+ 644              		.loc 1 261 0
+ 645 0038 FFF7FEFF 		bl	k_sched_and_swap
+ 646              	.LVL97:
+ 647 003c E8E7     		b	.L64
+ 648              	.LVL98:
+ 649              	.L67:
+ 242:../../picokernel/k_thread.c **** 		goto cleanup;
+ 650              		.loc 1 242 0
+ 651 003e 0224     		movs	r4, #2
+ 652 0040 E6E7     		b	.L64
+ 653              		.cfi_endproc
+ 654              	.LFE25:
+ 656              		.section	.text.thread_wait_signals,"ax",%progbits
+ 657              		.align	1
+ 658              		.global	thread_wait_signals
+ 659              		.syntax unified
+ 660              		.thumb
+ 661              		.thumb_func
+ 662              		.fpu fpv4-sp-d16
+ 664              	thread_wait_signals:
+ 665              	.LFB26:
+ 267:../../picokernel/k_thread.c **** 
+ 268:../../picokernel/k_thread.c **** uint32_t thread_wait_signals(tcb_t *t, uint32_t signals, thread_signal_opt_t opt, k_status_t *err)
+ 269:../../picokernel/k_thread.c **** {
+ 666              		.loc 1 269 0
+ 667              		.cfi_startproc
+ 668              		@ args = 0, pretend = 0, frame = 0
+ 669              		@ frame_needed = 0, uses_anonymous_args = 0
+ 670              	.LVL99:
+ 671 0000 2DE9F843 		push	{r3, r4, r5, r6, r7, r8, r9, lr}
+ 672              	.LCFI9:
+ 673              		.cfi_def_cfa_offset 32
+ 674              		.cfi_offset 3, -32
+ 675              		.cfi_offset 4, -28
+ 676              		.cfi_offset 5, -24
+ 677              		.cfi_offset 6, -20
+ARM GAS  /tmp/ccXrLhQk.s 			page 24
+
+
+ 678              		.cfi_offset 7, -16
+ 679              		.cfi_offset 8, -12
+ 680              		.cfi_offset 9, -8
+ 681              		.cfi_offset 14, -4
+ 682 0004 0E46     		mov	r6, r1
+ 683 0006 9046     		mov	r8, r2
+ 684 0008 1D46     		mov	r5, r3
+ 685              	.LVL100:
+ 270:../../picokernel/k_thread.c **** 	uint32_t rcvd = 0xFFFFFFFF;
+ 271:../../picokernel/k_thread.c **** 	bool match = false;
+ 272:../../picokernel/k_thread.c **** 	k_status_t ret;
+ 273:../../picokernel/k_thread.c **** 
+ 274:../../picokernel/k_thread.c **** 
+ 275:../../picokernel/k_thread.c **** 	if(t == NULL) {
+ 686              		.loc 1 275 0
+ 687 000a 0446     		mov	r4, r0
+ 688 000c 50B1     		cbz	r0, .L88
+ 689              	.LVL101:
+ 690              	.L72:
+ 276:../../picokernel/k_thread.c **** 		/* null thread can be the current */
+ 277:../../picokernel/k_thread.c **** 		t = k_current_task;
+ 278:../../picokernel/k_thread.c **** 		ULIPE_ASSERT(t!= NULL);
+ 279:../../picokernel/k_thread.c **** 	}
+ 280:../../picokernel/k_thread.c **** 
+ 281:../../picokernel/k_thread.c **** 
+ 282:../../picokernel/k_thread.c **** 
+ 283:../../picokernel/k_thread.c **** 	if(port_from_isr()){
+ 691              		.loc 1 283 0
+ 692 000e FFF7FEFF 		bl	port_from_isr
+ 693              	.LVL102:
+ 694 0012 70B1     		cbz	r0, .L89
+ 284:../../picokernel/k_thread.c **** 		/* wait cannot be called from ISR */
+ 285:../../picokernel/k_thread.c **** 		ret = k_status_illegal_from_isr;
+ 695              		.loc 1 285 0
+ 696 0014 0427     		movs	r7, #4
+ 270:../../picokernel/k_thread.c **** 	bool match = false;
+ 697              		.loc 1 270 0
+ 698 0016 4FF0FF34 		mov	r4, #-1
+ 699              	.LVL103:
+ 700              	.L74:
+ 286:../../picokernel/k_thread.c **** 		goto cleanup;
+ 287:../../picokernel/k_thread.c **** 	}
+ 288:../../picokernel/k_thread.c **** 
+ 289:../../picokernel/k_thread.c **** 	archtype_t key = port_irq_lock();
+ 290:../../picokernel/k_thread.c **** 
+ 291:../../picokernel/k_thread.c **** 
+ 292:../../picokernel/k_thread.c **** 	/*
+ 293:../../picokernel/k_thread.c **** 	 * Select and prepare task to wait for the conditions imposed to signaling
+ 294:../../picokernel/k_thread.c **** 	 */
+ 295:../../picokernel/k_thread.c **** 	switch(opt) {
+ 296:../../picokernel/k_thread.c **** 		case k_wait_match_pattern:
+ 297:../../picokernel/k_thread.c **** 			match = thread_handle_signal_wait(t, K_THR_PEND_SIGNAL_ALL, signals);
+ 298:../../picokernel/k_thread.c **** 		break;
+ 299:../../picokernel/k_thread.c **** 
+ 300:../../picokernel/k_thread.c **** 		case k_wait_match_any:
+ 301:../../picokernel/k_thread.c **** 			match = thread_handle_signal_wait(t, K_THR_PEND_SIGNAL_ANY, signals);
+ 302:../../picokernel/k_thread.c **** 		break;
+ARM GAS  /tmp/ccXrLhQk.s 			page 25
+
+
+ 303:../../picokernel/k_thread.c **** 
+ 304:../../picokernel/k_thread.c **** 		case k_match_pattern_consume:
+ 305:../../picokernel/k_thread.c **** 			match = thread_handle_signal_wait(t, K_THR_PEND_SIGNAL_ALL_C, signals);
+ 306:../../picokernel/k_thread.c **** 		break;
+ 307:../../picokernel/k_thread.c **** 
+ 308:../../picokernel/k_thread.c **** 		case k_match_any_consume:
+ 309:../../picokernel/k_thread.c **** 			match = thread_handle_signal_wait(t, K_THR_PEND_SIGNAL_ANY_C, signals);
+ 310:../../picokernel/k_thread.c **** 		break;
+ 311:../../picokernel/k_thread.c **** 
+ 312:../../picokernel/k_thread.c **** 		default:
+ 313:../../picokernel/k_thread.c **** 			ret = k_status_invalid_param;
+ 314:../../picokernel/k_thread.c **** 			port_irq_unlock(key);
+ 315:../../picokernel/k_thread.c **** 			goto cleanup;
+ 316:../../picokernel/k_thread.c **** 	}
+ 317:../../picokernel/k_thread.c **** 
+ 318:../../picokernel/k_thread.c **** 
+ 319:../../picokernel/k_thread.c **** 
+ 320:../../picokernel/k_thread.c **** 	/* if signals ware already asserted theres no need to reesched */
+ 321:../../picokernel/k_thread.c **** 	if(match) {
+ 322:../../picokernel/k_thread.c **** 		rcvd = t->signals_actual;
+ 323:../../picokernel/k_thread.c **** 		port_irq_unlock(key);
+ 324:../../picokernel/k_thread.c **** 		goto cleanup;
+ 325:../../picokernel/k_thread.c **** 	}
+ 326:../../picokernel/k_thread.c **** 
+ 327:../../picokernel/k_thread.c **** 	ret = k_make_not_ready(t);
+ 328:../../picokernel/k_thread.c **** 	ULIPE_ASSERT(ret == k_status_ok);
+ 329:../../picokernel/k_thread.c **** 
+ 330:../../picokernel/k_thread.c **** 
+ 331:../../picokernel/k_thread.c **** 	port_irq_unlock(key);
+ 332:../../picokernel/k_thread.c **** 	/* perform reesched to find next task to run */
+ 333:../../picokernel/k_thread.c **** 	k_sched_and_swap();
+ 334:../../picokernel/k_thread.c **** 	ret = k_status_ok;
+ 335:../../picokernel/k_thread.c **** 
+ 336:../../picokernel/k_thread.c **** 	rcvd = t->signals_actual;
+ 337:../../picokernel/k_thread.c **** 
+ 338:../../picokernel/k_thread.c **** cleanup:
+ 339:../../picokernel/k_thread.c **** 	if(err != NULL)
+ 701              		.loc 1 339 0
+ 702 001a 05B1     		cbz	r5, .L71
+ 340:../../picokernel/k_thread.c **** 		*err = ret;
+ 703              		.loc 1 340 0
+ 704 001c 2F70     		strb	r7, [r5]
+ 705              	.L71:
+ 341:../../picokernel/k_thread.c **** 
+ 342:../../picokernel/k_thread.c **** 	return(rcvd);
+ 343:../../picokernel/k_thread.c **** }
+ 706              		.loc 1 343 0
+ 707 001e 2046     		mov	r0, r4
+ 708 0020 BDE8F883 		pop	{r3, r4, r5, r6, r7, r8, r9, pc}
+ 709              	.LVL104:
+ 710              	.L88:
+ 277:../../picokernel/k_thread.c **** 		ULIPE_ASSERT(t!= NULL);
+ 711              		.loc 1 277 0
+ 712 0024 214B     		ldr	r3, .L90
+ 713              	.LVL105:
+ 714 0026 1C68     		ldr	r4, [r3]
+ 715              	.LVL106:
+ARM GAS  /tmp/ccXrLhQk.s 			page 26
+
+
+ 716              	.LBB52:
+ 717              	.LBB53:
+ 128:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 		port_set_break();
+ 718              		.loc 3 128 0
+ 719 0028 002C     		cmp	r4, #0
+ 720 002a F0D1     		bne	.L72
+ 721              		.loc 3 129 0
+ 722 002c FFF7FEFF 		bl	port_set_break
+ 723              	.LVL107:
+ 724              	.L73:
+ 725 0030 FEE7     		b	.L73
+ 726              	.LVL108:
+ 727              	.L89:
+ 728              	.LBE53:
+ 729              	.LBE52:
+ 289:../../picokernel/k_thread.c **** 
+ 730              		.loc 1 289 0
+ 731 0032 FFF7FEFF 		bl	port_irq_lock
+ 732              	.LVL109:
+ 733 0036 8146     		mov	r9, r0
+ 734              	.LVL110:
+ 295:../../picokernel/k_thread.c **** 		case k_wait_match_pattern:
+ 735              		.loc 1 295 0
+ 736 0038 B8F1030F 		cmp	r8, #3
+ 737 003c 20D8     		bhi	.L75
+ 738 003e DFE808F0 		tbb	[pc, r8]
+ 739              	.L77:
+ 740 0042 02       		.byte	(.L76-.L77)/2
+ 741 0043 0D       		.byte	(.L78-.L77)/2
+ 742 0044 13       		.byte	(.L79-.L77)/2
+ 743 0045 19       		.byte	(.L80-.L77)/2
+ 744              		.p2align 1
+ 745              	.L76:
+ 297:../../picokernel/k_thread.c **** 		break;
+ 746              		.loc 1 297 0
+ 747 0046 3246     		mov	r2, r6
+ 748 0048 1021     		movs	r1, #16
+ 749 004a 2046     		mov	r0, r4
+ 750              	.LVL111:
+ 751 004c FFF7FEFF 		bl	thread_handle_signal_wait
+ 752              	.LVL112:
+ 753              	.L81:
+ 321:../../picokernel/k_thread.c **** 		rcvd = t->signals_actual;
+ 754              		.loc 1 321 0
+ 755 0050 E0B1     		cbz	r0, .L82
+ 322:../../picokernel/k_thread.c **** 		port_irq_unlock(key);
+ 756              		.loc 1 322 0
+ 757 0052 E469     		ldr	r4, [r4, #28]
+ 758              	.LVL113:
+ 323:../../picokernel/k_thread.c **** 		goto cleanup;
+ 759              		.loc 1 323 0
+ 760 0054 4846     		mov	r0, r9
+ 761              	.LVL114:
+ 762 0056 FFF7FEFF 		bl	port_irq_unlock
+ 763              	.LVL115:
+ 324:../../picokernel/k_thread.c **** 	}
+ 764              		.loc 1 324 0
+ARM GAS  /tmp/ccXrLhQk.s 			page 27
+
+
+ 765 005a DEE7     		b	.L74
+ 766              	.LVL116:
+ 767              	.L78:
+ 301:../../picokernel/k_thread.c **** 		break;
+ 768              		.loc 1 301 0
+ 769 005c 3246     		mov	r2, r6
+ 770 005e 2021     		movs	r1, #32
+ 771 0060 2046     		mov	r0, r4
+ 772              	.LVL117:
+ 773 0062 FFF7FEFF 		bl	thread_handle_signal_wait
+ 774              	.LVL118:
+ 302:../../picokernel/k_thread.c **** 
+ 775              		.loc 1 302 0
+ 776 0066 F3E7     		b	.L81
+ 777              	.LVL119:
+ 778              	.L79:
+ 305:../../picokernel/k_thread.c **** 		break;
+ 779              		.loc 1 305 0
+ 780 0068 3246     		mov	r2, r6
+ 781 006a 4021     		movs	r1, #64
+ 782 006c 2046     		mov	r0, r4
+ 783              	.LVL120:
+ 784 006e FFF7FEFF 		bl	thread_handle_signal_wait
+ 785              	.LVL121:
+ 306:../../picokernel/k_thread.c **** 
+ 786              		.loc 1 306 0
+ 787 0072 EDE7     		b	.L81
+ 788              	.LVL122:
+ 789              	.L80:
+ 309:../../picokernel/k_thread.c **** 		break;
+ 790              		.loc 1 309 0
+ 791 0074 3246     		mov	r2, r6
+ 792 0076 8021     		movs	r1, #128
+ 793 0078 2046     		mov	r0, r4
+ 794              	.LVL123:
+ 795 007a FFF7FEFF 		bl	thread_handle_signal_wait
+ 796              	.LVL124:
+ 310:../../picokernel/k_thread.c **** 
+ 797              		.loc 1 310 0
+ 798 007e E7E7     		b	.L81
+ 799              	.LVL125:
+ 800              	.L75:
+ 314:../../picokernel/k_thread.c **** 			goto cleanup;
+ 801              		.loc 1 314 0
+ 802 0080 FFF7FEFF 		bl	port_irq_unlock
+ 803              	.LVL126:
+ 313:../../picokernel/k_thread.c **** 			port_irq_unlock(key);
+ 804              		.loc 1 313 0
+ 805 0084 0227     		movs	r7, #2
+ 270:../../picokernel/k_thread.c **** 	bool match = false;
+ 806              		.loc 1 270 0
+ 807 0086 4FF0FF34 		mov	r4, #-1
+ 808              	.LVL127:
+ 315:../../picokernel/k_thread.c **** 	}
+ 809              		.loc 1 315 0
+ 810 008a C6E7     		b	.L74
+ 811              	.LVL128:
+ARM GAS  /tmp/ccXrLhQk.s 			page 28
+
+
+ 812              	.L82:
+ 327:../../picokernel/k_thread.c **** 	ULIPE_ASSERT(ret == k_status_ok);
+ 813              		.loc 1 327 0
+ 814 008c 2046     		mov	r0, r4
+ 815              	.LVL129:
+ 816 008e FFF7FEFF 		bl	k_make_not_ready
+ 817              	.LVL130:
+ 818              	.LBB54:
+ 819              	.LBB55:
+ 128:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 		port_set_break();
+ 820              		.loc 3 128 0
+ 821 0092 0746     		mov	r7, r0
+ 822 0094 10B1     		cbz	r0, .L83
+ 823              		.loc 3 129 0
+ 824 0096 FFF7FEFF 		bl	port_set_break
+ 825              	.LVL131:
+ 826              	.L84:
+ 827 009a FEE7     		b	.L84
+ 828              	.LVL132:
+ 829              	.L83:
+ 830              	.LBE55:
+ 831              	.LBE54:
+ 331:../../picokernel/k_thread.c **** 	/* perform reesched to find next task to run */
+ 832              		.loc 1 331 0
+ 833 009c 4846     		mov	r0, r9
+ 834              	.LVL133:
+ 835 009e FFF7FEFF 		bl	port_irq_unlock
+ 836              	.LVL134:
+ 333:../../picokernel/k_thread.c **** 	ret = k_status_ok;
+ 837              		.loc 1 333 0
+ 838 00a2 FFF7FEFF 		bl	k_sched_and_swap
+ 839              	.LVL135:
+ 336:../../picokernel/k_thread.c **** 
+ 840              		.loc 1 336 0
+ 841 00a6 E469     		ldr	r4, [r4, #28]
+ 842              	.LVL136:
+ 843 00a8 B7E7     		b	.L74
+ 844              	.L91:
+ 845 00aa 00BF     		.align	2
+ 846              	.L90:
+ 847 00ac 00000000 		.word	k_current_task
+ 848              		.cfi_endproc
+ 849              	.LFE26:
+ 851              		.section	.text.thread_set_signals,"ax",%progbits
+ 852              		.align	1
+ 853              		.global	thread_set_signals
+ 854              		.syntax unified
+ 855              		.thumb
+ 856              		.thumb_func
+ 857              		.fpu fpv4-sp-d16
+ 859              	thread_set_signals:
+ 860              	.LFB27:
+ 344:../../picokernel/k_thread.c **** 
+ 345:../../picokernel/k_thread.c **** k_status_t thread_set_signals(tcb_t *t, uint32_t signals)
+ 346:../../picokernel/k_thread.c **** {
+ 861              		.loc 1 346 0
+ 862              		.cfi_startproc
+ARM GAS  /tmp/ccXrLhQk.s 			page 29
+
+
+ 863              		@ args = 0, pretend = 0, frame = 0
+ 864              		@ frame_needed = 0, uses_anonymous_args = 0
+ 865              	.LVL137:
+ 866 0000 70B5     		push	{r4, r5, r6, lr}
+ 867              	.LCFI10:
+ 868              		.cfi_def_cfa_offset 16
+ 869              		.cfi_offset 4, -16
+ 870              		.cfi_offset 5, -12
+ 871              		.cfi_offset 6, -8
+ 872              		.cfi_offset 14, -4
+ 873              	.LVL138:
+ 347:../../picokernel/k_thread.c **** 	k_status_t ret = k_status_ok;
+ 348:../../picokernel/k_thread.c **** 	bool match =false;
+ 349:../../picokernel/k_thread.c **** 
+ 350:../../picokernel/k_thread.c **** 	if(t == NULL) {
+ 874              		.loc 1 350 0
+ 875 0002 F0B1     		cbz	r0, .L97
+ 876 0004 0446     		mov	r4, r0
+ 877 0006 0D46     		mov	r5, r1
+ 351:../../picokernel/k_thread.c **** 		ret = k_status_invalid_param;
+ 352:../../picokernel/k_thread.c **** 		goto cleanup;
+ 353:../../picokernel/k_thread.c **** 	}
+ 354:../../picokernel/k_thread.c **** 
+ 355:../../picokernel/k_thread.c **** 	archtype_t key = port_irq_lock();
+ 878              		.loc 1 355 0
+ 879 0008 FFF7FEFF 		bl	port_irq_lock
+ 880              	.LVL139:
+ 881 000c 0646     		mov	r6, r0
+ 882              	.LVL140:
+ 356:../../picokernel/k_thread.c **** 
+ 357:../../picokernel/k_thread.c **** 	t->signals_actual |= signals;
+ 883              		.loc 1 357 0
+ 884 000e E369     		ldr	r3, [r4, #28]
+ 885 0010 2B43     		orrs	r3, r3, r5
+ 886 0012 E361     		str	r3, [r4, #28]
+ 358:../../picokernel/k_thread.c **** 	match = thread_handle_signal_act(t);
+ 887              		.loc 1 358 0
+ 888 0014 2046     		mov	r0, r4
+ 889              	.LVL141:
+ 890 0016 FFF7FEFF 		bl	thread_handle_signal_act
+ 891              	.LVL142:
+ 359:../../picokernel/k_thread.c **** 
+ 360:../../picokernel/k_thread.c **** 
+ 361:../../picokernel/k_thread.c **** 	if(!match) {
+ 892              		.loc 1 361 0
+ 893 001a 38B1     		cbz	r0, .L99
+ 362:../../picokernel/k_thread.c **** 		port_irq_unlock(key);
+ 363:../../picokernel/k_thread.c **** 		goto cleanup;
+ 364:../../picokernel/k_thread.c **** 	}
+ 365:../../picokernel/k_thread.c **** 
+ 366:../../picokernel/k_thread.c **** 
+ 367:../../picokernel/k_thread.c **** 	ret = k_make_ready(t);
+ 894              		.loc 1 367 0
+ 895 001c 2046     		mov	r0, r4
+ 896              	.LVL143:
+ 897 001e FFF7FEFF 		bl	k_make_ready
+ 898              	.LVL144:
+ARM GAS  /tmp/ccXrLhQk.s 			page 30
+
+
+ 899              	.LBB56:
+ 900              	.LBB57:
+ 128:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 		port_set_break();
+ 901              		.loc 3 128 0
+ 902 0022 0446     		mov	r4, r0
+ 903              	.LVL145:
+ 904 0024 38B1     		cbz	r0, .L95
+ 905              		.loc 3 129 0
+ 906 0026 FFF7FEFF 		bl	port_set_break
+ 907              	.LVL146:
+ 908              	.L96:
+ 909 002a FEE7     		b	.L96
+ 910              	.LVL147:
+ 911              	.L99:
+ 912              	.LBE57:
+ 913              	.LBE56:
+ 362:../../picokernel/k_thread.c **** 		port_irq_unlock(key);
+ 914              		.loc 1 362 0
+ 915 002c 3046     		mov	r0, r6
+ 916              	.LVL148:
+ 917 002e FFF7FEFF 		bl	port_irq_unlock
+ 918              	.LVL149:
+ 347:../../picokernel/k_thread.c **** 	bool match =false;
+ 919              		.loc 1 347 0
+ 920 0032 0024     		movs	r4, #0
+ 921              	.LVL150:
+ 363:../../picokernel/k_thread.c **** 	}
+ 922              		.loc 1 363 0
+ 923 0034 06E0     		b	.L93
+ 924              	.LVL151:
+ 925              	.L95:
+ 368:../../picokernel/k_thread.c **** 	ULIPE_ASSERT(ret == k_status_ok);
+ 369:../../picokernel/k_thread.c **** 	port_irq_unlock(key);
+ 926              		.loc 1 369 0
+ 927 0036 3046     		mov	r0, r6
+ 928              	.LVL152:
+ 929 0038 FFF7FEFF 		bl	port_irq_unlock
+ 930              	.LVL153:
+ 370:../../picokernel/k_thread.c **** 
+ 371:../../picokernel/k_thread.c **** 
+ 372:../../picokernel/k_thread.c **** 	/* perform reesched to find next task to run */
+ 373:../../picokernel/k_thread.c **** 	k_sched_and_swap();
+ 931              		.loc 1 373 0
+ 932 003c FFF7FEFF 		bl	k_sched_and_swap
+ 933              	.LVL154:
+ 934 0040 00E0     		b	.L93
+ 935              	.LVL155:
+ 936              	.L97:
+ 351:../../picokernel/k_thread.c **** 		goto cleanup;
+ 937              		.loc 1 351 0
+ 938 0042 0224     		movs	r4, #2
+ 939              	.LVL156:
+ 940              	.L93:
+ 374:../../picokernel/k_thread.c **** 	ret = k_status_ok;
+ 375:../../picokernel/k_thread.c **** 
+ 376:../../picokernel/k_thread.c **** 
+ 377:../../picokernel/k_thread.c **** cleanup:
+ARM GAS  /tmp/ccXrLhQk.s 			page 31
+
+
+ 378:../../picokernel/k_thread.c **** 	return(ret);
+ 379:../../picokernel/k_thread.c **** }
+ 941              		.loc 1 379 0
+ 942 0044 2046     		mov	r0, r4
+ 943 0046 70BD     		pop	{r4, r5, r6, pc}
+ 944              		.cfi_endproc
+ 945              	.LFE27:
+ 947              		.section	.text.thread_clr_signals,"ax",%progbits
+ 948              		.align	1
+ 949              		.global	thread_clr_signals
+ 950              		.syntax unified
+ 951              		.thumb
+ 952              		.thumb_func
+ 953              		.fpu fpv4-sp-d16
+ 955              	thread_clr_signals:
+ 956              	.LFB28:
+ 380:../../picokernel/k_thread.c **** 
+ 381:../../picokernel/k_thread.c **** k_status_t thread_clr_signals(tcb_t *t, uint32_t signals)
+ 382:../../picokernel/k_thread.c **** {
+ 957              		.loc 1 382 0
+ 958              		.cfi_startproc
+ 959              		@ args = 0, pretend = 0, frame = 0
+ 960              		@ frame_needed = 0, uses_anonymous_args = 0
+ 961              	.LVL157:
+ 962 0000 70B5     		push	{r4, r5, r6, lr}
+ 963              	.LCFI11:
+ 964              		.cfi_def_cfa_offset 16
+ 965              		.cfi_offset 4, -16
+ 966              		.cfi_offset 5, -12
+ 967              		.cfi_offset 6, -8
+ 968              		.cfi_offset 14, -4
+ 969              	.LVL158:
+ 383:../../picokernel/k_thread.c **** 
+ 384:../../picokernel/k_thread.c **** 	k_status_t ret = k_status_ok;
+ 385:../../picokernel/k_thread.c **** 	bool match =false;
+ 386:../../picokernel/k_thread.c **** 
+ 387:../../picokernel/k_thread.c **** 	if(t == NULL) {
+ 970              		.loc 1 387 0
+ 971 0002 F8B1     		cbz	r0, .L105
+ 972 0004 0446     		mov	r4, r0
+ 973 0006 0D46     		mov	r5, r1
+ 388:../../picokernel/k_thread.c **** 		ret = k_status_invalid_param;
+ 389:../../picokernel/k_thread.c **** 		goto cleanup;
+ 390:../../picokernel/k_thread.c **** 	}
+ 391:../../picokernel/k_thread.c **** 
+ 392:../../picokernel/k_thread.c **** 	archtype_t key = port_irq_lock();
+ 974              		.loc 1 392 0
+ 975 0008 FFF7FEFF 		bl	port_irq_lock
+ 976              	.LVL159:
+ 977 000c 0646     		mov	r6, r0
+ 978              	.LVL160:
+ 393:../../picokernel/k_thread.c **** 
+ 394:../../picokernel/k_thread.c **** 	t->signals_actual &= ~signals;
+ 979              		.loc 1 394 0
+ 980 000e E369     		ldr	r3, [r4, #28]
+ 981 0010 23EA0503 		bic	r3, r3, r5
+ 982 0014 E361     		str	r3, [r4, #28]
+ARM GAS  /tmp/ccXrLhQk.s 			page 32
+
+
+ 395:../../picokernel/k_thread.c **** 	match = thread_handle_signal_act(t);
+ 983              		.loc 1 395 0
+ 984 0016 2046     		mov	r0, r4
+ 985              	.LVL161:
+ 986 0018 FFF7FEFF 		bl	thread_handle_signal_act
+ 987              	.LVL162:
+ 396:../../picokernel/k_thread.c **** 
+ 397:../../picokernel/k_thread.c **** 
+ 398:../../picokernel/k_thread.c **** 
+ 399:../../picokernel/k_thread.c **** 	if(!match) {
+ 988              		.loc 1 399 0
+ 989 001c 38B1     		cbz	r0, .L107
+ 400:../../picokernel/k_thread.c **** 		port_irq_unlock(key);
+ 401:../../picokernel/k_thread.c **** 		goto cleanup;
+ 402:../../picokernel/k_thread.c **** 	}
+ 403:../../picokernel/k_thread.c **** 
+ 404:../../picokernel/k_thread.c **** 	ret = k_make_ready(t);
+ 990              		.loc 1 404 0
+ 991 001e 2046     		mov	r0, r4
+ 992              	.LVL163:
+ 993 0020 FFF7FEFF 		bl	k_make_ready
+ 994              	.LVL164:
+ 995              	.LBB58:
+ 996              	.LBB59:
+ 128:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 		port_set_break();
+ 997              		.loc 3 128 0
+ 998 0024 0446     		mov	r4, r0
+ 999              	.LVL165:
+ 1000 0026 38B1     		cbz	r0, .L103
+ 1001              		.loc 3 129 0
+ 1002 0028 FFF7FEFF 		bl	port_set_break
+ 1003              	.LVL166:
+ 1004              	.L104:
+ 1005 002c FEE7     		b	.L104
+ 1006              	.LVL167:
+ 1007              	.L107:
+ 1008              	.LBE59:
+ 1009              	.LBE58:
+ 400:../../picokernel/k_thread.c **** 		port_irq_unlock(key);
+ 1010              		.loc 1 400 0
+ 1011 002e 3046     		mov	r0, r6
+ 1012              	.LVL168:
+ 1013 0030 FFF7FEFF 		bl	port_irq_unlock
+ 1014              	.LVL169:
+ 384:../../picokernel/k_thread.c **** 	bool match =false;
+ 1015              		.loc 1 384 0
+ 1016 0034 0024     		movs	r4, #0
+ 1017              	.LVL170:
+ 401:../../picokernel/k_thread.c **** 	}
+ 1018              		.loc 1 401 0
+ 1019 0036 06E0     		b	.L101
+ 1020              	.LVL171:
+ 1021              	.L103:
+ 405:../../picokernel/k_thread.c **** 	ULIPE_ASSERT(ret == k_status_ok);
+ 406:../../picokernel/k_thread.c **** 	port_irq_unlock(key);
+ 1022              		.loc 1 406 0
+ 1023 0038 3046     		mov	r0, r6
+ARM GAS  /tmp/ccXrLhQk.s 			page 33
+
+
+ 1024              	.LVL172:
+ 1025 003a FFF7FEFF 		bl	port_irq_unlock
+ 1026              	.LVL173:
+ 407:../../picokernel/k_thread.c **** 
+ 408:../../picokernel/k_thread.c **** 
+ 409:../../picokernel/k_thread.c **** 	/* perform reesched to find next task to run */
+ 410:../../picokernel/k_thread.c **** 	k_sched_and_swap();
+ 1027              		.loc 1 410 0
+ 1028 003e FFF7FEFF 		bl	k_sched_and_swap
+ 1029              	.LVL174:
+ 1030 0042 00E0     		b	.L101
+ 1031              	.LVL175:
+ 1032              	.L105:
+ 388:../../picokernel/k_thread.c **** 		goto cleanup;
+ 1033              		.loc 1 388 0
+ 1034 0044 0224     		movs	r4, #2
+ 1035              	.LVL176:
+ 1036              	.L101:
+ 411:../../picokernel/k_thread.c **** 	ret = k_status_ok;
+ 412:../../picokernel/k_thread.c **** 
+ 413:../../picokernel/k_thread.c **** cleanup:
+ 414:../../picokernel/k_thread.c **** 	return(ret);
+ 415:../../picokernel/k_thread.c **** }
+ 1037              		.loc 1 415 0
+ 1038 0046 2046     		mov	r0, r4
+ 1039 0048 70BD     		pop	{r4, r5, r6, pc}
+ 1040              		.cfi_endproc
+ 1041              	.LFE28:
+ 1043              		.section	.text.thread_yield,"ax",%progbits
+ 1044              		.align	1
+ 1045              		.global	thread_yield
+ 1046              		.syntax unified
+ 1047              		.thumb
+ 1048              		.thumb_func
+ 1049              		.fpu fpv4-sp-d16
+ 1051              	thread_yield:
+ 1052              	.LFB29:
+ 416:../../picokernel/k_thread.c **** 
+ 417:../../picokernel/k_thread.c **** k_status_t thread_yield(void)
+ 418:../../picokernel/k_thread.c **** {
+ 1053              		.loc 1 418 0
+ 1054              		.cfi_startproc
+ 1055              		@ args = 0, pretend = 0, frame = 0
+ 1056              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1057 0000 10B5     		push	{r4, lr}
+ 1058              	.LCFI12:
+ 1059              		.cfi_def_cfa_offset 8
+ 1060              		.cfi_offset 4, -8
+ 1061              		.cfi_offset 14, -4
+ 1062              	.LVL177:
+ 419:../../picokernel/k_thread.c **** 	k_status_t ret = k_status_ok;
+ 420:../../picokernel/k_thread.c **** 	bool resched = false;
+ 421:../../picokernel/k_thread.c **** 
+ 422:../../picokernel/k_thread.c **** 	archtype_t key = port_irq_lock();
+ 1063              		.loc 1 422 0
+ 1064 0002 FFF7FEFF 		bl	port_irq_lock
+ 1065              	.LVL178:
+ARM GAS  /tmp/ccXrLhQk.s 			page 34
+
+
+ 1066 0006 0446     		mov	r4, r0
+ 1067              	.LVL179:
+ 423:../../picokernel/k_thread.c **** 	tcb_t *t = k_current_task;
+ 424:../../picokernel/k_thread.c **** 
+ 425:../../picokernel/k_thread.c **** 
+ 426:../../picokernel/k_thread.c **** 	/*
+ 427:../../picokernel/k_thread.c **** 	 * Yielding a task is very simple, we force a fifo remotion, then
+ 428:../../picokernel/k_thread.c **** 	 * pick the removed entry and send back to the fifo, the kernel
+ 429:../../picokernel/k_thread.c **** 	 * scheduling deal with case that only thread as the top priority and try to yield
+ 430:../../picokernel/k_thread.c **** 	 * itself
+ 431:../../picokernel/k_thread.c **** 	 */
+ 432:../../picokernel/k_thread.c **** 	resched = k_yield(t);
+ 1068              		.loc 1 432 0
+ 1069 0008 074B     		ldr	r3, .L113
+ 1070              	.LVL180:
+ 1071 000a 1868     		ldr	r0, [r3]
+ 1072              	.LVL181:
+ 1073 000c FFF7FEFF 		bl	k_yield
+ 1074              	.LVL182:
+ 433:../../picokernel/k_thread.c **** 
+ 434:../../picokernel/k_thread.c **** 	if(!resched) {
+ 1075              		.loc 1 434 0
+ 1076 0010 30B1     		cbz	r0, .L112
+ 435:../../picokernel/k_thread.c **** 		port_irq_unlock(key);
+ 436:../../picokernel/k_thread.c **** 		goto cleanup;
+ 437:../../picokernel/k_thread.c **** 	}
+ 438:../../picokernel/k_thread.c **** 
+ 439:../../picokernel/k_thread.c **** 	port_irq_unlock(key);
+ 1077              		.loc 1 439 0
+ 1078 0012 2046     		mov	r0, r4
+ 1079              	.LVL183:
+ 1080 0014 FFF7FEFF 		bl	port_irq_unlock
+ 1081              	.LVL184:
+ 440:../../picokernel/k_thread.c **** 	k_sched_and_swap();
+ 1082              		.loc 1 440 0
+ 1083 0018 FFF7FEFF 		bl	k_sched_and_swap
+ 1084              	.LVL185:
+ 1085              	.L110:
+ 441:../../picokernel/k_thread.c **** 
+ 442:../../picokernel/k_thread.c **** cleanup:
+ 443:../../picokernel/k_thread.c **** 	return(ret);
+ 444:../../picokernel/k_thread.c **** }
+ 1086              		.loc 1 444 0
+ 1087 001c 0020     		movs	r0, #0
+ 1088 001e 10BD     		pop	{r4, pc}
+ 1089              	.LVL186:
+ 1090              	.L112:
+ 435:../../picokernel/k_thread.c **** 		goto cleanup;
+ 1091              		.loc 1 435 0
+ 1092 0020 2046     		mov	r0, r4
+ 1093              	.LVL187:
+ 1094 0022 FFF7FEFF 		bl	port_irq_unlock
+ 1095              	.LVL188:
+ 436:../../picokernel/k_thread.c **** 	}
+ 1096              		.loc 1 436 0
+ 1097 0026 F9E7     		b	.L110
+ 1098              	.L114:
+ARM GAS  /tmp/ccXrLhQk.s 			page 35
+
+
+ 1099              		.align	2
+ 1100              	.L113:
+ 1101 0028 00000000 		.word	k_current_task
+ 1102              		.cfi_endproc
+ 1103              	.LFE29:
+ 1105              		.section	.text.thread_set_prio,"ax",%progbits
+ 1106              		.align	1
+ 1107              		.global	thread_set_prio
+ 1108              		.syntax unified
+ 1109              		.thumb
+ 1110              		.thumb_func
+ 1111              		.fpu fpv4-sp-d16
+ 1113              	thread_set_prio:
+ 1114              	.LFB30:
+ 445:../../picokernel/k_thread.c **** 
+ 446:../../picokernel/k_thread.c **** 
+ 447:../../picokernel/k_thread.c **** k_status_t thread_set_prio(tcb_t *t, uint8_t prio)
+ 448:../../picokernel/k_thread.c **** {
+ 1115              		.loc 1 448 0
+ 1116              		.cfi_startproc
+ 1117              		@ args = 0, pretend = 0, frame = 0
+ 1118              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1119              	.LVL189:
+ 1120 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+ 1121              	.LCFI13:
+ 1122              		.cfi_def_cfa_offset 24
+ 1123              		.cfi_offset 3, -24
+ 1124              		.cfi_offset 4, -20
+ 1125              		.cfi_offset 5, -16
+ 1126              		.cfi_offset 6, -12
+ 1127              		.cfi_offset 7, -8
+ 1128              		.cfi_offset 14, -4
+ 1129              	.LVL190:
+ 449:../../picokernel/k_thread.c **** 	k_status_t ret = k_status_ok;
+ 450:../../picokernel/k_thread.c **** 
+ 451:../../picokernel/k_thread.c **** 	if(prio > (K_PRIORITY_LEVELS - 1)){
+ 1130              		.loc 1 451 0
+ 1131 0002 1F29     		cmp	r1, #31
+ 1132 0004 02D9     		bls	.L127
+ 452:../../picokernel/k_thread.c **** 		ret = k_status_invalid_param;
+ 1133              		.loc 1 452 0
+ 1134 0006 0225     		movs	r5, #2
+ 1135              	.LVL191:
+ 1136              	.L116:
+ 453:../../picokernel/k_thread.c **** 		goto cleanup;
+ 454:../../picokernel/k_thread.c **** 	}
+ 455:../../picokernel/k_thread.c **** 
+ 456:../../picokernel/k_thread.c **** 	archtype_t key = port_irq_lock();
+ 457:../../picokernel/k_thread.c **** 
+ 458:../../picokernel/k_thread.c **** 
+ 459:../../picokernel/k_thread.c **** 	if(t == NULL) {
+ 460:../../picokernel/k_thread.c **** 		/* null thread can be the current */
+ 461:../../picokernel/k_thread.c **** 		t = k_current_task;
+ 462:../../picokernel/k_thread.c **** 		ULIPE_ASSERT(t!= NULL);
+ 463:../../picokernel/k_thread.c **** 	}
+ 464:../../picokernel/k_thread.c **** 
+ 465:../../picokernel/k_thread.c **** 
+ARM GAS  /tmp/ccXrLhQk.s 			page 36
+
+
+ 466:../../picokernel/k_thread.c **** 
+ 467:../../picokernel/k_thread.c **** 	if(t->thread_prio == prio) {
+ 468:../../picokernel/k_thread.c **** 		/* same prio, no need to process it */
+ 469:../../picokernel/k_thread.c **** 		ret = k_status_invalid_param;
+ 470:../../picokernel/k_thread.c **** 		port_irq_unlock(key);
+ 471:../../picokernel/k_thread.c **** 		goto cleanup;
+ 472:../../picokernel/k_thread.c **** 	}
+ 473:../../picokernel/k_thread.c **** 
+ 474:../../picokernel/k_thread.c **** 
+ 475:../../picokernel/k_thread.c **** 
+ 476:../../picokernel/k_thread.c **** 
+ 477:../../picokernel/k_thread.c **** 	/* the priority change impacts on moving the task to another level
+ 478:../../picokernel/k_thread.c **** 	 * on ready fifo
+ 479:../../picokernel/k_thread.c **** 	 */
+ 480:../../picokernel/k_thread.c **** 	if(!t->thread_wait) {
+ 481:../../picokernel/k_thread.c **** 		ret = k_make_not_ready(t);
+ 482:../../picokernel/k_thread.c **** 		ULIPE_ASSERT(ret == k_status_ok);
+ 483:../../picokernel/k_thread.c **** 	}
+ 484:../../picokernel/k_thread.c **** 
+ 485:../../picokernel/k_thread.c **** 	t->thread_prio = prio;
+ 486:../../picokernel/k_thread.c **** 
+ 487:../../picokernel/k_thread.c **** 
+ 488:../../picokernel/k_thread.c **** 	if(t->thread_wait) {
+ 489:../../picokernel/k_thread.c **** 		goto cleanup;
+ 490:../../picokernel/k_thread.c **** 	}
+ 491:../../picokernel/k_thread.c **** 
+ 492:../../picokernel/k_thread.c **** 	ret = k_make_ready(t);
+ 493:../../picokernel/k_thread.c **** 	ULIPE_ASSERT(ret == k_status_ok);
+ 494:../../picokernel/k_thread.c **** 	port_irq_unlock(key);
+ 495:../../picokernel/k_thread.c **** 
+ 496:../../picokernel/k_thread.c **** 	k_sched_and_swap();
+ 497:../../picokernel/k_thread.c **** 	ret = k_status_ok;
+ 498:../../picokernel/k_thread.c **** 
+ 499:../../picokernel/k_thread.c **** 
+ 500:../../picokernel/k_thread.c **** cleanup:
+ 501:../../picokernel/k_thread.c **** 	return(ret);
+ 502:../../picokernel/k_thread.c **** }
+ 1137              		.loc 1 502 0
+ 1138 0008 2846     		mov	r0, r5
+ 1139 000a F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 1140              	.LVL192:
+ 1141              	.L127:
+ 1142 000c 0446     		mov	r4, r0
+ 1143 000e 0E46     		mov	r6, r1
+ 456:../../picokernel/k_thread.c **** 
+ 1144              		.loc 1 456 0
+ 1145 0010 FFF7FEFF 		bl	port_irq_lock
+ 1146              	.LVL193:
+ 1147 0014 0746     		mov	r7, r0
+ 1148              	.LVL194:
+ 459:../../picokernel/k_thread.c **** 		/* null thread can be the current */
+ 1149              		.loc 1 459 0
+ 1150 0016 8CB1     		cbz	r4, .L128
+ 1151              	.L117:
+ 467:../../picokernel/k_thread.c **** 		/* same prio, no need to process it */
+ 1152              		.loc 1 467 0
+ 1153 0018 A37B     		ldrb	r3, [r4, #14]	@ zero_extendqisi2
+ARM GAS  /tmp/ccXrLhQk.s 			page 37
+
+
+ 1154 001a 9E42     		cmp	r6, r3
+ 1155 001c 15D0     		beq	.L129
+ 480:../../picokernel/k_thread.c **** 		ret = k_make_not_ready(t);
+ 1156              		.loc 1 480 0
+ 1157 001e A389     		ldrh	r3, [r4, #12]
+ 1158 0020 C3B1     		cbz	r3, .L130
+ 449:../../picokernel/k_thread.c **** 
+ 1159              		.loc 1 449 0
+ 1160 0022 0025     		movs	r5, #0
+ 1161              	.LVL195:
+ 1162              	.L120:
+ 485:../../picokernel/k_thread.c **** 
+ 1163              		.loc 1 485 0
+ 1164 0024 A673     		strb	r6, [r4, #14]
+ 488:../../picokernel/k_thread.c **** 		goto cleanup;
+ 1165              		.loc 1 488 0
+ 1166 0026 A389     		ldrh	r3, [r4, #12]
+ 1167 0028 002B     		cmp	r3, #0
+ 1168 002a EDD1     		bne	.L116
+ 492:../../picokernel/k_thread.c **** 	ULIPE_ASSERT(ret == k_status_ok);
+ 1169              		.loc 1 492 0
+ 1170 002c 2046     		mov	r0, r4
+ 1171 002e FFF7FEFF 		bl	k_make_ready
+ 1172              	.LVL196:
+ 1173              	.LBB60:
+ 1174              	.LBB61:
+ 128:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 		port_set_break();
+ 1175              		.loc 3 128 0
+ 1176 0032 0546     		mov	r5, r0
+ 1177 0034 B8B1     		cbz	r0, .L122
+ 1178              		.loc 3 129 0
+ 1179 0036 FFF7FEFF 		bl	port_set_break
+ 1180              	.LVL197:
+ 1181              	.L123:
+ 1182 003a FEE7     		b	.L123
+ 1183              	.LVL198:
+ 1184              	.L128:
+ 1185              	.LBE61:
+ 1186              	.LBE60:
+ 461:../../picokernel/k_thread.c **** 		ULIPE_ASSERT(t!= NULL);
+ 1187              		.loc 1 461 0
+ 1188 003c 0D4B     		ldr	r3, .L131
+ 1189 003e 1C68     		ldr	r4, [r3]
+ 1190              	.LVL199:
+ 1191              	.LBB62:
+ 1192              	.LBB63:
+ 128:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 		port_set_break();
+ 1193              		.loc 3 128 0
+ 1194 0040 002C     		cmp	r4, #0
+ 1195 0042 E9D1     		bne	.L117
+ 1196              		.loc 3 129 0
+ 1197 0044 FFF7FEFF 		bl	port_set_break
+ 1198              	.LVL200:
+ 1199              	.L118:
+ 1200 0048 FEE7     		b	.L118
+ 1201              	.LVL201:
+ 1202              	.L129:
+ARM GAS  /tmp/ccXrLhQk.s 			page 38
+
+
+ 1203              	.LBE63:
+ 1204              	.LBE62:
+ 470:../../picokernel/k_thread.c **** 		goto cleanup;
+ 1205              		.loc 1 470 0
+ 1206 004a 3846     		mov	r0, r7
+ 1207              	.LVL202:
+ 1208 004c FFF7FEFF 		bl	port_irq_unlock
+ 1209              	.LVL203:
+ 469:../../picokernel/k_thread.c **** 		port_irq_unlock(key);
+ 1210              		.loc 1 469 0
+ 1211 0050 0225     		movs	r5, #2
+ 471:../../picokernel/k_thread.c **** 	}
+ 1212              		.loc 1 471 0
+ 1213 0052 D9E7     		b	.L116
+ 1214              	.LVL204:
+ 1215              	.L130:
+ 481:../../picokernel/k_thread.c **** 		ULIPE_ASSERT(ret == k_status_ok);
+ 1216              		.loc 1 481 0
+ 1217 0054 2046     		mov	r0, r4
+ 1218              	.LVL205:
+ 1219 0056 FFF7FEFF 		bl	k_make_not_ready
+ 1220              	.LVL206:
+ 1221              	.LBB64:
+ 1222              	.LBB65:
+ 128:../../../uLipeRtosPico/ulipe_rtos_pico.h **** 		port_set_break();
+ 1223              		.loc 3 128 0
+ 1224 005a 0546     		mov	r5, r0
+ 1225 005c 0028     		cmp	r0, #0
+ 1226 005e E1D0     		beq	.L120
+ 1227              		.loc 3 129 0
+ 1228 0060 FFF7FEFF 		bl	port_set_break
+ 1229              	.LVL207:
+ 1230              	.L121:
+ 1231 0064 FEE7     		b	.L121
+ 1232              	.LVL208:
+ 1233              	.L122:
+ 1234              	.LBE65:
+ 1235              	.LBE64:
+ 494:../../picokernel/k_thread.c **** 
+ 1236              		.loc 1 494 0
+ 1237 0066 3846     		mov	r0, r7
+ 1238              	.LVL209:
+ 1239 0068 FFF7FEFF 		bl	port_irq_unlock
+ 1240              	.LVL210:
+ 496:../../picokernel/k_thread.c **** 	ret = k_status_ok;
+ 1241              		.loc 1 496 0
+ 1242 006c FFF7FEFF 		bl	k_sched_and_swap
+ 1243              	.LVL211:
+ 1244 0070 CAE7     		b	.L116
+ 1245              	.L132:
+ 1246 0072 00BF     		.align	2
+ 1247              	.L131:
+ 1248 0074 00000000 		.word	k_current_task
+ 1249              		.cfi_endproc
+ 1250              	.LFE30:
+ 1252              		.section	.text.thread_get_current,"ax",%progbits
+ 1253              		.align	1
+ARM GAS  /tmp/ccXrLhQk.s 			page 39
+
+
+ 1254              		.global	thread_get_current
+ 1255              		.syntax unified
+ 1256              		.thumb
+ 1257              		.thumb_func
+ 1258              		.fpu fpv4-sp-d16
+ 1260              	thread_get_current:
+ 1261              	.LFB31:
+ 503:../../picokernel/k_thread.c **** 
+ 504:../../picokernel/k_thread.c **** tcb_t *thread_get_current(void)
+ 505:../../picokernel/k_thread.c **** {
+ 1262              		.loc 1 505 0
+ 1263              		.cfi_startproc
+ 1264              		@ args = 0, pretend = 0, frame = 0
+ 1265              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1266              		@ link register save eliminated.
+ 1267              	.LVL212:
+ 506:../../picokernel/k_thread.c **** 	tcb_t *ret;
+ 507:../../picokernel/k_thread.c **** 	ret = k_current_task;
+ 508:../../picokernel/k_thread.c **** 	return(ret);
+ 509:../../picokernel/k_thread.c **** }
+ 1268              		.loc 1 509 0
+ 1269 0000 014B     		ldr	r3, .L134
+ 1270              	.LVL213:
+ 1271 0002 1868     		ldr	r0, [r3]
+ 1272 0004 7047     		bx	lr
+ 1273              	.L135:
+ 1274 0006 00BF     		.align	2
+ 1275              	.L134:
+ 1276 0008 00000000 		.word	k_current_task
+ 1277              		.cfi_endproc
+ 1278              	.LFE31:
+ 1280              		.text
+ 1281              	.Letext0:
+ 1282              		.file 4 "/home/venturus/gcc-arm-none-eabi-6-2017-q2-update/arm-none-eabi/include/machine/_default_
+ 1283              		.file 5 "/home/venturus/gcc-arm-none-eabi-6-2017-q2-update/arm-none-eabi/include/sys/_stdint.h"
+ 1284              		.file 6 "/home/venturus/gcc-arm-none-eabi-6-2017-q2-update/arm-none-eabi/include/sys/lock.h"
+ 1285              		.file 7 "/home/venturus/gcc-arm-none-eabi-6-2017-q2-update/arm-none-eabi/include/sys/_types.h"
+ 1286              		.file 8 "/home/venturus/gcc-arm-none-eabi-6-2017-q2-update/lib/gcc/arm-none-eabi/6.3.1/include/std
+ 1287              		.file 9 "/home/venturus/gcc-arm-none-eabi-6-2017-q2-update/arm-none-eabi/include/sys/reent.h"
+ 1288              		.file 10 "../../../uLipeRtosPico/include/picokernel/k_thread.h"
+ 1289              		.file 11 "../../../uLipeRtosPico/include/picokernel/k_port.h"
+ 1290              		.file 12 "../../../uLipeRtosPico/include/picokernel/k_kernel.h"
+ARM GAS  /tmp/ccXrLhQk.s 			page 40
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 k_thread.c
+     /tmp/ccXrLhQk.s:18     .text.thread_handle_signal_act:0000000000000000 $t
+     /tmp/ccXrLhQk.s:24     .text.thread_handle_signal_act:0000000000000000 thread_handle_signal_act
+     /tmp/ccXrLhQk.s:131    .text.thread_handle_signal_wait:0000000000000000 $t
+     /tmp/ccXrLhQk.s:137    .text.thread_handle_signal_wait:0000000000000000 thread_handle_signal_wait
+     /tmp/ccXrLhQk.s:166    .text.thread_create:0000000000000000 $t
+     /tmp/ccXrLhQk.s:173    .text.thread_create:0000000000000000 thread_create
+     /tmp/ccXrLhQk.s:357    .text.thread_create:00000000000000a4 $d
+     /tmp/ccXrLhQk.s:362    .text.thread_abort:0000000000000000 $t
+     /tmp/ccXrLhQk.s:369    .text.thread_abort:0000000000000000 thread_abort
+     /tmp/ccXrLhQk.s:450    .text.thread_abort:0000000000000038 $d
+     /tmp/ccXrLhQk.s:455    .text.thread_suspend:0000000000000000 $t
+     /tmp/ccXrLhQk.s:462    .text.thread_suspend:0000000000000000 thread_suspend
+     /tmp/ccXrLhQk.s:567    .text.thread_suspend:000000000000005c $d
+     /tmp/ccXrLhQk.s:572    .text.thread_resume:0000000000000000 $t
+     /tmp/ccXrLhQk.s:579    .text.thread_resume:0000000000000000 thread_resume
+     /tmp/ccXrLhQk.s:657    .text.thread_wait_signals:0000000000000000 $t
+     /tmp/ccXrLhQk.s:664    .text.thread_wait_signals:0000000000000000 thread_wait_signals
+     /tmp/ccXrLhQk.s:740    .text.thread_wait_signals:0000000000000042 $d
+     /tmp/ccXrLhQk.s:744    .text.thread_wait_signals:0000000000000046 $t
+     /tmp/ccXrLhQk.s:847    .text.thread_wait_signals:00000000000000ac $d
+     /tmp/ccXrLhQk.s:852    .text.thread_set_signals:0000000000000000 $t
+     /tmp/ccXrLhQk.s:859    .text.thread_set_signals:0000000000000000 thread_set_signals
+     /tmp/ccXrLhQk.s:948    .text.thread_clr_signals:0000000000000000 $t
+     /tmp/ccXrLhQk.s:955    .text.thread_clr_signals:0000000000000000 thread_clr_signals
+     /tmp/ccXrLhQk.s:1044   .text.thread_yield:0000000000000000 $t
+     /tmp/ccXrLhQk.s:1051   .text.thread_yield:0000000000000000 thread_yield
+     /tmp/ccXrLhQk.s:1101   .text.thread_yield:0000000000000028 $d
+     /tmp/ccXrLhQk.s:1106   .text.thread_set_prio:0000000000000000 $t
+     /tmp/ccXrLhQk.s:1113   .text.thread_set_prio:0000000000000000 thread_set_prio
+     /tmp/ccXrLhQk.s:1248   .text.thread_set_prio:0000000000000074 $d
+     /tmp/ccXrLhQk.s:1253   .text.thread_get_current:0000000000000000 $t
+     /tmp/ccXrLhQk.s:1260   .text.thread_get_current:0000000000000000 thread_get_current
+     /tmp/ccXrLhQk.s:1276   .text.thread_get_current:0000000000000008 $d
+                     .debug_frame:0000000000000010 $d
+
+UNDEFINED SYMBOLS
+port_from_isr
+port_irq_lock
+port_create_stack_frame
+k_make_ready
+port_set_break
+port_irq_unlock
+k_sched_and_swap
+k_current_task
+k_make_not_ready
+k_yield

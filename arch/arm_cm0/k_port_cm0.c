@@ -200,9 +200,7 @@ cleanup:
 uint8_t port_bit_ls_scan(archtype_t arg)
 {
 	/* ctz is not as well */
-    uint32_t mask = ~(arg - 1);
-    arg = mask & arg;
-	return(port_bit_fs_scan(arg));
+	return(31 - port_bit_fs_scan(arg & -arg));
 }
 
 #endif

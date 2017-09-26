@@ -146,12 +146,23 @@ static void t3_task(void *arg)
 			strcpy(ptr[i], "memory allocated!");
 		}
 
-		(void)ptr;
-
 
 		for(int i = 0; i < 128; i++){
 			k_block_free(&mem1, ptr[i]);
 		}
+
+
+		for(int i = 0; i < 128; i++){
+			ptr[i + 128] = k_malloc(32);
+			ulipe_assert(ptr[i + 128] != NULL);
+			strcpy(ptr[i + 128], "memory heap allocated!");
+		}
+
+
+		for(int i = 0; i < 128; i++){
+			k_free(ptr[i + 128]);
+		}
+
 
 
 		ticker_timer_wait(5);

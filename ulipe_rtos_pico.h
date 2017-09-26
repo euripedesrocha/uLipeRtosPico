@@ -87,7 +87,7 @@ typedef uint64_t archtype_t;
 
 
 #if(K_ENABLE_DYNAMIC_ALLOCATOR > 0)
-#error "FATAL: Dynamic allocator is under development, please use memory pool instead!"
+//#error "FATAL: Dynamic allocator is under development, please use memory pool instead!"
 #ifndef K_HEAP_SIZE
 #define K_HEAP_SIZE 1024
 #endif

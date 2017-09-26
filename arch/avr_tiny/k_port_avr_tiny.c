@@ -183,7 +183,7 @@ uint8_t port_bit_fs_scan(archtype_t x)
 	/* clz not implemented for this architecture */
 	uint8_t ret = 32;
 
-	if(!reg) 
+	if(!x)
 		goto cleanup;
 
 
@@ -240,14 +240,11 @@ cleanup:
 	return(ret);
 }
 
-uint8_t port_bit_ls_scan(archtype_t reg)
+uint8_t port_bit_ls_scan(archtype_t arg)
 {
 	/* ctz is not as well */
-    uint32_t mask = ~(arg - 1);
-    arg = mask & arg;
-	return(port_bit_fs_scan(arg));
+	return(31 - port_bit_fs_scan(arg & -arg));
 }
-
 
 
 

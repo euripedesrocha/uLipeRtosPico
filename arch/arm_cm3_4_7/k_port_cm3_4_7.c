@@ -77,6 +77,11 @@ uint32_t port_halt_ticker(void)
 
 }
 
+void port_low_power_engine(k_wakeup_info_t *info)
+{
+
+}
+
 #endif
 
 

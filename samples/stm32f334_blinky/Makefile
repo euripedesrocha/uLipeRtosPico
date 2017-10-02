@@ -91,7 +91,7 @@ PERIFLIB_SOURCES =
 
 #######################################
 # binaries
-#######################################
+#######################################c
 BINPATH = 
 PREFIX = arm-none-eabi-
 CC = $(BINPATH)/$(PREFIX)gcc

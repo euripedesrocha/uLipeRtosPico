@@ -123,6 +123,11 @@ k_status_t wqueue_submit(wqueue_t *wq, wqueue_job_t *work)
 		goto cleanup;
 	}
 
+	if(!wq->thr->created) {
+		ret = k_status_invalid_param;
+		goto cleanup;
+	}
+
 	archtype_t key = port_irq_lock();
 	sys_dlist_append(&wq->fifo, &work->node);
 	port_irq_unlock(key);

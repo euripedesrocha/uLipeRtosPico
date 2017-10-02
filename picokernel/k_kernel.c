@@ -27,7 +27,7 @@ tcb_t *k_current_task;
 tcb_t *k_high_prio_task;
 archtype_t irq_nesting = 0;
 
-static k_wakeup_info_t wu_info;
+extern k_wakeup_info_t wu_info;
 
 
 #if((K_ENABLE_TICKER > 0) || (K_ENABLE_TIMERS > 0))
@@ -47,20 +47,37 @@ extern void timer_dispatcher(void *args);
  */
 static void k_idle_thread(void *kernel_info)
 {
-	k_wakeup_info_t *info = (k_wakeup_info_t *)kernel_info;
-	ulipe_assert(info != NULL);
-
 
 	for(;;) {
 #if (K_ENABLE_TICKLESS_IDLE > 0)
 		/* kernel can sleep ? */
-		if((info->next_thread_wake == NULL) && (info->next_timer == NULL)) {
+		if((wu_info.next_thread_wake == NULL) && (wu_info.next_timer == NULL)) {
 			/* simplest case, we need only to enter in sleep for user defined time
 			 * the tasks sleep for defined time is future implementation
 			 */
+			port_low_power_engine(&wu_info);
+		} else if ((wu_info.next_thread_wake == NULL) && (wu_info.next_timer != NULL)) {
 
+			/* we have a next timer to expire, time to sleep? */
+			if((wu_info.next_timer->load_val - *wu_info.tick_cntr) > K_MAX_LOW_POWER_PERIOD) {
+				port_low_power_engine(&wu_info);
+			}
+		} else if ((wu_info.next_thread_wake != NULL) && (wu_info.next_timer == NULL)) {
 
+			/* we have a next timer to expire, time to sleep? */
+			if((wu_info.next_thread_wake->wake_tick - *wu_info.tick_cntr) > K_MAX_LOW_POWER_PERIOD) {
+				port_low_power_engine(&wu_info);
+			}
 
+		} 	else if((wu_info.next_thread_wake != NULL) && (wu_info.next_timer != NULL)) {
+
+			uint32_t thread_tick_step = wu_info.next_thread_wake->wake_tick - *wu_info.tick_cntr;
+			uint32_t timer_tick_step = wu_info.next_timer->load_val - *wu_info.tick_cntr;
+
+			/* both timers needs to allow us to enter in sleep mode */
+			if((thread_tick_step >= K_MAX_LOW_POWER_PERIOD) && (timer_tick_step >= K_MAX_LOW_POWER_PERIOD) ) {
+				port_low_power_engine(&wu_info);
+			}
 		}
 
 #else
@@ -380,9 +397,6 @@ k_status_t kernel_init(void)
 	extern uint32_t tick_count;
 	extern ktimer_t *actual_timer;
 
-	wu_info.next_thread_wake = next_task_wake;
-	wu_info.next_timer = actual_timer;
-	wu_info.tick_cntr = &tick_count;
 
 	/* creates the idle thread */
 	k_status_t err = thread_create(&k_idle_thread,&wu_info, &idle_thread);

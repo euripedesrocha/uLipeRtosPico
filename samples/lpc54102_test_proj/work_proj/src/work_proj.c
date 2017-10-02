@@ -42,9 +42,9 @@ SEMAPHORE_BLOCK_DECLARE(s3,0,1);
 
 MEMPOOL_DECLARE(mem1, 64, 256);
 
-TIMER_CONTROL_BLOCK_DECLARE(tm1, 6);
-TIMER_CONTROL_BLOCK_DECLARE(tm2, 1);
-TIMER_CONTROL_BLOCK_DECLARE(tm3, 120);
+TIMER_CONTROL_BLOCK_DECLARE(tm1, 2000);
+TIMER_CONTROL_BLOCK_DECLARE(tm2, 1542);
+TIMER_CONTROL_BLOCK_DECLARE(tm3, 685);
 
 MUTEX_BLOCK_DECLARE(mtx1);
 WQUEUE_CONTROL_BLOCK_DECLARE(mywq, 16);
@@ -110,7 +110,7 @@ static void t1_task(void *arg)
 		semaphore_take(&s1);
 		cntr += 4;
 		timer_start(&tm1);
-		ticker_timer_wait(12);
+		//ticker_timer_wait(655);
 	}
 }
 
@@ -165,7 +165,7 @@ static void t3_task(void *arg)
 
 
 
-		ticker_timer_wait(5);
+		ticker_timer_wait(2560);
 	}
 }
 
@@ -180,7 +180,7 @@ static void t4_task(void *arg)
 		mutex_take(&mtx1, false);
 		strcpy(cbuffer, "thread 4 is owner of mutex! \n\r");
 		mutex_give(&mtx1);
-		ticker_timer_wait(100);
+		ticker_timer_wait(563);
 
 	}
 
@@ -193,7 +193,7 @@ static void t5_task(void *arg)
 		mutex_take(&mtx1, false);
 		strcpy(cbuffer, "thread 5 is owner of mutex! \n\r");
 		mutex_give(&mtx1);
-		ticker_timer_wait(10);
+		ticker_timer_wait(5698);
 	}
 
 }
@@ -203,7 +203,7 @@ static void t6_task(void *arg)
 	for(;;) {
 		mutex_take(&mtx1, false);
 		strcpy(cbuffer, "thread 6 is owner of mutex! \n\r");
-		ticker_timer_wait(5);
+		ticker_timer_wait(879);
 		mutex_give(&mtx1);
 	}
 

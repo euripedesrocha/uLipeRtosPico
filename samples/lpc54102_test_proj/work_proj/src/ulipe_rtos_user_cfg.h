@@ -32,7 +32,7 @@
 #define K_HEAP_SIZE						16384
 
 /* Tickless idle support */
-#define K_ENABLE_TICKLESS_IDLE			0
+#define K_ENABLE_TICKLESS_IDLE			1
 #define K_MAX_LOW_POWER_PERIOD			(500)
 
 

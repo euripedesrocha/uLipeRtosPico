@@ -10,6 +10,7 @@
 #ifndef __K_PORT_H
 #define __K_PORT_H
 
+#include "ulipe_rtos_pico.h"
 
 /**
  *  @fn port_irq_lock()
@@ -120,6 +121,20 @@ extern uint8_t port_bit_ls_scan(archtype_t reg);
  */
 #if K_DEBUG > 0
 extern void port_set_break(void);
+#endif
+
+/************* Specific low power port **********************************/
+#if (K_ENABLE_TICKLESS_IDLE > 0)
+
+/**
+ *  @fn port_set_break
+ *  @brief architecture specific low power engine handler, called by idle task
+ *
+ *  @param info - structure which contains the kernel states about timing and tasks
+ *
+ *  @return none
+ */
+extern void port_low_power_engine(k_wakeup_info_t *info);
 #endif
 
 

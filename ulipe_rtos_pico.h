@@ -110,7 +110,6 @@ extern void user_lowpower_exit(void *arg);
 #endif
 
 #include "include/picokernel/k_thread.h"
-#include "include/picokernel/k_port.h"
 #include "include/picokernel/k_kernel.h"
 #include "include/picokernel/k_message.h"
 #include "include/picokernel/k_raw_timer.h"
@@ -119,6 +118,7 @@ extern void user_lowpower_exit(void *arg);
 #include "include/picokernel/k_memp.h"
 #include "include/picokernel/k_mem_dyn.h"
 #include "include/picokernel/k_wqueue.h"
+#include "include/picokernel/k_port.h"
 
 
 

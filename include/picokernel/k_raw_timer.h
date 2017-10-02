@@ -145,6 +145,18 @@ k_status_t timer_set_load(ktimer_t *t, uint32_t load_val);
 k_status_t ticker_timer_wait(uint32_t ticks);
 
 
+/**
+ *  @fn timer_get_tick_count()
+ *  @brief gets the current tick count
+ *
+ *  @param none
+ *
+ *  @return current tick count value
+ */
+uint32_t timer_get_tick_count(void);
+
+
+
 
 #endif
 #endif

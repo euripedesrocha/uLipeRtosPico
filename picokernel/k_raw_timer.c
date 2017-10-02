@@ -32,6 +32,7 @@ uint32_t tick_count = 0;
 tcb_t * next_task_wake = NULL;
 static k_list_t k_ticker_list;
 
+k_wakeup_info_t wu_info;
 
 THREAD_CONTROL_BLOCK_DECLARE(timer_tcb, K_TIMER_DISPATCHER_STACK_SIZE, K_TIMER_DISPATCHER_PRIORITY);
 
@@ -405,6 +406,11 @@ void timer_dispatcher(void *args)
 		thread_clr_signals(&timer_tcb, clear_msk);
 		clear_msk = 0;
 
+
+		wu_info.next_thread_wake = next_task_wake;
+		wu_info.next_timer = actual_timer;
+		wu_info.tick_cntr = &tick_count;
+
 	}
 }
 
@@ -720,4 +726,15 @@ k_status_t ticker_timer_wait(uint32_t ticks)
 cleanup:
 	return(ret);
 }
+
+
+uint32_t timer_get_tick_count(void)
+{
+	archtype_t key = port_irq_lock();
+	uint32_t ret = tick_count;
+	port_irq_unlock(key);
+
+	return(ret);
+}
+
 #endif

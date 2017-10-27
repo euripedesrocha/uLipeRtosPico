@@ -1,0 +1,8 @@
+sudo: false
+language: cpp
+services: docker
+before_install:
+    - docker build -t ulipe .
+script:
+    - docker run --rm -u $UID:$GROUPS  -v `pwd`:/uLipePico -t ulipe /bin/bash -c "meson --cross-file cross.config cortexM0"
+    - docker run --rm -u $UID:$GROUPS  -v `pwd`:/uLipePico -t ulipe /bin/bash -c "ninja -C cortexM0"
